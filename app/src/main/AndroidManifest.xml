@@ -12,6 +12,10 @@
         android:theme="@style/Theme.CringeMPOne"
         tools:targetApi="31">
         <activity
+            android:name=".components.MusicPlayer"
+            android:exported="true">
+        </activity>
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
