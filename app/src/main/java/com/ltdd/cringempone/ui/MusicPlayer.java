@@ -5,9 +5,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -30,6 +33,8 @@ public class MusicPlayer extends AppCompatActivity {
     private Handler handler = new Handler();
     private ViewHolder viewHolder;
     private Song current;
+    private Animation rotate;
+    private ImageView discImg;
     List<Song> playList = new ArrayList<Song>(Arrays.asList(
             new Song("Một bước yêu vạn dặm đau", "mbyvdd"),
             new Song("Maze (The King: Eternal Monarch OST Part 4) Instrumental", "maze"),
@@ -52,6 +57,9 @@ public class MusicPlayer extends AppCompatActivity {
         current = playList.get(0);
         bindEventForPlayList();
         bindEventForMediaPlayer();
+        rotate = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.rotate);
+        discImg = findViewById(R.id.discImg);
+        discImg.setImageResource(R.drawable.disc);
     }
     public void bindEventForPlayList(){
         ListView playListView = findViewById(R.id.lstSong);
@@ -87,8 +95,11 @@ public class MusicPlayer extends AppCompatActivity {
             public void onClick(View view) {
                 Toast.makeText(view.getContext(), "Playing Audio", Toast.LENGTH_SHORT).show();
                 mediaPlayer.start();
+                discImg.startAnimation(rotate);
+
                 player.eTime = mediaPlayer.getDuration();
                 player.sTime = mediaPlayer.getCurrentPosition();
+
                 if (player.oTime == 0) {
                     viewHolder.prog.setMax(player.eTime);
                     player.oTime = 1;
@@ -111,6 +122,7 @@ public class MusicPlayer extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mediaPlayer.pause();
+                discImg.clearAnimation();
                 viewHolder.pause.setEnabled(false);
                 viewHolder.play.setEnabled(true);
                 Toast.makeText(getApplicationContext(), "Pausing Audio",
