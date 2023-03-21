@@ -47,21 +47,21 @@ public class MainActivity extends AppCompatActivity {
         StrictMode.setThreadPolicy(policy);
         setContentView(R.layout.activity_main);
 
-        Intent sintent = new Intent(this, BaseAPIService.class);
-        bindService(sintent, new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-                BaseAPIService.LocalBinder binder = (BaseAPIService.LocalBinder) iBinder;
-                apiService = binder.getService();
-                isBound = true;
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName componentName) {
-                isBound = false;
-            }
-        }, Context.BIND_AUTO_CREATE);
-        getRandNumber();
+//        Intent sintent = new Intent(this, BaseAPIService.class);
+//        bindService(sintent, new ServiceConnection() {
+//            @Override
+//            public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+//                BaseAPIService.LocalBinder binder = (BaseAPIService.LocalBinder) iBinder;
+//                apiService = binder.getService();
+//                isBound = true;
+//            }
+//
+//            @Override
+//            public void onServiceDisconnected(ComponentName componentName) {
+//                isBound = false;
+//            }
+//        }, Context.BIND_AUTO_CREATE);
+//        getRandNumber();
         //#region Streaming media player
         //Set up
         //https://mp3-s1-zmp3.zmdcdn.me/5a7ab8a550e1b9bfe0f0/2684602975505725241?authen=exp=1679135555~acl=/5a7ab8a550e1b9bfe0f0/*~hmac=4a1ff5882b7f905fb7241eaf281c725b&fs=MTY3ODk2MjmUsIC1NTmUsICzM3x3ZWJWNnwwfDU0LjI1NC4xNjIdUngMTM4
