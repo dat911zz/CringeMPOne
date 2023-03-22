@@ -1,4 +1,4 @@
-package com.ltdd.cringempone.utils;
+package com.ltdd.cringempone.api;
 
 import android.content.Context;
 import android.content.SharedPreferences;
