@@ -14,19 +14,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CringeMPOne"
         tools:targetApi="31">
-        <activity
-            android:name=".BottomNavigationDrawerActivity"
-            android:exported="false"
-            android:label="@string/title_activity_bottom_navigation_drawer"
-            android:theme="@style/Theme.CringeMPOne.NoActionBar" />
-
         <service
-            android:name=".data.BaseAPIService"
+            android:name=".api.BaseAPIService"
             android:enabled="true"
-            android:exported="true" />
-
+            android:exported="true"
+            />
         <activity
-            android:name=".ui.MusicPlayer"
+            android:name=".ui.activity.MusicPlayer"
             android:exported="true" />
         <activity
             android:name=".MainActivity"

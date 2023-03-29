@@ -1,4 +1,4 @@
-package com.ltdd.cringempone.ui;
+package com.ltdd.cringempone.ui.activity;
 
 import android.media.MediaPlayer;
 import android.os.Bundle;
