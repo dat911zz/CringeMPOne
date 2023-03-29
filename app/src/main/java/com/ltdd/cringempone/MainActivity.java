@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -14,6 +15,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.ltdd.cringempone.api.BaseAPIService;
 import com.ltdd.cringempone.ui.activity.MusicPlayer;
+import com.ltdd.cringempone.utils.Helper;
 
 public class MainActivity extends AppCompatActivity {
     String TAG = "APP";
@@ -26,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         setContentView(R.layout.activity_main);
-
+        BaseAPIService.getInstance().getSong("sad");
         bindAPIBase();
 
         //#region Streaming media player
@@ -46,9 +48,9 @@ public class MainActivity extends AppCompatActivity {
 //        // Start the playback.
 //        exoPlayer.play();
 //        //#endregion
-//        ImageView img = findViewById(R.id.imgView);
-//        img.setImageDrawable(Helper.LoadImageFromWebOperations("https://photo-resize-zmp3.zmdcdn.me/w165_r1x1_jpeg/cover/8/5/5/b/855bb71b9bc9a577ea6627df65a2adeb.jpg"));
-//
+        ImageView img = findViewById(R.id.imgView);
+        img.setImageDrawable(Helper.LoadImageFromWebOperations("https://photo-resize-zmp3.zmdcdn.me/w240_r1x1_jpeg/cover/a/d/2/7/ad270c623249e1d583f06ad0fc275b9c.jpg"));
+
         Button player = findViewById(R.id.btnMusicPlayer);
         player.setOnClickListener(view -> {
 //            exoPlayer.stop();
@@ -72,37 +74,5 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-//        Log.d(TAG, "onResume: " + apiService.getTop100());
-//        Zmp3API apiZ = new Zmp3API(this);
-//        apiZ.makeAPICall();
-//        RequestQueue rq = Volley.newRequestQueue(this);
-//        Request request = new StringRequest(Request.Method.GET, apiSample, new Response.Listener<String>() {
-//            @Override
-//            public void onResponse(String response) {
-//                Log.i(TAG, "StringRequest onResponse: " + response);
-//            }
-//        }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                Log.e(TAG, "StringRequest onErrorResponse: " + error.getMessage());
-//            }
-//        });
-//        rq.add(request);
-//
-//
-//        SharedPreferences sharedPref = this.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
-//        try {
-//            String source = sharedPref.getString("returnResponse", "");
-//            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-//            JsonParser jp = new JsonParser();
-//            JsonElement je = jp.parse(source);
-//            String prettyJsonString = gson.toJson(je);
-//            Log.d(TAG, "onResume: " + prettyJsonString);
-//            TextView tvMain = findViewById(R.id.txtMain);
-//            tvMain.setText(prettyJsonString);
-//
-//        } catch (Exception e) {
-//            Log.e(TAG, "onResume: " + e.getMessage());
-//        }
     }
 }

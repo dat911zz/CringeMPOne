@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">CringeMPOne</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="one">0.25</string>
+    <string name="two">-0.25</string>
 </resources>
