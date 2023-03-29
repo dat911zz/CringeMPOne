@@ -2,10 +2,20 @@ package com.ltdd.cringempone.api;
 
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.ltdd.cringempone.data.dto.SongInfoDTO;
+
+import java.util.ArrayList;
+
 public class BaseAPIService {
     private String hostAPI = "https://zingmp3api-dvn.onrender.com/";
     private String LOG_TAG = "Base API Service";
+    static GsonBuilder builder;
+    static Gson gson;
     public static BaseAPIService getInstance(){
+        builder = new GsonBuilder();
+        gson = builder.create();
         return new BaseAPIService();
     }
     public BaseAPIService() {
@@ -26,5 +36,12 @@ public class BaseAPIService {
     }
     public String getHome(){
         return getRequest("Home");
+    }
+    public SongInfoDTO.SongFullInfoDTO getSong(String id)
+    {
+        //id test: ZWABWOFZ
+        String res = getRequest("getFullInfo/" + id);
+        SongInfoDTO.SongFullInfoDTO songStreaming = gson.fromJson(res, SongInfoDTO.SongFullInfoDTO.class);
+        return songStreaming;
     }
 }
