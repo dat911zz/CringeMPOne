@@ -3,12 +3,15 @@
     <string name="title_activity_bottom_navigation_drawer">BottomNavigationDrawerActivity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">Android Studio</string>
-    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_title">Hồ Mỹ Kim</string>
+    <string name="nav_header_subtitle">homykim729@gmail.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
-    <string name="menu_home">Home</string>
-    <string name="menu_gallery">Gallery</string>
-    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_home">TRANG CHỦ</string>
+    <string name="menu_gallery">#ZING</string>
+    <string name="menu_slideshow">CHỦ ĐỀ</string>
+    <string name="menu_top100">TOP 100</string>
+    <string name="menu_newrelease">MỚI PHÁT HÀNH</string>
+    <string name="menu_logout">ĐĂNG XUẤT</string>
 </resources>
