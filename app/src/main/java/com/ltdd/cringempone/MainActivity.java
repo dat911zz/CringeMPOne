@@ -1,13 +1,17 @@
 package com.ltdd.cringempone;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -24,16 +28,21 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.ltdd.cringempone.api.BaseAPIService;
 import com.ltdd.cringempone.ui.activity.MusicPlayer;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import com.ltdd.cringempone.databinding.ActivityMainBinding;
-
-public class MainActivity extends AppCompatActivity {
+import com.ltdd.cringempone.ui.person.PersonFragment;
+import com.ltdd.cringempone.ui.settings.SettingsFragment;
+import com.ltdd.cringempone.ui.homebottom.HomeFragmentBottom;
+public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
+    BottomNavigationView bottomNavigationView;
     String TAG = "APP";
     BaseAPIService apiService = BaseAPIService.getInstance();
     Boolean isBound = false;
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,7 +95,16 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        bottomNavigationView.setOnNavigationItemSelectedListener(this);
+        bottomNavigationView.setSelectedItemId(R.id.person);
+
+
     }
+
+    PersonFragment personFragment = new PersonFragment();
+    HomeFragmentBottom homeFragmentBottom = new HomeFragmentBottom();
+    SettingsFragment settingsFragment = new SettingsFragment();
     public void bindAPIBase(){
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         JsonParser jp = new JsonParser();
@@ -147,5 +165,23 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.person:
+                getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_main, personFragment).commit();
+                return true;
+
+            case R.id.home:
+                getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_main, homeFragmentBottom).commit();
+                return true;
+
+            case R.id.settings:
+                getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_main, settingsFragment).commit();
+                return true;
+        }
+        return false;
     }
 }
