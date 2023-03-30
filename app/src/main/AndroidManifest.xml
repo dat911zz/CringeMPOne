@@ -14,11 +14,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CringeMPOne"
         tools:targetApi="31">
+<!--        <service-->
+<!--            android:name=".MediaPlayerService"-->
+<!--            android:enabled="true"-->
+<!--            android:exported="true"></service>-->
         <service
             android:name=".api.BaseAPIService"
             android:enabled="true"
-            android:exported="true"
-            />
+            android:exported="true" />
+
         <activity
             android:name=".ui.activity.MusicPlayer"
             android:exported="true" />
