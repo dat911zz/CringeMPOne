@@ -10,11 +10,13 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class LoginActivity extends AppCompatActivity {
 
     CheckBox showPasswordCheckBox;
+    TextView backTextView;
     EditText passwordEditText;
     EditText usernameEditText;
     Button loginButton;
@@ -48,6 +50,12 @@ public class LoginActivity extends AppCompatActivity {
                     // Ẩn hint khi EditText nhận được sự tương tác (được chọn)
                     passwordEditText.setHint("");
                 }
+            }
+        });
+        backTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
             }
         });
         usernameEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -88,6 +96,7 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText = (EditText) findViewById(R.id.password);
         usernameEditText = (EditText) findViewById(R.id.username);
         loginButton = (Button) findViewById(R.id.login);
+        backTextView = (TextView) findViewById(R.id.backTextView);
 
     }
 }
