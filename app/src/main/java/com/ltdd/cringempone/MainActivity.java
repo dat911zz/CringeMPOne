@@ -9,11 +9,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.SearchView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.MenuItemCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -158,7 +161,28 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-        return true;
+        MenuItem menuItem = menu.findItem(R.id.action_login);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
+        return super.onCreateOptionsMenu(menu);
+    }
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        switch (id){
+            case R.id.action_login:
+                Intent intent = new Intent(this, LoginActivity.class);
+                startActivity(intent);
+
+                break;
+            case R.id.action_register:
+                Toast.makeText(getBaseContext(),"Đăng ký",Toast.LENGTH_LONG).show();
+                break;
+            case R.id.action_settings:
+                Toast.makeText(getBaseContext(),"Settings",Toast.LENGTH_SHORT).show();
+                break;
+            default:
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -181,4 +205,5 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         }
         return false;
     }
+
 }
