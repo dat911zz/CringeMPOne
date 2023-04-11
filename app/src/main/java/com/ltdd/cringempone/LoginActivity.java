@@ -18,7 +18,7 @@ public class LoginActivity extends AppCompatActivity {
     CheckBox showPasswordCheckBox;
     TextView backTextView;
     EditText passwordEditText;
-    EditText usernameEditText;
+    EditText emailEditText;
     Button loginButton;
 
 
@@ -58,15 +58,15 @@ public class LoginActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
-        usernameEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        emailEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus && usernameEditText.getText().length() == 0) {
+                if (!hasFocus && emailEditText.getText().length() == 0) {
                     // Hiển thị lại hint nếu EditText trống
-                    usernameEditText.setHint("Username");
+                    emailEditText.setHint("Email");
                 } else {
                     // Ẩn hint khi EditText nhận được sự tương tác (được chọn)
-                    usernameEditText.setHint("");
+                    emailEditText.setHint("");
                 }
             }
         });
@@ -74,28 +74,28 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String username = usernameEditText.getText().toString();
+                String email = emailEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
 
                 // Kiểm tra thông tin tài khoản
-                if (username.equals("username") && password.equals("password")) {
+                if (email.equals("email") && password.equals("password")) {
                     // Đúng, đăng nhập thành công và chuyển sang activity trang chủ
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(intent);
                 } else {
                     // Sai, yêu cầu nhập lại
-                    Toast.makeText(LoginActivity.this, "Tài khoản hoặc mật khẩu không đúng!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, "Email hoặc mật khẩu không chính xác!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
     }
-    private void addControls()
+    public void addControls()
     {
-        showPasswordCheckBox = (CheckBox) findViewById(R.id.showPassword);
-        passwordEditText = (EditText) findViewById(R.id.password);
-        usernameEditText = (EditText) findViewById(R.id.username);
-        loginButton = (Button) findViewById(R.id.login);
+        showPasswordCheckBox = (CheckBox) findViewById(R.id.showPasswordCheckBox);
+        passwordEditText = (EditText) findViewById(R.id.passwordEditText);
+        emailEditText = (EditText) findViewById(R.id.emailEditText);
+        loginButton = (Button) findViewById(R.id.loginButton);
         backTextView = (TextView) findViewById(R.id.backTextView);
 
     }
