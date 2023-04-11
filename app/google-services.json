@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "776955739924",
+    "firebase_url": "https://zingmpone-default-rtdb.firebaseio.com",
+    "project_id": "zingmpone",
+    "storage_bucket": "zingmpone.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:776955739924:android:703939f807048a20168c01",
+        "android_client_info": {
+          "package_name": "com.ltdd.cringempone"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "776955739924-5l6h3bpcra1dtabhd1ne43kl7dk3o2tm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGFIBPtcQKNlb4S09urHjPYpT-NPNYomw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "776955739924-5l6h3bpcra1dtabhd1ne43kl7dk3o2tm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
