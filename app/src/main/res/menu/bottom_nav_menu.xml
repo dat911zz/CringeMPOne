@@ -2,14 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/person"
-        android:title="Person"
-        android:icon="@drawable/ic_person"/>
+        android:title="Cá Nhân"
+        android:icon="@drawable/ic_library_music"/>
     <item
         android:id="@+id/home"
-        android:title="Home"
-        android:icon="@drawable/ic_home"/>
-    <item
-        android:id="@+id/settings"
-        android:title="Settings"
-        android:icon="@drawable/ic_settings"/>
+        android:title="Khám Phá"
+        android:icon="@drawable/ic_play_circle"/>
 </menu>

@@ -163,7 +163,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds itemDTOS to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
@@ -184,10 +183,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
             case R.id.home:
                 getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_main, homeFragmentBottom).commit();
-                return true;
-
-            case R.id.settings:
-                getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_main, settingsFragment).commit();
                 return true;
         }
         return false;
