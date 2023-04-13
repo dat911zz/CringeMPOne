@@ -14,10 +14,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CringeMPOne"
         tools:targetApi="31">
-<!--        <service-->
-<!--            android:name=".MediaPlayerService"-->
-<!--            android:enabled="true"-->
-<!--            android:exported="true"></service>-->
+        <activity
+            android:name=".ui.activity.UserProfile"
+            android:exported="false"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".ui.activity.LoginActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".ui.activity.RegisterActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme.NoActionBar"/> <!-- <service -->
+        <!-- android:name=".MediaPlayerService" -->
+        <!-- android:enabled="true" -->
+        <!-- android:exported="true"></service> -->
         <service
             android:name=".api.BaseAPIService"
             android:enabled="true"
