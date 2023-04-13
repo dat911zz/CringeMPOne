@@ -17,6 +17,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -24,20 +25,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.ltdd.cringempone.api.ApiUtils;
 import com.ltdd.cringempone.api.BaseAPIService;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
-
 import com.ltdd.cringempone.api.CringeAPIService;
 import com.ltdd.cringempone.databinding.ActivityMainBinding;
+import com.ltdd.cringempone.ui.homebottom.HomeFragmentBottom;
 import com.ltdd.cringempone.ui.musicplayer.PlayerActivity;
 import com.ltdd.cringempone.ui.person.PersonFragment;
 import com.ltdd.cringempone.ui.settings.SettingsFragment;
-import com.ltdd.cringempone.ui.homebottom.HomeFragmentBottom;
-
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
     private AppBarConfiguration mAppBarConfiguration;
@@ -90,24 +83,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
         bottomNavigationView.setSelectedItemId(R.id.person);
 
-    }
-    private void loadRS(){
-        Call<ResponseBody> responseBodyCall = mService.getTop100();
-        responseBodyCall.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful()){
-                    Log.i(TAG, "onResponse: " + response.body().toString());
-                    testRs[0] = String.valueOf(response.body());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.e(TAG, "error loading from API");
-            }
-        });
-        Log.i(TAG, "onCreate: " + testRs[0]);
     }
     PersonFragment personFragment = new PersonFragment();
     HomeFragmentBottom homeFragmentBottom = new HomeFragmentBottom();
