@@ -24,7 +24,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.ltdd.cringempone.api.BaseAPIService;
 import com.ltdd.cringempone.databinding.ActivityMainBinding;
-import com.ltdd.cringempone.ui.activity.TestLoginActivity;
 import com.ltdd.cringempone.ui.activity.RegisterActivity;
 import com.ltdd.cringempone.ui.homebottom.HomeFragmentBottom;
 import com.ltdd.cringempone.ui.person.PersonFragment;
@@ -160,11 +159,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             case R.id.action_register:
                 Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
                 startActivity(intent);
-                return true;
-
-            case R.id.action_login:
-                Intent intent1 = new Intent(MainActivity.this, TestLoginActivity.class);
-                startActivity(intent1);
                 return true;
         }
         return false;
