@@ -24,11 +24,16 @@ public class BaseAPIService {
         HttpGetRequest httpGetRequest = new HttpGetRequest();
         httpGetRequest.execute(hostAPI + path);
         try {
-            Log.i("BaseAPI", httpGetRequest.get());
-            return httpGetRequest.get();
+            if (httpGetRequest.get() == null){
+                throw new Exception("No Respond!");
+            }
+            String result = httpGetRequest.get();
+            Log.i("BaseAPI", result);
+            return result;
         } catch (Exception e) {
-            Log.e(LOG_TAG, "getRequest: " + e.getMessage());
-            return String.format("{\"err\":\"{0}\",\"mess:\":\"{1}\"}","404",e.getMessage());
+            String err = e.getMessage() != null ? e.getMessage() : "";
+            Log.e(LOG_TAG, "getRequest: " + err);
+            return String.format("{\"err\":\"404\",\"mess:\":\"No respond\"}");
         }
     }
     public String getTop100(){
@@ -37,11 +42,14 @@ public class BaseAPIService {
     public String getHome(){
         return getRequest("Home");
     }
-    public SongInfoDTO.SongFullInfoDTO getSong(String id)
+    public SongInfoDTO getSong(String id)
     {
         //id test: ZWABWOFZ
         String res = getRequest("getFullInfo/" + id);
-        SongInfoDTO.SongFullInfoDTO songStreaming = gson.fromJson(res, SongInfoDTO.SongFullInfoDTO.class);
+        if (res.contains("err")){
+            return null;
+        }
+        SongInfoDTO songStreaming = gson.fromJson(res, SongInfoDTO.class);
         return songStreaming;
     }
 }
