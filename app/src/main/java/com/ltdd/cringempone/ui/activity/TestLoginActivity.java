@@ -19,7 +19,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.ltdd.cringempone.R;
 
-public class LoginActivity extends AppCompatActivity {
+public class TestLoginActivity extends AppCompatActivity {
     EditText txtEmail, txtPassword;
     Button btnSignIn;
     TextView txtViewSignUp;
@@ -32,7 +32,7 @@ public class LoginActivity extends AppCompatActivity {
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
-            Intent intent = new Intent(LoginActivity.this, UserProfile.class);
+            Intent intent = new Intent(TestLoginActivity.this, TestUserProfile.class);
             startActivity(intent);
         }
     }
@@ -40,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_login_test);
         loadControls();
 
         mAuth = FirebaseAuth.getInstance();
@@ -48,7 +48,7 @@ public class LoginActivity extends AppCompatActivity {
         txtViewSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                Intent intent = new Intent(TestLoginActivity.this, RegisterActivity.class);
                 startActivity(intent);
             }
         });
@@ -62,11 +62,11 @@ public class LoginActivity extends AppCompatActivity {
 
                 //Kiểm tra dữ liệu đã nhập vào textbox hay chưa và kiểm tra password có giống nhau hay không
                 if(TextUtils.isEmpty(email)){
-                    Toast.makeText(LoginActivity.this, "Enter email", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(TestLoginActivity.this, "Enter email", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 if(TextUtils.isEmpty(password)){
-                    Toast.makeText(LoginActivity.this, "Enter password", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(TestLoginActivity.this, "Enter password", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -76,14 +76,14 @@ public class LoginActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
-                                    Toast.makeText(LoginActivity.this, "Login successful",
+                                    Toast.makeText(TestLoginActivity.this, "Login successful",
                                             Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(LoginActivity.this, UserProfile.class);
+                                    Intent intent = new Intent(TestLoginActivity.this, TestUserProfile.class);
                                     startActivity(intent);
                                     finish();
                                 } else {
                                     // If sign in fails, display a message to the user.
-                                    Toast.makeText(LoginActivity.this, "Email or Password is not correct",
+                                    Toast.makeText(TestLoginActivity.this, "Email or Password is not correct",
                                             Toast.LENGTH_SHORT).show();
                                 }
                             }

@@ -16,7 +16,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.ltdd.cringempone.R;
 
-public class UserProfile extends AppCompatActivity {
+public class TestUserProfile extends AppCompatActivity {
 
     FirebaseAuth auth;
     Button button;
@@ -28,7 +28,7 @@ public class UserProfile extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_profile);
+        setContentView(R.layout.activity_user_profile_test);
 
 
 
@@ -37,7 +37,7 @@ public class UserProfile extends AppCompatActivity {
         textView = findViewById(R.id.userDetails);
         user = auth.getCurrentUser();
         if(user==null){
-            Intent intent = new Intent(UserProfile.this, LoginActivity.class);
+            Intent intent = new Intent(TestUserProfile.this, TestLoginActivity.class);
             startActivity(intent);
             finish();
         }
@@ -58,7 +58,7 @@ public class UserProfile extends AppCompatActivity {
             public void onClick(View v) {
                 gsc.signOut();
                 FirebaseAuth.getInstance().signOut();
-                Intent intent = new Intent(UserProfile.this, LoginActivity.class);
+                Intent intent = new Intent(TestUserProfile.this, TestLoginActivity.class);
                 startActivity(intent);
             }
         });

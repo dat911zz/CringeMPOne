@@ -41,7 +41,7 @@ public class RegisterActivity extends AppCompatActivity {
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
-            Intent intent = new Intent(RegisterActivity.this, UserProfile.class);
+            Intent intent = new Intent(RegisterActivity.this, TestUserProfile.class);
             startActivity(intent);
         }
     }
@@ -91,7 +91,7 @@ public class RegisterActivity extends AppCompatActivity {
         txtViewSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                Intent intent = new Intent(RegisterActivity.this, TestLoginActivity.class);
                 startActivity(intent);
                 finish();
             }
@@ -129,7 +129,7 @@ public class RegisterActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             Toast.makeText(RegisterActivity.this, "Tạo tài khoản thành công", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                            Intent intent = new Intent(RegisterActivity.this, TestLoginActivity.class);
                             startActivity(intent);
                             finish();
                         } else {
@@ -154,7 +154,7 @@ public class RegisterActivity extends AppCompatActivity {
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if(task.isSuccessful()){
                                     FirebaseUser currentUser = mAuth.getCurrentUser();
-                                    Intent intent = new Intent(getApplicationContext(),UserProfile.class);
+                                    Intent intent = new Intent(getApplicationContext(), TestUserProfile.class);
                                     startActivity(intent);
                                 }else{
                                     Toast.makeText(RegisterActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();

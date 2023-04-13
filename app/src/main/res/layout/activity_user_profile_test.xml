@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    tools:context=".ui.activity.UserProfile">
+    tools:context=".ui.activity.TestUserProfile">
 
     <TextView
         android:id="@+id/userDetails"

@@ -15,11 +15,11 @@
         android:theme="@style/Theme.CringeMPOne"
         tools:targetApi="31">
         <activity
-            android:name=".ui.activity.UserProfile"
+            android:name=".ui.activity.TestUserProfile"
             android:exported="false"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
-            android:name=".ui.activity.LoginActivity"
+            android:name=".ui.activity.TestLoginActivity"
             android:exported="false"
             android:theme="@style/AppTheme.NoActionBar"/>
         <activity
