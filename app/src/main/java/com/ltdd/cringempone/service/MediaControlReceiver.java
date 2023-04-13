@@ -41,12 +41,15 @@ public class MediaControlReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (intent != null && intent.getAction() != null){
             String act = intent.getAction();
+            // Get the current playback state of ExoPlayer
+            int playbackState = exoPlayer.getPlaybackState();
+            boolean isPause = playbackState == Player.STATE_READY && !exoPlayer.isPlaying();
             switch (act){
                 case MediaAction.ACTION_PLAY:
                     exoPlayer.setPlayWhenReady(true);
                     String mediaUrl = intent.getStringExtra("url");
                     Log.i("APP", "onStartCommand: ");
-                    if (mediaUrl != null){
+                    if (mediaUrl != null && !isPause){
                         MediaItem mediaItem = MediaItem.fromUri(mediaUrl);
                         exoPlayer.setMediaItem(mediaItem);
                         exoPlayer.prepare();
@@ -101,47 +104,14 @@ public class MediaControlReceiver extends BroadcastReceiver {
                 Intent playIntent = new Intent(MediaAction.ACTION_PLAY);
                 playIntent.putExtra("url", songUrl);
                 context.sendBroadcast(playIntent);
-                exoPlayer.seekTo(0);
             }
             else{
                 viewHolder.getPlay().setBackgroundResource(R.drawable.baseline_play_arrow_24);
                 Intent pauseIntent = new Intent(MediaAction.ACTION_PAUSE);
                 context.sendBroadcast(pauseIntent);
-                exoPlayer.setPlayWhenReady(false);
             }
         });
-        viewHolder.getSeekBar().setMax(((int) exoPlayer.getDuration()));
-        viewHolder.getSeekBar().setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (fromUser){
-                    exoPlayer.seekTo(progress);
-                    viewHolder.getSeekBar().setProgress(progress);
-                }
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-
-    }
-    public void executeDisc(Context context, ImageView disc) {
-        Animation animation = AnimationUtils.loadAnimation(context, R.anim.rotate);
-        Handler handler = new Handler();
-        disc.setImageDrawable(Helper.LoadImageFromWebOperations(getCurrentSong().thumbnailM));
         exoPlayer.addListener(new Player.Listener() {
-            @Override
-            public void onPlayWhenReadyChanged(boolean playWhenReady, int reason) {
-                Player.Listener.super.onPlayWhenReadyChanged(playWhenReady, reason);
-            }
-
             @Override
             public void onPlaybackStateChanged(int playbackState) {
                 // Handle playback state change event
@@ -153,18 +123,71 @@ public class MediaControlReceiver extends BroadcastReceiver {
                     if (exoPlayer.getPlayWhenReady()) {
                         // Player is in play state
                         // Example: Handle play event with a Handler
-                        disc.startAnimation(animation);
+                        int duration = ((int) exoPlayer.getDuration());
+                        viewHolder.getSeekBar().setMax(duration);
+                        viewHolder.getEnd().setText(createTimeText(duration));
                     } else {
                         // Player is in pause state
                         // Example: Handle pause event with a Handler
-                        animation.cancel();
+
                     }
                 } else if (playbackState == Player.STATE_ENDED) {
                     // Playback ended, update UI accordingly
-                    animation.cancel();
+
                 }
             }
         });
+
+
+        viewHolder.getSeekBar().setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser){
+                    exoPlayer.seekTo(progress);
+                    viewHolder.getSeekBar().setProgress(progress);
+                    Log.i("On progress", "onProgressChanged: " + seekBar.getMax());
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+//                exoPlayer.seekTo(seekBar.getProgress());
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (exoPlayer != null) {
+                    int currentPosition = (int) exoPlayer.getCurrentPosition();
+                    viewHolder.getSeekBar().setProgress(currentPosition);
+                    viewHolder.getStart().setText(createTimeText(currentPosition));
+                }
+                handler.postDelayed(this, 100);
+            }
+        }, 0);
+    }
+    private String createTimeText(int time){
+        String timeText;
+        int min = time / 1000 / 60;
+        int sec = time / 1000 % 60;
+        timeText = min + ":";
+        if (sec < 10){
+            timeText += "0";
+        }
+        timeText += sec;
+        return timeText;
+    }
+    public void executeDisc(Context context, ImageView disc) {
+        Animation animation = AnimationUtils.loadAnimation(context, R.anim.rotate);
+        Handler handler = new Handler();
+        disc.setImageDrawable(Helper.LoadImageFromWebOperations(getCurrentSong().thumbnailM));
+
     }
     public void setExoPlayer(ExoPlayer exoPlayer){
         this.exoPlayer = exoPlayer;

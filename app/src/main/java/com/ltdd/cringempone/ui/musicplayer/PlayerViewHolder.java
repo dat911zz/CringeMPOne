@@ -1,24 +1,27 @@
 package com.ltdd.cringempone.ui.musicplayer;
 
 import android.widget.SeekBar;
+import android.widget.TextView;
+
 import androidx.appcompat.widget.AppCompatButton;
 
 public class PlayerViewHolder {
     private SeekBar seekBar;
-    private AppCompatButton play;
-    private AppCompatButton skipNext;
-    private AppCompatButton skipPrev;
-    private AppCompatButton shuffle;
-    private AppCompatButton loop;
+    private AppCompatButton play, skipNext, skipPrev, shuffle, loop;
+    private TextView start;
+    private TextView end;
 
-    public PlayerViewHolder(SeekBar seekBar, AppCompatButton play, AppCompatButton skipNext, AppCompatButton skipPrev, AppCompatButton shuffle, AppCompatButton loop) {
-        this.setSeekBar(seekBar);
-        this.setPlay(play);
-        this.setSkipNext(skipNext);
-        this.setSkipPrev(skipPrev);
-        this.setShuffle(shuffle);
-        this.setLoop(loop);
+    public PlayerViewHolder(SeekBar seekBar, AppCompatButton play, AppCompatButton skipNext, AppCompatButton skipPrev, AppCompatButton shuffle, AppCompatButton loop, TextView start, TextView end) {
+        this.seekBar = seekBar;
+        this.play = play;
+        this.skipNext = skipNext;
+        this.skipPrev = skipPrev;
+        this.shuffle = shuffle;
+        this.loop = loop;
+        this.start = start;
+        this.end = end;
     }
+
 
     public SeekBar getSeekBar() {
         return seekBar;
@@ -66,5 +69,21 @@ public class PlayerViewHolder {
 
     public void setLoop(AppCompatButton loop) {
         this.loop = loop;
+    }
+
+    public TextView getStart() {
+        return start;
+    }
+
+    public void setStart(TextView start) {
+        this.start = start;
+    }
+
+    public TextView getEnd() {
+        return end;
+    }
+
+    public void setEnd(TextView end) {
+        this.end = end;
     }
 }

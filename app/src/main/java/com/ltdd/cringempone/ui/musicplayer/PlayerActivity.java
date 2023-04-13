@@ -33,7 +33,9 @@ public class PlayerActivity extends AppCompatActivity {
                 findViewById(id.skipNext),
                 findViewById(id.skipPrev),
                 findViewById(id.shuffle),
-                findViewById(id.loop)
+                findViewById(id.loop),
+                findViewById(id.txtStart),
+                findViewById(id.txtEnd)
         ));
 
         ViewPager viewPager = findViewById(id.pager);
