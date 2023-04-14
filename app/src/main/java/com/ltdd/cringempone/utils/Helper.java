@@ -9,8 +9,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.ltdd.cringempone.R;
-import com.ltdd.cringempone.ui.fragment.MainPlayerFragment;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -29,13 +28,15 @@ public class Helper {
     public static class FragmentUtil{
 
         public static FragmentTransaction ft;
-        public static void addFragment(Activity activity, Fragment fragment, int frameLayout, String name){
+        public static void addFragment(Activity activity, Fragment fragment, int frameLayout,@Nullable String name){
             FragmentManager fragmentManager = ((AppCompatActivity)activity).getSupportFragmentManager();
-            fragmentManager.beginTransaction()
-                    .replace(frameLayout, fragment)
-                    .setReorderingAllowed(true)
-                    .addToBackStack(name) // name can be null
-                    .commit();
+            FragmentTransaction fr = fragmentManager.beginTransaction();
+                    fr.replace(frameLayout, fragment)
+                    .setReorderingAllowed(true);
+            if (name != null) {
+                fr.addToBackStack(name); // name can be null
+            }
+            fr.commit();
         }
     }
 

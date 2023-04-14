@@ -7,9 +7,14 @@ import android.os.StrictMode;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.SearchView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.MenuItemCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -22,10 +27,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.ltdd.cringempone.api.ApiUtils;
 import com.ltdd.cringempone.api.BaseAPIService;
+import com.ltdd.cringempone.api.CringeAPIService;
 import com.ltdd.cringempone.databinding.ActivityMainBinding;
-import com.ltdd.cringempone.ui.activity.RegisterActivity;
 import com.ltdd.cringempone.ui.homebottom.HomeFragmentBottom;
+import com.ltdd.cringempone.ui.musicplayer.PlayerActivity;
 import com.ltdd.cringempone.ui.person.PersonFragment;
 import com.ltdd.cringempone.ui.settings.SettingsFragment;
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
@@ -34,6 +41,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private ActivityMainBinding binding;
     BottomNavigationView bottomNavigationView;
     String TAG = "APP";
+    String[] testRs = new String[1];
+    CringeAPIService mService;
+
     BaseAPIService apiService = BaseAPIService.getInstance();
     Boolean isBound = false;
     @SuppressLint("MissingInflatedId")
@@ -43,38 +53,23 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         setContentView(R.layout.activity_main_link);
-
+        Thread.setDefaultUncaughtExceptionHandler((thread, ex) -> {
+            // Handle the exception here
+            Log.e("MyApplication", "Uncaught exception occurred: " + ex.getMessage());
+        });
         bindAPIBase();
+        mService = ApiUtils.getCringeAPIService();
+        Log.d(TAG, "onCreate: hello?");
+
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setSupportActionBar(binding.appBarMain.toolbar);
 
-        //#region Streaming media player
-//        //Set up
-//        //https://mp3-s1-zmp3.zmdcdn.me/5a7ab8a550e1b9bfe0f0/2684602975505725241?authen=exp=1679135555~acl=/5a7ab8a550e1b9bfe0f0/*~hmac=4a1ff5882b7f905fb7241eaf281c725b&fs=MTY3ODk2MjmUsIC1NTmUsICzM3x3ZWJWNnwwfDU0LjI1NC4xNjIdUngMTM4
-//        String url_exo = "https://www.youtube.com/watch?v=WPl10ZrhCtk";
-//        PlayerView playerView = findViewById(R.id.exoPlayer);
-//        ExoPlayer exoPlayer = new ExoPlayer.Builder(this).build();
-//        playerView.setPlayer(exoPlayer);
-//
-//        // Build the media item.
-//        MediaItem mediaItem = MediaItem.fromUri(url_exo);
-//        // Set the media item to be played.
-//        exoPlayer.setMediaItem(mediaItem);
-//        // Prepare the player.
-//        exoPlayer.prepare();
-//        // Start the playback.
-//        exoPlayer.play();
-//        //#endregion
-//        ImageView img = findViewById(R.id.imgView);
-//        img.setImageDrawable(Helper.LoadImageFromWebOperations("https://photo-resize-zmp3.zmdcdn.me/w165_r1x1_jpeg/cover/8/5/5/b/855bb71b9bc9a577ea6627df65a2adeb.jpg"));
-//
-//        Button player = findViewById(R.id.btnMusicPlayer);
-//        player.setOnClickListener(view -> {
-////            exoPlayer.stop();
-//            Intent intent = new Intent(view.getContext(), MusicPlayer.class);
-//            startActivity(intent);
+//        Button btnMedia = findViewById(R.id.go_media_btn);
+//        btnMedia.setOnClickListener(v -> {
+//            Intent intentMd = new Intent(this, PlayerActivity.class);
+//            startActivity(intentMd);
 //        });
 
         DrawerLayout drawer = binding.drawerLayout;
@@ -82,20 +77,17 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow)
+                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow, R.layout.fragment_top100)
                 .setOpenableLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
-
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
         bottomNavigationView.setSelectedItemId(R.id.person);
 
-
     }
-
     PersonFragment personFragment = new PersonFragment();
     HomeFragmentBottom homeFragmentBottom = new HomeFragmentBottom();
     SettingsFragment settingsFragment = new SettingsFragment();
@@ -109,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     @Override
     protected void onStart() {
         super.onStart();
+        Log.i(TAG, "onStart: " + testRs[0]);
     }
 
     @Override
@@ -150,19 +143,28 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-        return true;
+        MenuItem menuItem = menu.findItem(R.id.action_login);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
+        return super.onCreateOptionsMenu(menu);
     }
-
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.action_register:
-                Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
+        int id = item.getItemId();
+        switch (id){
+            case R.id.action_login:
+                Intent intent = new Intent(this, LoginActivity.class);
                 startActivity(intent);
-                return true;
-        }
-        return false;
 
+                break;
+            case R.id.action_register:
+                Toast.makeText(getBaseContext(),"Đăng ký",Toast.LENGTH_LONG).show();
+                break;
+            case R.id.action_settings:
+                Toast.makeText(getBaseContext(),"Settings",Toast.LENGTH_SHORT).show();
+                break;
+            default:
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
