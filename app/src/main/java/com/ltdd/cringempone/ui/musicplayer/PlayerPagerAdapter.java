@@ -48,8 +48,10 @@ public class PlayerPagerAdapter extends FragmentPagerAdapter {
             case PLAYER_MAIN:
                 MediaControlReceiver mediaControl = MediaControlReceiver.getInstance();
                 return MainPlayerFragment.newInstance(
-                        mediaControl.getCurrentSong().title,
-                        mediaControl.getCurrentSong().artists.get(0).name
+                        mediaControl.getCurrentSong().title != null ?
+                                mediaControl.getCurrentSong().title : "---",
+                        mediaControl.getCurrentSong().artists.get(0).name != null ?
+                                mediaControl.getCurrentSong().artists.get(0).name : "---"
                 );
         }
         return null;
