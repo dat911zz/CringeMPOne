@@ -75,6 +75,7 @@
         android:text="Đăng nhập" />
 
     <TextView
+        android:id="@+id/txtViewSignUp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Chưa có tài khoản? Đăng ký."

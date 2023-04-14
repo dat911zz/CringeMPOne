@@ -5,86 +5,130 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center"
+    android:padding="20dp"
+    android:background="#1c1f3e"
     tools:context=".ui.activity.RegisterActivity">
 
     <TextView
+        android:id="@+id/txtViewBack"
+        android:layout_width="45dp"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#f2f2f2"
+        android:layout_gravity="top"
+        android:layout_marginBottom="40dp"
+        android:tint="@color/white"
+        android:drawableLeft="@drawable/baseline_arrow_back_24"/>
+
+    <TextView
         android:id="@+id/textView2"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
+        android:gravity="center"
         android:text="ĐĂNG KÝ"
+        android:textColor="@color/white"
         android:textStyle="bold"
         android:textSize="34sp" />
 
     <EditText
         android:id="@+id/txtEmail"
-        android:layout_width="350dp"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
         android:layout_marginTop="24dp"
         android:ems="10"
+        android:background="@drawable/edit_text_border"
         android:hint="Email"
         android:inputType="textEmailAddress" />
 
     <EditText
-        android:id="@+id/txtPassword"
-        android:layout_width="350dp"
-        android:layout_height="wrap_content"
+        android:id="@+id/txtUserName"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
         android:layout_marginTop="8dp"
         android:ems="10"
+        android:background="@drawable/edit_text_border"
+        android:hint="Tên người dùng"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:id="@+id/txtPassword"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:background="@drawable/edit_text_border"
         android:hint="Mật khẩu (ít nhất có 6 kí tự)"
         android:inputType="textPassword" />
 
     <EditText
         android:id="@+id/txtConfirmPassword"
-        android:layout_width="350dp"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
         android:layout_marginTop="8dp"
         android:ems="10"
+        android:background="@drawable/edit_text_border"
         android:hint="nhập lại mật khẩu"
         android:inputType="textPassword" />
 
-    <Button
-        android:id="@+id/btnSIgnUp"
-        android:layout_width="350dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="ĐĂNG KÝ" />
-
-    <TextView
-        android:id="@+id/textView3"
+    <CheckBox
+        android:id="@+id/showPasswordCheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Đã có tài khoản?"
-        android:textSize="16sp" />
+        android:textColor="@color/white"
+        android:text="Hiện mật khẩu"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnSIgnUp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/button_bg"
+        android:text="ĐĂNG KÝ" />
 
     <TextView
         android:id="@+id/txtViewSignIn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:clickable="false"
-        android:contextClickable="false"
-        android:text="Đăng nhập"
-        android:textColor="#00BCD4"
+        android:layout_marginTop="2dp"
+        android:textColor="@color/white"
+        android:text="Đã có tài khoản? Đăng nhập"
         android:textSize="16sp" />
 
-    <Button
-        android:id="@+id/btnSignUpWithGoogle"
-        android:layout_width="350dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="ĐĂNG KÝ BẰNG GOOGLE"
-        app:icon="@drawable/google__g__logo"
-        app:iconTint="@null" />
+        android:layout_marginTop="30dp"
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/btnSignUpWIthFacebook"
-        android:layout_width="350dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="ĐĂNG KÝ BẰNG FACEBOOK"
-        app:icon="@drawable/facebook_logo"
-        app:iconTint="@null" />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnSignUpWithGoogle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/btn_bg"
+            android:drawableLeft="@drawable/ic_google"
+            android:drawablePadding="10dp"
+            android:paddingLeft="20dp"
+            android:text="Google"
+            android:textAlignment="textStart"
+            android:textAllCaps="false" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnSignUpWIthFacebook"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="32dp"
+            android:layout_weight="1"
+            android:background="@drawable/btn_bg"
+            android:drawableLeft="@drawable/ic_facebook"
+            android:drawablePadding="10dp"
+            android:paddingLeft="20dp"
+            android:text="Facebook"
+            android:textAlignment="textStart"
+            android:textAllCaps="false" />
+    </LinearLayout>
 
 </LinearLayout>

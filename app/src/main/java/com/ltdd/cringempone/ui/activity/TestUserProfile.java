@@ -9,18 +9,18 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.ltdd.cringempone.LoginActivity;
 import com.ltdd.cringempone.R;
 
 public class TestUserProfile extends AppCompatActivity {
 
     FirebaseAuth auth;
     Button button;
-    TextView textView;
+    TextView txtViewUserEmail, txtViewUserName;
     FirebaseUser user;
     GoogleSignInOptions gso;
     GoogleSignInClient gsc;
@@ -33,33 +33,37 @@ public class TestUserProfile extends AppCompatActivity {
 
 
         auth = FirebaseAuth.getInstance();
-        button = findViewById(R.id.btnLogout);
-        textView = findViewById(R.id.userDetails);
+        button =(Button) findViewById(R.id.btnLogout);
+        txtViewUserEmail =(TextView) findViewById(R.id.txtViewUserEmail);
+        txtViewUserName =(TextView) findViewById(R.id.txtViewUserName);
         user = auth.getCurrentUser();
         if(user==null){
-            Intent intent = new Intent(TestUserProfile.this, TestLoginActivity.class);
+            Intent intent = new Intent(TestUserProfile.this, LoginActivity.class);
             startActivity(intent);
             finish();
         }
         else {
-            textView.setText(user.getEmail());
+            txtViewUserEmail.setText(user.getEmail());
+            txtViewUserName.setText(user.getDisplayName());
         }
+
 
         GoogleSignInOptions options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
 
-        GoogleSignInAccount signInAccount = GoogleSignIn.getLastSignedInAccount(this);
-        gsc = GoogleSignIn.getClient(this, options);
+        gsc = GoogleSignIn.getClient(TestUserProfile.this, options);
 
+        //Đăng xuất khỏi tài khoản
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                gsc.signOut();
-                FirebaseAuth.getInstance().signOut();
-                Intent intent = new Intent(TestUserProfile.this, TestLoginActivity.class);
+                gsc.signOut();//Đăng xuất khỏi google
+                FirebaseAuth.getInstance().signOut();//Đăng xuất khỏi Firebase Auth
+                Intent intent = new Intent(TestUserProfile.this, LoginActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
     }

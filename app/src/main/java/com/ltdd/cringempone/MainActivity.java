@@ -7,13 +7,11 @@ import android.os.StrictMode;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.MenuItemCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
@@ -31,8 +29,8 @@ import com.ltdd.cringempone.api.ApiUtils;
 import com.ltdd.cringempone.api.BaseAPIService;
 import com.ltdd.cringempone.api.CringeAPIService;
 import com.ltdd.cringempone.databinding.ActivityMainBinding;
+import com.ltdd.cringempone.ui.activity.RegisterActivity;
 import com.ltdd.cringempone.ui.homebottom.HomeFragmentBottom;
-import com.ltdd.cringempone.ui.musicplayer.PlayerActivity;
 import com.ltdd.cringempone.ui.person.PersonFragment;
 import com.ltdd.cringempone.ui.settings.SettingsFragment;
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
@@ -157,7 +155,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
                 break;
             case R.id.action_register:
-                Toast.makeText(getBaseContext(),"Đăng ký",Toast.LENGTH_LONG).show();
+                Intent intent1 = new Intent(this, RegisterActivity.class);
+                startActivity(intent1);
                 break;
             case R.id.action_settings:
                 Toast.makeText(getBaseContext(),"Settings",Toast.LENGTH_SHORT).show();
