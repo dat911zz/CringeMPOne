@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
@@ -11,6 +12,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.ltdd.cringempone.R;
 import com.ltdd.cringempone.R.*;
 import com.ltdd.cringempone.api.BaseAPIService;
+import com.ltdd.cringempone.data.dto.SongInfoDTO;
 import com.ltdd.cringempone.service.MediaAction;
 import com.ltdd.cringempone.service.MediaControlReceiver;
 
@@ -24,23 +26,29 @@ public class PlayerActivity extends AppCompatActivity {
         getSupportActionBar().hide();
         MediaControlReceiver mediaControl = MediaControlReceiver.getInstance();
         mediaControl.registerReceiver(this);
-        mediaControl.setCurrentSong(BaseAPIService.getInstance().getSong("ZWABWOFZ"));
-        Button play = findViewById(R.id.play);
+        SongInfoDTO song = BaseAPIService.getInstance().getSong("ZWABWOFZ");
+        if (song != null){
+            mediaControl.setCurrentSong(song);
+            Button play = findViewById(R.id.play);
 
-        mediaControl.addControl(this, new PlayerViewHolder(
-                findViewById(id.seekBar),
-                findViewById(id.play),
-                findViewById(id.skipNext),
-                findViewById(id.skipPrev),
-                findViewById(id.shuffle),
-                findViewById(id.loop),
-                findViewById(id.txtStart),
-                findViewById(id.txtEnd)
-        ));
+            mediaControl.addControl(this, new PlayerViewHolder(
+                    findViewById(id.seekBar),
+                    findViewById(id.play),
+                    findViewById(id.skipNext),
+                    findViewById(id.skipPrev),
+                    findViewById(id.shuffle),
+                    findViewById(id.loop),
+                    findViewById(id.txtStart),
+                    findViewById(id.txtEnd)
+            ));
+            ViewPager viewPager = findViewById(id.pager);
+            viewPager.setAdapter(new PlayerPagerAdapter(getSupportFragmentManager()));
+            viewPager.setCurrentItem(1);
+        }
+        else{
+            Toast.makeText(this,"Có lỗi đã xảy ra, vui lòng thử lại!", Toast.LENGTH_SHORT).show();
+        }
 
-        ViewPager viewPager = findViewById(id.pager);
-        viewPager.setAdapter(new PlayerPagerAdapter(getSupportFragmentManager()));
-        viewPager.setCurrentItem(1);
 //        Helper.FragmentUtil.addFragment(this, MainPlayerFragment.newInstance(player.isPlaying(), "Một Bước Lên Mây", "Tester số 1 VN"), R.id.media_fragment_holder, null);
     }
 
