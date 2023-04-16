@@ -9,7 +9,7 @@ import com.ltdd.cringempone.data.dto.SongInfoDTO;
 import java.util.ArrayList;
 
 public class BaseAPIService {
-    private String hostAPI = "https://zingmp3api-dvn.onrender.com/";
+    private String hostAPI = "https://cringe-mp3-api.vercel.app/";
     private String LOG_TAG = "Base API Service";
     static GsonBuilder builder;
     static Gson gson;
