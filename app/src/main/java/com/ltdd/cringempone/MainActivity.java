@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             Log.e("MyApplication", "Uncaught exception occurred: " + ex.getMessage());
         });
         bindAPIBase();
-        mService = ApiUtils.getCringeAPIService();
+//        mService = ApiUtils.getCringeAPIService();
         Log.d(TAG, "onCreate: hello?");
 
 
