@@ -35,7 +35,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginTop="24dp"
-        android:ems="10"
+        android:padding="15dp"
         android:background="@drawable/edit_text_border"
         android:hint="Email"
         android:inputType="textEmailAddress" />
@@ -45,7 +45,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginTop="8dp"
-        android:ems="10"
+        android:padding="15dp"
         android:background="@drawable/edit_text_border"
         android:hint="Tên người dùng"
         android:inputType="textPersonName" />
@@ -55,7 +55,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginTop="8dp"
-        android:ems="10"
+        android:padding="15dp"
         android:background="@drawable/edit_text_border"
         android:hint="Mật khẩu (ít nhất có 6 kí tự)"
         android:inputType="textPassword" />
@@ -65,7 +65,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginTop="8dp"
-        android:ems="10"
+        android:padding="15dp"
         android:background="@drawable/edit_text_border"
         android:hint="nhập lại mật khẩu"
         android:inputType="textPassword" />
@@ -102,33 +102,32 @@
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnSignUpWithGoogle"
-            android:layout_width="wrap_content"
+            android:layout_width="10dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginEnd="8dp"
             android:layout_weight="1"
             android:background="@drawable/btn_bg"
             android:drawableLeft="@drawable/ic_google"
             android:drawablePadding="10dp"
             android:paddingLeft="20dp"
             android:text="Google"
+            android:textColor="@color/black"
             android:textAlignment="textStart"
             android:textAllCaps="false" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btnSignUpWIthFacebook"
-            android:layout_width="wrap_content"
+            android:layout_width="10dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="32dp"
             android:layout_weight="1"
             android:background="@drawable/btn_bg"
             android:drawableLeft="@drawable/ic_facebook"
             android:drawablePadding="10dp"
             android:paddingLeft="20dp"
             android:text="Facebook"
+            android:textColor="@color/black"
             android:textAlignment="textStart"
             android:textAllCaps="false" />
+
     </LinearLayout>
 
 </LinearLayout>

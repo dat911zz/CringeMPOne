@@ -18,7 +18,9 @@
     <string name="menu_logout">ĐĂNG XUẤT</string>
 
     <string name="musicplayer_info">Thông tin</string>
-    <string name="musicplayer_main">Phát nhạc</string>
+    <string name="facebook_app_id">238454865394893</string>
+    <string name="fb_login_protocol_scheme">fb238454865394893</string>
+    <string name="facebook_client_token">3431ab07922959fd2d43462404e3533b</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

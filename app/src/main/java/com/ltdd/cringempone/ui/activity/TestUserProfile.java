@@ -8,9 +8,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.ltdd.cringempone.LoginActivity;
@@ -22,8 +20,6 @@ public class TestUserProfile extends AppCompatActivity {
     Button button;
     TextView txtViewUserEmail, txtViewUserName;
     FirebaseUser user;
-    GoogleSignInOptions gso;
-    GoogleSignInClient gsc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +32,10 @@ public class TestUserProfile extends AppCompatActivity {
         button =(Button) findViewById(R.id.btnLogout);
         txtViewUserEmail =(TextView) findViewById(R.id.txtViewUserEmail);
         txtViewUserName =(TextView) findViewById(R.id.txtViewUserName);
+
+        //Lấy thông tin tài khoản đang đăng nhập
         user = auth.getCurrentUser();
+
         if(user==null){
             Intent intent = new Intent(TestUserProfile.this, LoginActivity.class);
             startActivity(intent);
@@ -47,19 +46,11 @@ public class TestUserProfile extends AppCompatActivity {
             txtViewUserName.setText(user.getDisplayName());
         }
 
-
-        GoogleSignInOptions options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(getString(R.string.default_web_client_id))
-                .requestEmail()
-                .build();
-
-        gsc = GoogleSignIn.getClient(TestUserProfile.this, options);
-
         //Đăng xuất khỏi tài khoản
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                gsc.signOut();//Đăng xuất khỏi google
+                LoginManager.getInstance().logOut();//Đăng xuất khỏi facebook
                 FirebaseAuth.getInstance().signOut();//Đăng xuất khỏi Firebase Auth
                 Intent intent = new Intent(TestUserProfile.this, LoginActivity.class);
                 startActivity(intent);
