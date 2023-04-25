@@ -1,9 +1,9 @@
-package com.ltdd.cringempone;
+package com.ltdd.cringempone.ui.activity;
 
 import android.content.Intent;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.text.InputType;
-import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -28,8 +28,8 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.ltdd.cringempone.ui.activity.RegisterActivity;
-import com.ltdd.cringempone.ui.activity.TestUserProfile;
+import com.ltdd.cringempone.MainActivity;
+import com.ltdd.cringempone.R;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -37,12 +37,13 @@ public class LoginActivity extends AppCompatActivity {
     CheckBox showPasswordCheckBox;
     TextView backTextView;
     EditText passwordEditText;
+    TextView forgotPwdTextView;
     EditText emailEditText;
     Button loginButton, btnLoginGoogle, btnLoginFacebook;
     FirebaseAuth mAuth;
     GoogleSignInClient gsc;
 
-    @Override
+    /*@Override
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
@@ -52,7 +53,7 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
         }
-    }
+    }*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,8 +61,25 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         getSupportActionBar().hide();
         addControls();
-        mAuth =FirebaseAuth.getInstance();
+        forgotPwdTextView.setPaintFlags(forgotPwdTextView.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        txtViewSignUp.setPaintFlags(txtViewSignUp.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+        mAuth = FirebaseAuth.getInstance();
         createGoogleSignWindow();
+
+        backTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
+        forgotPwdTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginActivity.this, ForgotPassword.class);
+                startActivity(intent);
+            }
+        });
         showPasswordCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -74,71 +92,12 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
-        passwordEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus && passwordEditText.getText().length() == 0) {
-                    // Hiển thị lại hint nếu EditText trống
-                    passwordEditText.setHint("Password");
-                } else {
-                    // Ẩn hint khi EditText nhận được sự tương tác (được chọn)
-                    passwordEditText.setHint("");
-                }
-            }
-        });
-        backTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-        emailEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus && emailEditText.getText().length() == 0) {
-                    // Hiển thị lại hint nếu EditText trống
-                    emailEditText.setHint("Email");
-                } else {
-                    // Ẩn hint khi EditText nhận được sự tương tác (được chọn)
-                    emailEditText.setHint("");
-                }
-            }
-        });
+
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String email = emailEditText.getText().toString();
-                String password = passwordEditText.getText().toString();
-
-                // Kiểm tra thông tin tài khoản
-                if (TextUtils.isEmpty(email)||TextUtils.isEmpty(password)) {
-                    // Đúng, đăng nhập thành công và chuyển sang activity trang chủ
-//                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-//                    startActivity(intent);
-                    Toast.makeText(LoginActivity.this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                //Đăng nhập bằng email và mật khẩu
-                mAuth.signInWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    //đăng nhập thành công thì chuyển activity
-                                    Toast.makeText(LoginActivity.this, "Login successful",
-                                            Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(LoginActivity.this, TestUserProfile.class);
-                                    startActivity(intent);
-                                    finish();
-                                } else {
-                                    // If sign in fails, display a message to the user.
-                                    Toast.makeText(LoginActivity.this, "Email or Password is not correct",
-                                            Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
+                onClickSignIn();
             }
         });
 
@@ -196,6 +155,32 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    private void onClickSignIn()
+    {
+
+        String email = emailEditText.getText().toString();
+        String password = passwordEditText.getText().toString();
+        if (email.length() == 0||password.length() == 0) {
+            Toast.makeText(LoginActivity.this, "Vui lòng nhập đầy đủ thông tin.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        else{
+            mAuth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                startActivity(intent);
+                                finish();
+                            } else {
+                                Toast.makeText(LoginActivity.this, "Email hoặc mật khẩu không chính xác.",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });}
+    }
+
     public void addControls()
     {
         showPasswordCheckBox = (CheckBox) findViewById(R.id.showPasswordCheckBox);
@@ -206,6 +191,7 @@ public class LoginActivity extends AppCompatActivity {
         txtViewSignUp = (TextView) findViewById(R.id.txtViewSignUp);
         btnLoginGoogle = (Button) findViewById(R.id.googleButton);
         btnLoginFacebook =(Button) findViewById(R.id.facebookButton);
+        forgotPwdTextView = findViewById(R.id.forgot_password);
 
     }
 }

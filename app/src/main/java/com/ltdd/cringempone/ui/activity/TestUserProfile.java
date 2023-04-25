@@ -13,7 +13,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.ltdd.cringempone.LoginActivity;
+import com.ltdd.cringempone.MainActivity;
 import com.ltdd.cringempone.R;
 
 public class TestUserProfile extends AppCompatActivity {
@@ -61,7 +61,7 @@ public class TestUserProfile extends AppCompatActivity {
             public void onClick(View v) {
                 gsc.signOut();//Đăng xuất khỏi google
                 FirebaseAuth.getInstance().signOut();//Đăng xuất khỏi Firebase Auth
-                Intent intent = new Intent(TestUserProfile.this, LoginActivity.class);
+                Intent intent = new Intent(TestUserProfile.this, MainActivity.class);
                 startActivity(intent);
                 finish();
             }
