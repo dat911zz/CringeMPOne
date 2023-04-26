@@ -62,7 +62,7 @@
         android:textColor="@color/white"
         android:padding="10dp"
         android:layout_gravity="right"
-        android:textSize="12sp"/>
+        android:textSize="13sp"/>
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/loginButton"

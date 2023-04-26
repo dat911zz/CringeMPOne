@@ -2,25 +2,31 @@ package com.ltdd.cringempone;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.SearchView;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.MenuItemCompat;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.bumptech.glide.Glide;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -29,6 +35,7 @@ import com.ltdd.cringempone.api.ApiUtils;
 import com.ltdd.cringempone.api.BaseAPIService;
 import com.ltdd.cringempone.api.CringeAPIService;
 import com.ltdd.cringempone.databinding.ActivityMainBinding;
+import com.ltdd.cringempone.ui.activity.LoginActivity;
 import com.ltdd.cringempone.ui.activity.RegisterActivity;
 import com.ltdd.cringempone.ui.homebottom.HomeFragmentBottom;
 import com.ltdd.cringempone.ui.person.PersonFragment;
@@ -38,9 +45,18 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
     BottomNavigationView bottomNavigationView;
+    TextView tvName;
+    TextView tvEmail;
+    ImageView imgAvatar;
+
+
     String TAG = "APP";
+
     String[] testRs = new String[1];
     CringeAPIService mService;
+    NavigationView navigationView;
+    DrawerLayout drawer;
+    NavController navController;
 
     BaseAPIService apiService = BaseAPIService.getInstance();
     Boolean isBound = false;
@@ -51,6 +67,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         setContentView(R.layout.activity_main_link);
+
+
         Thread.setDefaultUncaughtExceptionHandler((thread, ex) -> {
             // Handle the exception here
             Log.e("MyApplication", "Uncaught exception occurred: " + ex.getMessage());
@@ -70,22 +88,55 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 //            startActivity(intentMd);
 //        });
 
-        DrawerLayout drawer = binding.drawerLayout;
-        NavigationView navigationView = binding.navView;
+        drawer = binding.drawerLayout;
+        navigationView = binding.navView;
+        tvName = navigationView.getHeaderView(0).findViewById(R.id.name);
+        tvEmail = navigationView.getHeaderView(0).findViewById(R.id.email);
+        imgAvatar = navigationView.getHeaderView(0).findViewById(R.id.imageView);
+
+        showUserInformation();
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow, R.layout.fragment_top100)
+                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow, R.id.nav_top100)
                 .setOpenableLayout(drawer)
                 .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
         bottomNavigationView.setSelectedItemId(R.id.person);
+        navClick();
 
     }
+
+    private void navClick()
+    {
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                boolean handled = NavigationUI.onNavDestinationSelected(item, navController);
+                if (!handled) {
+                    switch (item.getItemId()) {
+                        case R.id.nav_logout: {
+                            FirebaseAuth.getInstance().signOut();//Đăng xuất khỏi Firebase Auth
+                            Intent intent = new Intent(MainActivity.this, MainActivity.class);
+                            startActivity(intent);
+                            finish();
+                            break;
+                        }
+
+                    }
+                }
+                drawer.closeDrawer(GravityCompat.START);
+                return handled;
+            }
+        });
+    }
+
+
     PersonFragment personFragment = new PersonFragment();
     HomeFragmentBottom homeFragmentBottom = new HomeFragmentBottom();
     SettingsFragment settingsFragment = new SettingsFragment();
@@ -141,8 +192,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-        MenuItem menuItem = menu.findItem(R.id.action_login);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
+/*        MenuItem menuItem = menu.findItem(R.id.action_login);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuItem);*/
         return super.onCreateOptionsMenu(menu);
     }
     @Override
@@ -166,6 +217,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         return super.onOptionsItemSelected(item);
     }
 
+
+
     @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
@@ -186,4 +239,48 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         }
         return false;
     }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            menu.findItem(R.id.action_login).setVisible(false);
+            menu.findItem(R.id.action_register).setVisible(false);
+
+        }
+        else{
+            menu = navigationView.getMenu();
+            MenuItem itemToHide = menu.findItem(R.id.nav_logout);
+            itemToHide.setVisible(false);
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+
+
+
+    private void showUserInformation()
+    {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if(user == null)
+        {
+            return;
+        }
+        String name = user.getDisplayName();
+        String email = user.getEmail();
+        Uri photoUrl = user.getPhotoUrl();
+        if(name == null)
+        {
+            tvName.setVisibility(View.GONE);
+        }
+        else {
+            tvName.setVisibility(View.VISIBLE);
+            tvName.setText(name);
+
+        }
+        tvEmail.setText(email);
+        Glide.with(this).load(photoUrl).error(R.drawable.avatar_default).into(imgAvatar);
+    }
+
+
 }

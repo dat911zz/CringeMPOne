@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.ltdd.cringempone.LoginActivity;
+import com.ltdd.cringempone.MainActivity;
 import com.ltdd.cringempone.R;
 
 public class TestUserProfile extends AppCompatActivity {
@@ -52,7 +52,7 @@ public class TestUserProfile extends AppCompatActivity {
             public void onClick(View v) {
                 LoginManager.getInstance().logOut();//Đăng xuất khỏi facebook
                 FirebaseAuth.getInstance().signOut();//Đăng xuất khỏi Firebase Auth
-                Intent intent = new Intent(TestUserProfile.this, LoginActivity.class);
+                Intent intent = new Intent(TestUserProfile.this, MainActivity.class);
                 startActivity(intent);
                 finish();
             }
