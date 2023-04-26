@@ -42,6 +42,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.ltdd.cringempone.MainActivity;
 import com.ltdd.cringempone.R;
 
 import java.util.Arrays;
@@ -178,7 +179,7 @@ public class RegisterActivity extends AppCompatActivity {
                             UsersTest users = new UsersTest(currentUser.getEmail(),currentUser.getDisplayName());
                             userDbRef.push().setValue(users);
 
-                            Intent intent = new Intent(RegisterActivity.this, TestUserProfile.class);
+                            Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
                             startActivity(intent);
                             finish();
                         }
@@ -259,6 +260,7 @@ public class RegisterActivity extends AppCompatActivity {
                                         //Thêm dử liệu users vào realtime
                                         UsersTest users = new UsersTest(email,userName);
                                         userDbRef.push().setValue(users);
+
                                         Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                                         startActivity(intent);
                                         FirebaseAuth.getInstance().signOut();
@@ -298,7 +300,7 @@ public class RegisterActivity extends AppCompatActivity {
                                             UsersTest users = new UsersTest(currentUser.getEmail(), currentUser.getDisplayName());
                                             userDbRef.push().setValue(users);
 
-                                            Intent intent = new Intent(RegisterActivity.this, TestUserProfile.class);
+                                            Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
                                             startActivity(intent);
                                             finish();
                                         } else {

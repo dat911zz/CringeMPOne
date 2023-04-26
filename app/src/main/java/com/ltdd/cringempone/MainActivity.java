@@ -23,6 +23,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.bumptech.glide.Glide;
+import com.facebook.login.LoginManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -121,6 +122,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 if (!handled) {
                     switch (item.getItemId()) {
                         case R.id.nav_logout: {
+                            LoginManager.getInstance().logOut();//Đăng xuất khỏi facebook
                             FirebaseAuth.getInstance().signOut();//Đăng xuất khỏi Firebase Auth
                             Intent intent = new Intent(MainActivity.this, MainActivity.class);
                             startActivity(intent);
