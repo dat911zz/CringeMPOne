@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.media.Image;
 import android.os.Handler;
 import android.util.Log;
@@ -13,6 +14,8 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.SeekBar;
+
+import androidx.appcompat.widget.AppCompatButton;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -27,6 +30,8 @@ public class MediaControlReceiver extends BroadcastReceiver {
     private static MediaControlReceiver instance; // Singleton instance
     private ExoPlayer exoPlayer;
     private SongInfoDTO currentSong;
+    private Boolean isShuffle = false
+            , isLoop = false;
 
     private MediaControlReceiver(){ }
     public static MediaControlReceiver getInstance(){
@@ -111,6 +116,37 @@ public class MediaControlReceiver extends BroadcastReceiver {
                 context.sendBroadcast(pauseIntent);
             }
         });
+        viewHolder.getSkipNext().setOnClickListener(v -> {
+            if (exoPlayer.hasNextMediaItem()){
+                exoPlayer.seekToNextMediaItem();
+            }
+            else{
+                exoPlayer.seekTo(0);
+            }
+        });
+        viewHolder.getSkipPrev().setOnClickListener(v -> {
+            if (exoPlayer.hasPreviousMediaItem()){
+                exoPlayer.seekToPreviousMediaItem();
+            }
+            else{
+                exoPlayer.seekTo(0);
+            }
+        });
+        viewHolder.getLoop().setOnClickListener(v -> {
+
+        });
+        viewHolder.getShuffle().setOnClickListener(v -> {
+            if (!isShuffle){
+                exoPlayer.setShuffleModeEnabled(true);
+                isShuffle = true;
+                viewHolder.getShuffle().setTextColor(v.getResources().getColor(R.color.btn_off));
+            }
+            else{
+                exoPlayer.setShuffleModeEnabled(false);
+                isShuffle = false;
+                viewHolder.getShuffle().setTextColor(v.getResources().getColor(R.color.btn_on));
+            }
+        });
         exoPlayer.addListener(new Player.Listener() {
             @Override
             public void onPlaybackStateChanged(int playbackState) {
@@ -151,7 +187,7 @@ public class MediaControlReceiver extends BroadcastReceiver {
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-//                exoPlayer.seekTo(seekBar.getProgress());
+
             }
 
             @Override
@@ -168,9 +204,10 @@ public class MediaControlReceiver extends BroadcastReceiver {
                     viewHolder.getSeekBar().setProgress(currentPosition);
                     viewHolder.getStart().setText(createTimeText(currentPosition));
                 }
-                handler.postDelayed(this, 100);
+                handler.postDelayed(this, 10);
             }
         }, 0);
+
     }
     private String createTimeText(int time){
         String timeText;

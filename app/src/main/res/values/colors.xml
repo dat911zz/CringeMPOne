@@ -11,5 +11,6 @@
     <color name="textSubtitleColor">#72738e</color>
     <color name="PrimaryColor">#1c1f3e</color>
     <color name="colorPrimaryDark">#3262C4</color>
-
+    <color name="btn_off">#B5B5B5</color>
+    <color name="btn_on">#cb54ec</color>
 </resources>
