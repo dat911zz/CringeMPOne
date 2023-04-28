@@ -1,17 +1,16 @@
 package com.ltdd.cringempone.ui.musicplayer;
 
+import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-import androidx.appcompat.widget.AppCompatButton;
-
 public class PlayerViewHolder {
     private SeekBar seekBar;
-    private AppCompatButton play, skipNext, skipPrev, shuffle, loop;
+    private Button play, skipNext, skipPrev, shuffle, loop;
     private TextView start;
     private TextView end;
 
-    public PlayerViewHolder(SeekBar seekBar, AppCompatButton play, AppCompatButton skipNext, AppCompatButton skipPrev, AppCompatButton shuffle, AppCompatButton loop, TextView start, TextView end) {
+    public PlayerViewHolder(SeekBar seekBar, Button play, Button skipNext, Button skipPrev, Button shuffle, Button loop, TextView start, TextView end) {
         this.seekBar = seekBar;
         this.play = play;
         this.skipNext = skipNext;
@@ -31,43 +30,43 @@ public class PlayerViewHolder {
         this.seekBar = seekBar;
     }
 
-    public AppCompatButton getPlay() {
+    public Button getPlay() {
         return play;
     }
 
-    public void setPlay(AppCompatButton play) {
+    public void setPlay(Button play) {
         this.play = play;
     }
 
-    public AppCompatButton getSkipNext() {
+    public Button getSkipNext() {
         return skipNext;
     }
 
-    public void setSkipNext(AppCompatButton skipNext) {
+    public void setSkipNext(Button skipNext) {
         this.skipNext = skipNext;
     }
 
-    public AppCompatButton getSkipPrev() {
+    public Button getSkipPrev() {
         return skipPrev;
     }
 
-    public void setSkipPrev(AppCompatButton skipPrev) {
+    public void setSkipPrev(Button skipPrev) {
         this.skipPrev = skipPrev;
     }
 
-    public AppCompatButton getShuffle() {
+    public Button getShuffle() {
         return shuffle;
     }
 
-    public void setShuffle(AppCompatButton shuffle) {
+    public void setShuffle(Button shuffle) {
         this.shuffle = shuffle;
     }
 
-    public AppCompatButton getLoop() {
+    public Button getLoop() {
         return loop;
     }
 
-    public void setLoop(AppCompatButton loop) {
+    public void setLoop(Button loop) {
         this.loop = loop;
     }
 

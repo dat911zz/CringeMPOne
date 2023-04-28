@@ -1,19 +1,14 @@
 package com.ltdd.cringempone.ui.musicplayer;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
-import com.ltdd.cringempone.R;
 import com.ltdd.cringempone.R.*;
 import com.ltdd.cringempone.api.BaseAPIService;
 import com.ltdd.cringempone.data.dto.SongInfoDTO;
-import com.ltdd.cringempone.service.MediaAction;
 import com.ltdd.cringempone.service.MediaControlReceiver;
 
 public class PlayerActivity extends AppCompatActivity {
@@ -22,14 +17,13 @@ public class PlayerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(layout.activity_music_player);
+        setContentView(layout.activity_player);
         getSupportActionBar().hide();
         MediaControlReceiver mediaControl = MediaControlReceiver.getInstance();
         mediaControl.registerReceiver(this);
         SongInfoDTO song = BaseAPIService.getInstance().getSong("ZWABWOFZ");
         if (song != null){
             mediaControl.setCurrentSong(song);
-            Button play = findViewById(R.id.play);
 
             mediaControl.addControl(this, new PlayerViewHolder(
                     findViewById(id.seekBar),
