@@ -1,4 +1,4 @@
-package com.ltdd.cringempone.ui.musicplayer;
+package com.ltdd.cringempone.ui.musicplayer.fragment;
 
 import android.os.Bundle;
 

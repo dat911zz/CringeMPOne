@@ -1,6 +1,7 @@
 package com.ltdd.cringempone.service;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -154,6 +155,7 @@ public class MediaControlReceiver extends BroadcastReceiver {
                 // Example: Update UI based on playback state
                 if (playbackState == Player.STATE_BUFFERING) {
                     // Show buffering indicator
+
                 } else if (playbackState == Player.STATE_READY) {
                     // Playback is ready, update UI accordingly
                     if (exoPlayer.getPlayWhenReady()) {
@@ -165,11 +167,9 @@ public class MediaControlReceiver extends BroadcastReceiver {
                     } else {
                         // Player is in pause state
                         // Example: Handle pause event with a Handler
-
                     }
                 } else if (playbackState == Player.STATE_ENDED) {
                     // Playback ended, update UI accordingly
-
                 }
             }
         });
@@ -223,8 +223,7 @@ public class MediaControlReceiver extends BroadcastReceiver {
     public void executeDisc(Context context, ImageView disc) {
         Animation animation = AnimationUtils.loadAnimation(context, R.anim.rotate);
         Handler handler = new Handler();
-        disc.setImageDrawable(Helper.LoadImageFromWebOperations(getCurrentSong().thumbnailM));
-
+        disc.setImageDrawable(Helper.ImageUtil.LoadImageFromWebOperations(getCurrentSong().thumbnailM));
     }
     public void setExoPlayer(ExoPlayer exoPlayer){
         this.exoPlayer = exoPlayer;

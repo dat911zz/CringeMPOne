@@ -3,12 +3,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/bgDark"
     tools:context=".ui.top100.Top100Fragment">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         >
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/top100_parent_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="horizontal"
+            android:layout_above="@id/btn_goto_player"
+            android:layout_alignParentTop="true"/>
         <Button
             android:id="@+id/btn_goto_player"
             android:layout_width="match_parent"

@@ -2,10 +2,13 @@ package com.ltdd.cringempone.api;
 
 import android.util.Log;
 
+import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.ltdd.cringempone.data.dto.SongInfoDTO;
+import com.ltdd.cringempone.data.dto.TopDTO;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 public class BaseAPIService {
@@ -36,8 +39,18 @@ public class BaseAPIService {
             return String.format("{\"err\":\"404\",\"mess:\":\"No respond\"}");
         }
     }
-    public String getTop100(){
+    public String getTop100Json(){
         return getRequest("top100");
+    }
+    public ArrayList<TopDTO> getTop100List(String top100res){
+        if (top100res == ""){
+            top100res = getTop100Json();
+        }
+        if (top100res.contains("err")){
+            return null;
+        }
+        Type top100ListType = new TypeToken<ArrayList<TopDTO>>(){}.getType();
+        return gson.fromJson(top100res, top100ListType);
     }
     public String getHome(){
         return getRequest("Home");
