@@ -4,25 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#1c1f3e"
     tools:context=".ui.musicplayer.fragment.MainPlayerFragment">
-
-    <TextView
-        android:id="@+id/txtAppName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp"
-        android:textColor="#ffffff"
-        android:textStyle="bold"
-        android:textSize="22dp"
-        android:text="Pháp Sư Music" />
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
         android:layout_centerHorizontal="true"
         android:layout_width="260dp"
         android:layout_height="260dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="10dp"
         android:scaleType="centerCrop"
         app:cardCornerRadius="130dp"
         app:layout_constraintStart_toStartOf="@id/txtSongName"

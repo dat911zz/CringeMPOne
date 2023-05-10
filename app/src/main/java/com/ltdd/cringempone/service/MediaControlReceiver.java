@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.media.Image;
+import android.media.browse.MediaBrowser;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
@@ -23,14 +24,21 @@ import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.ltdd.cringempone.R;
+import com.ltdd.cringempone.api.BaseAPIService;
+import com.ltdd.cringempone.data.dto.ItemDTO;
 import com.ltdd.cringempone.data.dto.SongInfoDTO;
 import com.ltdd.cringempone.ui.musicplayer.PlayerViewHolder;
 import com.ltdd.cringempone.utils.Helper;
+import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
 
 public class MediaControlReceiver extends BroadcastReceiver {
     private static MediaControlReceiver instance; // Singleton instance
     private ExoPlayer exoPlayer;
-    private SongInfoDTO currentSong;
+    private ArrayList<ItemDTO> playList = new ArrayList<>();
+    private int currentPos;
+    public boolean isRegister;
     private Boolean isShuffle = false
             , isLoop = false;
 
@@ -42,7 +50,6 @@ public class MediaControlReceiver extends BroadcastReceiver {
         return instance;
     }
 
-
     @Override
     public void onReceive(Context context, Intent intent) {
         if (intent != null && intent.getAction() != null){
@@ -53,10 +60,12 @@ public class MediaControlReceiver extends BroadcastReceiver {
             switch (act){
                 case MediaAction.ACTION_PLAY:
                     exoPlayer.setPlayWhenReady(true);
-                    String mediaUrl = intent.getStringExtra("url");
-                    Log.i("APP", "onStartCommand: ");
-                    if (mediaUrl != null && !isPause){
-                        MediaItem mediaItem = MediaItem.fromUri(mediaUrl);
+                    if (currentPos >= 0 && !isPause){
+                        MediaItem mediaItem = MediaItem.fromUri(BaseAPIService
+                                        .getInstance()
+                                        .getStreaming(playList.get(currentPos).encodeId)
+                                ._128
+                        );
                         exoPlayer.setMediaItem(mediaItem);
                         exoPlayer.prepare();
                     }
@@ -76,22 +85,17 @@ public class MediaControlReceiver extends BroadcastReceiver {
         }
     }
     public void registerReceiver(Context context) {
-        ((Activity)context).runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                //Setup media control receiver
-                exoPlayer = new ExoPlayer.Builder(context).build();
-                setExoPlayer(exoPlayer);
+        isRegister = true;
+        //Setup media control receiver
+        exoPlayer = new ExoPlayer.Builder(context).build();
+        setExoPlayer(exoPlayer);
 
-                //Register the broadcast receiver
-                IntentFilter intentFilter = new IntentFilter();
-                intentFilter.addAction(MediaAction.ACTION_PLAY);
-                intentFilter.addAction(MediaAction.ACTION_PAUSE);
-                intentFilter.addAction(MediaAction.ACTION_STOP);
-                context.registerReceiver(MediaControlReceiver.getInstance(), intentFilter);
-            }
-        });
-
+        //Register the broadcast receiver
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(MediaAction.ACTION_PLAY);
+        intentFilter.addAction(MediaAction.ACTION_PAUSE);
+        intentFilter.addAction(MediaAction.ACTION_STOP);
+        context.registerReceiver(MediaControlReceiver.getInstance(), intentFilter);
     }
     public void unregisterReceiver(Context context){
         //Unregister broadcast and release exoplayer instance
@@ -99,39 +103,47 @@ public class MediaControlReceiver extends BroadcastReceiver {
         exoPlayer.release();
         exoPlayer = null;
     }
+    public void addPlaylist(ArrayList<ItemDTO> items){
+        if (exoPlayer != null){
+            exoPlayer.clearMediaItems();
+        }
+        playList.addAll(items);
+    }
+    public void addSongIntoPlaylist(){
+
+    }
+    public void sendBroadcast(){
+
+    }
     public void addControl(Context context, PlayerViewHolder viewHolder){
         viewHolder.getPlay().setOnClickListener(v -> {
-            if(!MediaControlReceiver.getInstance().getExoPlayer().isPlaying()) {
-                Log.i("APP", "play song");
+            if(!exoPlayer.isPlaying()) {
                 viewHolder.getPlay().setBackgroundResource(R.drawable.baseline_pause_24);
-                //Send play command to the MediaControlService
-
-                String songUrl = getCurrentSong().streaming._128;
-                Intent playIntent = new Intent(MediaAction.ACTION_PLAY);
-                playIntent.putExtra("url", songUrl);
-                context.sendBroadcast(playIntent);
+                context.sendBroadcast(new Intent(MediaAction.ACTION_PLAY));
             }
             else{
                 viewHolder.getPlay().setBackgroundResource(R.drawable.baseline_play_arrow_24);
-                Intent pauseIntent = new Intent(MediaAction.ACTION_PAUSE);
-                context.sendBroadcast(pauseIntent);
+                context.sendBroadcast(new Intent(MediaAction.ACTION_PAUSE));
             }
         });
+
         viewHolder.getSkipNext().setOnClickListener(v -> {
-            if (exoPlayer.hasNextMediaItem()){
-                exoPlayer.seekToNextMediaItem();
+            if (currentPos + 1 <= playList.size() - 1){
+                currentPos++;
             }
             else{
                 exoPlayer.seekTo(0);
             }
+            context.sendBroadcast(new Intent(MediaAction.ACTION_PLAY));
         });
         viewHolder.getSkipPrev().setOnClickListener(v -> {
-            if (exoPlayer.hasPreviousMediaItem()){
-                exoPlayer.seekToPreviousMediaItem();
+            if (currentPos - 1 >= 0){
+                currentPos--;
             }
             else{
                 exoPlayer.seekTo(0);
             }
+            context.sendBroadcast(new Intent(MediaAction.ACTION_PLAY));
         });
         viewHolder.getLoop().setOnClickListener(v -> {
 
@@ -148,6 +160,11 @@ public class MediaControlReceiver extends BroadcastReceiver {
                 viewHolder.getShuffle().setTextColor(v.getResources().getColor(R.color.btn_on));
             }
         });
+        //Jump to current pos of current playing song
+        int duration = ((int) exoPlayer.getDuration());
+        viewHolder.getSeekBar().setMax(duration);
+        viewHolder.getEnd().setText(createTimeText(duration));
+
         exoPlayer.addListener(new Player.Listener() {
             @Override
             public void onPlaybackStateChanged(int playbackState) {
@@ -164,17 +181,17 @@ public class MediaControlReceiver extends BroadcastReceiver {
                         int duration = ((int) exoPlayer.getDuration());
                         viewHolder.getSeekBar().setMax(duration);
                         viewHolder.getEnd().setText(createTimeText(duration));
+                        viewHolder.getPlay().setBackgroundResource(R.drawable.baseline_pause_24);
                     } else {
                         // Player is in pause state
                         // Example: Handle pause event with a Handler
+                        viewHolder.getPlay().setBackgroundResource(R.drawable.baseline_play_arrow_24);
                     }
                 } else if (playbackState == Player.STATE_ENDED) {
                     // Playback ended, update UI accordingly
                 }
             }
         });
-
-
         viewHolder.getSeekBar().setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -184,7 +201,7 @@ public class MediaControlReceiver extends BroadcastReceiver {
                     Log.i("On progress", "onProgressChanged: " + seekBar.getMax());
                 }
             }
-
+            //#region Các hàm không xài tới
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
 
@@ -194,7 +211,9 @@ public class MediaControlReceiver extends BroadcastReceiver {
             public void onStopTrackingTouch(SeekBar seekBar) {
 
             }
+            //#endregion
         });
+        //Lấy tọa độ từ thời gian nhạc đang phát
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -220,15 +239,27 @@ public class MediaControlReceiver extends BroadcastReceiver {
         timeText += sec;
         return timeText;
     }
-    public void executeDisc(Context context, ImageView disc) {
-        Animation animation = AnimationUtils.loadAnimation(context, R.anim.rotate);
-        Handler handler = new Handler();
-        disc.setImageDrawable(Helper.ImageUtil.LoadImageFromWebOperations(getCurrentSong().thumbnailM));
+    public void executeDisc(ImageView disc) {
+        Picasso.get().load(getCurrentSong().thumbnailM).into(disc);
     }
     public void setExoPlayer(ExoPlayer exoPlayer){
         this.exoPlayer = exoPlayer;
     }
     public ExoPlayer getExoPlayer() { return exoPlayer; }
-    public SongInfoDTO getCurrentSong() { return currentSong; }
-    public void setCurrentSong(SongInfoDTO currentSong) { this.currentSong = currentSong; }
+    public ItemDTO getCurrentSong() {
+        if (exoPlayer.getCurrentMediaItem() == null){
+            if (playList.size() != 0){
+                return playList.get(getCurrentPos());
+            }
+            return null;
+        }
+        return playList.get(currentPos);
+    }
+    public int getCurrentPos() {
+        return currentPos;
+    }
+
+    public void setCurrentPos(int currentPos) {
+        this.currentPos = currentPos;
+    }
 }

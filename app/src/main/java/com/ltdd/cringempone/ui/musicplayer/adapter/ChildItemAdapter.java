@@ -1,16 +1,22 @@
 package com.ltdd.cringempone.ui.musicplayer.adapter;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ltdd.cringempone.R;
+import com.ltdd.cringempone.ui.musicplayer.PlayerActivity;
+import com.ltdd.cringempone.ui.musicplayer.RecyclerViewItemClickListener;
 import com.ltdd.cringempone.ui.musicplayer.model.ChildItem;
+import com.ltdd.cringempone.ui.playlist.PlaylistActivity;
+import com.ltdd.cringempone.utils.Helper;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -29,28 +35,51 @@ public class ChildItemAdapter extends RecyclerView.Adapter<ChildItemAdapter.Chil
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.top100_children_item, viewGroup, false);
         return new ChildViewHolder(view);
     }
-
     @Override
     public void onBindViewHolder(@NonNull ChildViewHolder childViewHolder, int position) {
         ChildItem childItem = ChildItemList.get(position);
-        childViewHolder.childItemTitle.setText(childItem.getChildItemTitle());
-        Picasso.get().load(childItem.getChildItemImg()).fit().into(childViewHolder.childItemImg);
+        childViewHolder.childItemTitle.setText(childItem.getTitle());
+        childViewHolder.setItemClickListener(new RecyclerViewItemClickListener() {
+            @Override
+            public void onClick(View view, int position, boolean isLongClick) {
+                Toast.makeText(view.getContext(),"Child Item clicked: "+ childItem.getId() ,Toast.LENGTH_LONG).show();
+                Intent playlistIntent = new Intent(view.getContext(), PlaylistActivity.class);
+                playlistIntent.putExtra("playlistId", childItem.getId());
+                view.getContext().startActivity(playlistIntent);
+            }
+        });
+        Picasso.get().load(childItem.getImg()).fit().into(childViewHolder.childItemImg);
     }
-
     @Override
     public int getItemCount() {
         return ChildItemList.size();
     }
 
-    class ChildViewHolder extends RecyclerView.ViewHolder {
+    class ChildViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,View.OnLongClickListener{
 
-        TextView childItemTitle;
-        ImageView childItemImg;
-
+        private TextView childItemTitle;
+        private ImageView childItemImg;
+        private RecyclerViewItemClickListener itemClickListener;
         ChildViewHolder(View itemView) {
             super(itemView);
             childItemTitle = itemView.findViewById(R.id.top100_child_item_title);
             childItemImg = itemView.findViewById(R.id.top100_img_child_item);
+
+            itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
+        }
+        public void setItemClickListener(RecyclerViewItemClickListener itemClickListener) {
+            this.itemClickListener = itemClickListener;
+        }
+        @Override
+        public void onClick(View v) {
+            itemClickListener.onClick(v, getAbsoluteAdapterPosition(), false);
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            itemClickListener.onClick(v, getAbsoluteAdapterPosition(), true);
+            return true;
         }
     }
 }

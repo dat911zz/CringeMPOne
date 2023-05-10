@@ -1,31 +1,38 @@
 package com.ltdd.cringempone.ui.musicplayer.model;
 
-import android.graphics.drawable.Drawable;
-
-import com.android.volley.toolbox.NetworkImageView;
-
 public class ChildItem {
-    private String childItemTitle;
-    private String childItemImg;
+    private String id;
 
-    public String getChildItemImg() {
-        return childItemImg;
+    public String getId() {
+        return id;
     }
 
-    public void setChildItemImg(String childItemImg) {
-        this.childItemImg = childItemImg;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public ChildItem(String childItemTitle, String childItemImg) {
-        this.childItemTitle = childItemTitle;
-        this.childItemImg = childItemImg;
+    private String title;
+    private String img;
+
+    public String getImg() {
+        return img;
     }
 
-    public String getChildItemTitle() {
-        return childItemTitle;
+    public void setImg(String childItemImg) {
+        this.img = childItemImg;
     }
 
-    public void setChildItemTitle(String childItemTitle) {
-        this.childItemTitle = childItemTitle;
+    public ChildItem(String id, String title, String img) {
+        this.id = id;
+        this.title = title;
+        this.img = img;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String childItemTitle) {
+        this.title = childItemTitle;
     }
 }

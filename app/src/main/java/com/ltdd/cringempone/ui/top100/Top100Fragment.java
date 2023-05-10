@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -19,6 +20,8 @@ import com.ltdd.cringempone.R;
 import com.ltdd.cringempone.api.BaseAPIService;
 import com.ltdd.cringempone.data.dto.ItemDTO;
 import com.ltdd.cringempone.data.dto.TopDTO;
+import com.ltdd.cringempone.databinding.Top100ChildrenItemBinding;
+import com.ltdd.cringempone.service.MediaControlReceiver;
 import com.ltdd.cringempone.ui.musicplayer.PlayerActivity;
 import com.ltdd.cringempone.ui.musicplayer.adapter.ParentItemAdapter;
 import com.ltdd.cringempone.ui.musicplayer.model.ChildItem;
@@ -35,6 +38,7 @@ public class Top100Fragment extends Fragment {
         return new Top100Fragment();
     }
     private FragmentTop100Binding binding;
+    private Top100ChildrenItemBinding childrenItemBinding;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -47,18 +51,27 @@ public class Top100Fragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Helper.MediaProgressDialog.showDialog(v.getContext());
+                MediaControlReceiver.getInstance().addPlaylist(new ArrayList<>() { });
+
                 Intent it = new Intent(v.getContext(), PlayerActivity.class);
                 startActivity(it);
             }
         });
         SharedPreferences prefs = getContext().getSharedPreferences("LocalStorage", Context.MODE_PRIVATE);
-        top100s = BaseAPIService.getInstance().getTop100List(prefs.getString("top100s", ""));
-        LinearLayoutManager layoutManager = new LinearLayoutManager(binding.getRoot().getContext());
-        ParentItemAdapter parentItemAdapter = new ParentItemAdapter(ParentItemList(top100s));
+        if (prefs.getString("top100s", "").contains("err")){
+            top100s = BaseAPIService.getInstance().getTop100List(BaseAPIService.getInstance().getRequest("top100"));
+        }
+        else{
+            top100s = BaseAPIService.getInstance().getTop100List(prefs.getString("top100s", ""));
+        }
 
-        parentRecycleViewItem.setAdapter(parentItemAdapter);
-        parentRecycleViewItem.setLayoutManager(layoutManager);
+        if(top100s != null){
+            LinearLayoutManager layoutManager = new LinearLayoutManager(binding.getRoot().getContext());
+            ParentItemAdapter parentItemAdapter = new ParentItemAdapter(ParentItemList(top100s));
 
+            parentRecycleViewItem.setAdapter(parentItemAdapter);
+            parentRecycleViewItem.setLayoutManager(layoutManager);
+        }
         return binding.getRoot();
     }
     private List<ParentItem> ParentItemList(ArrayList<TopDTO> top100s) {
@@ -79,7 +92,7 @@ public class Top100Fragment extends Fragment {
     {
         List<ChildItem> ChildItemList = new ArrayList<>();
         top100.forEach((x) ->{
-            ChildItemList.add(new ChildItem(x.title, x.thumbnail));
+            ChildItemList.add(new ChildItem(x.encodeId, x.title, x.thumbnail));
         });
         return ChildItemList;
     }

@@ -4,12 +4,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ltdd.cringempone.R;
+import com.ltdd.cringempone.ui.musicplayer.RecyclerViewItemClickListener;
 import com.ltdd.cringempone.ui.musicplayer.model.ParentItem;
 
 import java.util.List;
@@ -51,6 +53,7 @@ public class ParentItemAdapter extends RecyclerView.Adapter<ParentItemAdapter.Pa
     class ParentViewHolder extends RecyclerView.ViewHolder {
         private TextView ParentItemTile;
         private RecyclerView ChildRecyclerView;
+
         public ParentViewHolder(final View itemView){
             super(itemView);
             ParentItemTile = itemView.findViewById(R.id.top100_parent_item_title);

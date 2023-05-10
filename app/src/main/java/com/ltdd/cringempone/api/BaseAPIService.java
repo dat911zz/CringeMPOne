@@ -1,13 +1,18 @@
 package com.ltdd.cringempone.api;
 
+import android.os.Build;
 import android.util.Log;
 
-import com.google.common.reflect.TypeToken;
+import androidx.annotation.RequiresApi;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.ltdd.cringempone.data.dto.SongInfoDTO;
+import com.ltdd.cringempone.data.dto.Streaming;
 import com.ltdd.cringempone.data.dto.TopDTO;
 
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
@@ -17,15 +22,15 @@ public class BaseAPIService {
     static GsonBuilder builder;
     static Gson gson;
     public static BaseAPIService getInstance(){
-        builder = new GsonBuilder();
-        gson = builder.create();
         return new BaseAPIService();
     }
     public BaseAPIService() {
+        builder = new GsonBuilder();
+        gson = builder.create();
     }
-    public String getRequest(String path){
+    public String getRequest(String path, String... pram){
         HttpGetRequest httpGetRequest = new HttpGetRequest();
-        httpGetRequest.execute(hostAPI + path);
+        httpGetRequest.execute(hostAPI + path + "/" + (pram.length <= 0  ? "" : pram[0]));
         try {
             if (httpGetRequest.get() == null){
                 throw new Exception("No Respond!");
@@ -39,30 +44,39 @@ public class BaseAPIService {
             return String.format("{\"err\":\"404\",\"mess:\":\"No respond\"}");
         }
     }
-    public String getTop100Json(){
-        return getRequest("top100");
-    }
-    public ArrayList<TopDTO> getTop100List(String top100res){
-        if (top100res == ""){
-            top100res = getTop100Json();
-        }
-        if (top100res.contains("err")){
+    public ArrayList<TopDTO> getTop100List(String top100res) {
+        if (top100res.contains("err")) {
             return null;
         }
-        Type top100ListType = new TypeToken<ArrayList<TopDTO>>(){}.getType();
-        return gson.fromJson(top100res, top100ListType);
-    }
-    public String getHome(){
-        return getRequest("Home");
+        return new Converter<>(TopDTO.class).getList(top100res);
     }
     public SongInfoDTO getSong(String id)
     {
         //id test: ZWABWOFZ
-        String res = getRequest("getFullInfo/" + id);
+        String res = getRequest("getFullInfo", id);
         if (res.contains("err")){
             return null;
         }
-        SongInfoDTO songStreaming = gson.fromJson(res, SongInfoDTO.class);
-        return songStreaming;
+        return new Converter<SongInfoDTO>(SongInfoDTO.class).get(res);
+    }
+    public Streaming getStreaming(String songId){
+        String res = getRequest("getStreaming", songId);
+        if (res.contains("err")){
+            return null;
+        }
+        return new Converter<Streaming>(Streaming.class).get(res);
+    }
+    public static class Converter<T>{
+        final Class<T> cls;
+        public Converter(Class<T> cls) {
+            this.cls = cls;
+        }
+        public T get(String jsonRes){
+            return gson.fromJson(jsonRes, cls);
+        }
+        public ArrayList<T> getList(String jsonRes){
+            Type listType = TypeToken.getParameterized(ArrayList.class, cls).getType();
+            return gson.fromJson(jsonRes, listType);
+        }
     }
 }

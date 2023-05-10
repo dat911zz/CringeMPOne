@@ -27,11 +27,13 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.ltdd.cringempone.api.BaseAPIService;
 import com.ltdd.cringempone.api.CringeAPIService;
+import com.ltdd.cringempone.data.dto.TopDTO;
 import com.ltdd.cringempone.databinding.ActivityMainBinding;
 import com.ltdd.cringempone.ui.homebottom.HomeFragmentBottom;
 import com.ltdd.cringempone.ui.person.PersonFragment;
 import com.ltdd.cringempone.ui.settings.SettingsFragment;
 
+import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -43,22 +45,16 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     BottomNavigationView bottomNavigationView;
     String TAG = "APP";
     String[] testRs = new String[1];
-    CringeAPIService mService;
-
-    BaseAPIService apiService = BaseAPIService.getInstance();
-    Boolean isBound = false;
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-        setContentView(R.layout.activity_main_link);
         Thread.setDefaultUncaughtExceptionHandler((thread, ex) -> {
             // Handle the exception here
             Log.e("MyApplication", "Uncaught exception occurred: " + ex.getMessage());
         });
-        fetchDataFromServer();
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -81,21 +77,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     PersonFragment personFragment = new PersonFragment();
     HomeFragmentBottom homeFragmentBottom = new HomeFragmentBottom();
     SettingsFragment settingsFragment = new SettingsFragment();
-    public void fetchDataFromServer(){
-        //Run job every 30 mins
-        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
-        exec.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                SharedPreferences prefs = getSharedPreferences("LocalStorage", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = prefs.edit();
-                //Fetch new data from server
-                editor.putString("top100s", BaseAPIService.getInstance().getTop100Json());
-                editor.commit();
-                Log.d(TAG, "fetchDataFromServer: run every 30 mins");
-            }
-        }, 0, 30, TimeUnit.MINUTES);
-    }
+
     @Override
     protected void onStart() {
         super.onStart();

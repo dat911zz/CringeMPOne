@@ -12,6 +12,8 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.android.volley.toolbox.ImageLoader;
+import com.ltdd.cringempone.data.dto.ItemDTO;
+import com.ltdd.cringempone.data.dto.SongInfoDTO;
 import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import org.jetbrains.annotations.Nullable;
@@ -56,6 +58,38 @@ public class Helper {
             if (pgl != null){
                 pgl.dismiss();
             }
+        }
+    }
+    public static class Converter{
+        public static ItemDTO songInfoDTO2ItemDTO(SongInfoDTO songInfoDTO){
+            return new ItemDTO(
+                    songInfoDTO.encodeId,
+                    songInfoDTO.title,
+                    songInfoDTO.thumbnail,
+                    songInfoDTO.isOffical,
+                    songInfoDTO.link,
+                    songInfoDTO.isIndie,
+                    "",
+                    "",
+                    0,
+                    songInfoDTO.genreIds,
+                    songInfoDTO.preRelease,
+                    songInfoDTO.artists,
+                    songInfoDTO.artistsNames,
+                    0,
+                    0,
+                    songInfoDTO.userid,
+                    songInfoDTO.thumbnailM,
+                    false,
+                    songInfoDTO.isPrivate,
+                    songInfoDTO.username,
+                    false,
+                    "",
+                    false,
+                    songInfoDTO.distributor,
+                    songInfoDTO.hasLyric,
+                    songInfoDTO.mvlink
+            );
         }
     }
 

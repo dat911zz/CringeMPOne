@@ -8,9 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.android.exoplayer2.Player;
 import com.ltdd.cringempone.R;
+import com.ltdd.cringempone.databinding.FragmentMainPlayerBinding;
 import com.ltdd.cringempone.service.MediaControlReceiver;
 
 /**
@@ -25,6 +28,7 @@ public class MainPlayerFragment extends Fragment {
     private String songName;
     private String artist;
     private View view;
+    private FragmentMainPlayerBinding binding;
     public MainPlayerFragment() {
         // Required empty public constructor
     }
@@ -50,25 +54,26 @@ public class MainPlayerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        view = inflater.inflate(R.layout.fragment_main_player, container, false);
+        binding = FragmentMainPlayerBinding.inflate(inflater, container, false);
         MediaControlReceiver mediaControlReceiver = MediaControlReceiver.getInstance();
-        ImageView disc = view.findViewById(R.id.imgDisc);
-        mediaControlReceiver.executeDisc(view.getContext(), disc);
-        addControl(view);
-        return view;
+        mediaControlReceiver.executeDisc(binding.imgDisc);
+        addControl();
+        return binding.getRoot();
     }
-
     @Override
     public void onResume() {
         super.onResume();
 
     }
 
-    public void addControl(View view){
-        TextView s_name = view.findViewById(R.id.txtSongName);
-        TextView s_artist = view.findViewById(R.id.txtTitle);
-
-        s_name.setText(songName);
-        s_artist.setText(artist);
+    public void addControl(){
+        MediaControlReceiver.getInstance().getExoPlayer().addListener(new Player.Listener() {
+            @Override
+            public void onPlaybackStateChanged(int playbackState) {
+                Player.Listener.super.onPlaybackStateChanged(playbackState);
+            }
+        });
+        binding.txtSongName.setText(songName);
+        binding.txtTitle.setText(artist);
     }
 }
