@@ -1,33 +1,17 @@
-package com.ltdd.cringempone.ui.musicplayer;
+package com.ltdd.cringempone.ui.musicplayer.fragment;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.Player;
 import com.ltdd.cringempone.R;
 import com.ltdd.cringempone.service.MediaControlReceiver;
-import com.ltdd.cringempone.utils.Helper;
-
-import org.w3c.dom.Text;
 
 /**
  * A simple {@link Fragment} subclass.
