@@ -8,17 +8,19 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.ltdd.cringempone.service.MediaControlReceiver;
 import com.ltdd.cringempone.ui.musicplayer.fragment.InfoPlayerFragment;
+import com.ltdd.cringempone.ui.musicplayer.fragment.LyricPlayerFragment;
 import com.ltdd.cringempone.ui.musicplayer.fragment.MainPlayerFragment;
 
 public class PlayerPagerAdapter extends FragmentPagerAdapter {
     private final static int PLAYER_INFO = 0;
     private final static int PLAYER_MAIN = 1;
+    private final static int PLAYER_LYRIC = 2;
     public PlayerPagerAdapter(FragmentManager fragmentManager){
         super(fragmentManager);
     }
     @Override
     public int getCount() {
-        return 2;
+        return 3;
     }
 
     @NonNull
@@ -30,11 +32,13 @@ public class PlayerPagerAdapter extends FragmentPagerAdapter {
             case PLAYER_MAIN:
                 MediaControlReceiver mediaControl = MediaControlReceiver.getInstance();
                 return MainPlayerFragment.newInstance(
-                        mediaControl.getCurrentSong().title != null ?
+                        mediaControl.getCurrentSong() != null ?
                                 mediaControl.getCurrentSong().title : "---",
-                        mediaControl.getCurrentSong().artists.get(0).name != null ?
+                        mediaControl.getCurrentSong() != null ?
                                 mediaControl.getCurrentSong().artists.get(0).name : "---"
                 );
+            case PLAYER_LYRIC:
+                return LyricPlayerFragment.newInstance();
         }
         return null;
     }
@@ -44,9 +48,11 @@ public class PlayerPagerAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch (position){
             case PLAYER_INFO:
-                return  "Thông tin";
+                return "Thông tin";
             case PLAYER_MAIN:
                 return "Phát nhạc";
+            case PLAYER_LYRIC:
+                return "Lời bài hát";
         }
         return "";
     }

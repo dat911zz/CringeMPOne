@@ -3,20 +3,57 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/player_holder"
     tools:context=".ui.musicplayer.PlayerActivity"
-    android:background="#1c1f3e">
+    android:background="@drawable/gradient_background_theme_1">
+    <RelativeLayout
+        android:id="@+id/navigation_header_container"
+        android:layout_width="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_height="50dp">
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnBackToMainActivity"
+            android:layout_centerVertical="true"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/baseline_keyboard_arrow_down_24"/>
+        <TextView
+            android:id="@+id/player_top_tittle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:text="Thông tin"
+            android:textColor="@color/white"
+            android:layout_marginTop="5dp"
+            android:textSize="16dp"/>
+    </RelativeLayout>
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/navigation_header_container"
         android:layout_above="@id/media_actions"
-        android:layout_alignParentTop="true"
         android:id="@+id/media_fragment_holder">
+        <com.tbuonomo.viewpagerdotsindicator.DotsIndicator
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/pager_indicator"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="10dp"
+            app:dotsColor="@color/colorPrimaryDark"
+            app:selectedDotColor="@color/teal_200"
+            app:dotsSize="10dp"
+            app:dotsSpacing="5dp"
+            app:progressMode="true"/>
         <androidx.viewpager.widget.ViewPager
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/pager"
+            android:layout_below="@id/pager_indicator"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            app:tabGravity="center"
+            app:tabIndicatorHeight="0dp"/>
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="match_parent"
