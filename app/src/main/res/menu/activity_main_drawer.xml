@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
+    <group android:id="@+id/grp1" android:checkableBehavior="single" >
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_home"
@@ -24,6 +24,14 @@
             android:id="@+id/nav_newrelease"
             android:icon="@drawable/ic_menu_music_note"
             android:title="@string/menu_newrelease" />
+    </group>
+
+    <group android:id="@+id/grp2" android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_acc"
+            android:icon="@drawable/ic_person"
+            android:title="TÀI KHOẢN" />
         <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/ic_menu_logout"

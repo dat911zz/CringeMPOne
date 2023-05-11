@@ -123,4 +123,15 @@
     </LinearLayout>
 
 
+    <ProgressBar
+        android:id="@+id/activity_login_progressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-255dp"
+        android:elevation="10dp"
+        android:visibility="gone"
+       />
+
+
 </LinearLayout>

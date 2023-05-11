@@ -67,7 +67,7 @@
         android:layout_marginTop="8dp"
         android:padding="15dp"
         android:background="@drawable/edit_text_border"
-        android:hint="nhập lại mật khẩu"
+        android:hint="Nhập lại mật khẩu"
         android:inputType="textPassword" />
 
     <CheckBox
@@ -82,6 +82,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:textColor="@color/white"
         android:background="@drawable/button_bg"
         android:text="ĐĂNG KÝ" />
 
@@ -91,6 +92,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
         android:textColor="@color/white"
+        android:paddingTop="5dp"
         android:text="Đã có tài khoản? Đăng nhập"
         android:textSize="16sp" />
 

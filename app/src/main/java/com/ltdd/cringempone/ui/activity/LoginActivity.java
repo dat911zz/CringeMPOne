@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,7 +46,7 @@ import com.ltdd.cringempone.R;
 import java.util.Arrays;
 
 public class LoginActivity extends AppCompatActivity {
-
+    ProgressBar progressBar;
     TextView txtViewSignUp;
     CheckBox showPasswordCheckBox;
     TextView backTextView;
@@ -257,6 +258,7 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
         else{
+            progressBar.setVisibility(View.VISIBLE);
             mAuth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                         @Override
@@ -269,6 +271,8 @@ public class LoginActivity extends AppCompatActivity {
                                 Toast.makeText(LoginActivity.this, "Email hoặc mật khẩu không chính xác.",
                                         Toast.LENGTH_SHORT).show();
                             }
+                            progressBar.setVisibility(View.GONE);
+
                         }
                     });}
     }
@@ -284,6 +288,7 @@ public class LoginActivity extends AppCompatActivity {
         btnLoginGoogle = (Button) findViewById(R.id.googleButton);
         btnLoginFacebook =(Button) findViewById(R.id.facebookButton);
         forgotPwdTextView = findViewById(R.id.forgot_password);
+        progressBar = findViewById(R.id.activity_login_progressBar);
 
     }
 }

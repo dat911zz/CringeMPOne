@@ -23,10 +23,15 @@
         android:label="@string/menu_slideshow"
         tools:layout="@layout/fragment_slideshow" />
 
-
     <fragment
         android:id="@+id/nav_top100"
         android:name="com.ltdd.cringempone.ui.top100.Top100Fragment"
-        android:label="@string/menu_slideshow"
+        android:label="@string/menu_top100"
         tools:layout="@layout/fragment_slideshow" />
+
+    <fragment
+        android:id="@+id/nav_acc"
+        android:name="com.ltdd.cringempone.ui.account.AccountFragment"
+        android:label="TÀI KHOẢN"
+        tools:layout="@layout/fragment_account" />
 </navigation>
