@@ -20,7 +20,7 @@ import com.ltdd.cringempone.data.dto.ItemDTO;
 import com.ltdd.cringempone.data.dto.PlaylistDTO;
 import com.ltdd.cringempone.ui.playlist.adapter.PlaylistAdapter;
 import com.ltdd.cringempone.ui.playlist.model.PlaylistItem;
-import com.ltdd.cringempone.utils.Helper;
+import com.ltdd.cringempone.utils.CoreHelper;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;

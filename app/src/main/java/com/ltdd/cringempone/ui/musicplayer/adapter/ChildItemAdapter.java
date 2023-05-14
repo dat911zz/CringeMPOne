@@ -16,7 +16,7 @@ import com.ltdd.cringempone.ui.musicplayer.PlayerActivity;
 import com.ltdd.cringempone.ui.musicplayer.RecyclerViewItemClickListener;
 import com.ltdd.cringempone.ui.musicplayer.model.ChildItem;
 import com.ltdd.cringempone.ui.playlist.PlaylistActivity;
-import com.ltdd.cringempone.utils.Helper;
+import com.ltdd.cringempone.utils.CoreHelper;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;

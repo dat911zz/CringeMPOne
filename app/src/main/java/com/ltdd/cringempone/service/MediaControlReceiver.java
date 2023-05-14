@@ -28,7 +28,6 @@ import com.ltdd.cringempone.api.BaseAPIService;
 import com.ltdd.cringempone.data.dto.ItemDTO;
 import com.ltdd.cringempone.data.dto.SongInfoDTO;
 import com.ltdd.cringempone.ui.musicplayer.PlayerViewHolder;
-import com.ltdd.cringempone.utils.Helper;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
