@@ -35,9 +35,6 @@ public class PlayerActivity extends AppCompatActivity {
         setContentView(layout.activity_player);
         getSupportActionBar().hide();
         mediaControl = MediaControlReceiver.getInstance();
-        if (!mediaControl.isRegister){
-            mediaControl.registerReceiver(this);
-        }
         addControl();
     }
     public void addControl(){

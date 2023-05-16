@@ -105,14 +105,9 @@ public class MediaControlReceiver extends BroadcastReceiver {
     public void addPlaylist(ArrayList<ItemDTO> items){
         if (exoPlayer != null){
             exoPlayer.clearMediaItems();
+            playList.clear();
         }
         playList.addAll(items);
-    }
-    public void addSongIntoPlaylist(){
-
-    }
-    public void sendBroadcast(){
-
     }
     public void addControl(Context context, PlayerViewHolder viewHolder){
         viewHolder.getPlay().setOnClickListener(v -> {
