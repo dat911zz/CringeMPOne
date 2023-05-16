@@ -19,6 +19,7 @@ import com.ltdd.cringempone.R;
 import com.ltdd.cringempone.api.BaseAPIService;
 import com.ltdd.cringempone.data.dto.ItemDTO;
 import com.ltdd.cringempone.data.dto.PlaylistDTO;
+import com.ltdd.cringempone.service.LocalStorageService;
 import com.ltdd.cringempone.service.MediaControlReceiver;
 import com.ltdd.cringempone.ui.playlist.adapter.PlaylistAdapter;
 import com.ltdd.cringempone.ui.playlist.model.PlaylistItem;
@@ -46,14 +47,14 @@ public class PlaylistActivity extends AppCompatActivity {
 
     }
     public void loadData(){
-        SharedPreferences prefs = getSharedPreferences("LocalStorage", Context.MODE_PRIVATE);
-        if (prefs.getString(playlistId, "").equals("")){
-            playlist = new BaseAPIService.Converter<>(PlaylistDTO.class)
-                    .get(BaseAPIService.getInstance().getRequest("getDetailPlaylist", playlistId));
+        String playListData = LocalStorageService.getInstance().getString(playlistId);
+        if (playListData.contains("error") || playListData.equals("") || playListData.contains("not found")){
+            String resData = BaseAPIService.getInstance().getRequest("getPlaylist", playlistId);
+            LocalStorageService.getInstance().putString(playlistId, resData);
+            playlist = new BaseAPIService.Converter<>(PlaylistDTO.class).get(resData);
         }
         else{
-            playlist = new BaseAPIService.Converter<>(PlaylistDTO.class)
-                    .get(prefs.getString(playlistId, ""));
+            playlist = new BaseAPIService.Converter<>(PlaylistDTO.class).get(LocalStorageService.getInstance().getString(playlistId));
         }
     }
     public void initViewHolder(){

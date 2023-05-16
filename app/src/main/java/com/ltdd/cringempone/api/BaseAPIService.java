@@ -5,6 +5,7 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.ltdd.cringempone.data.dto.ResponseDTO;
 import com.ltdd.cringempone.data.dto.SongInfoDTO;
 import com.ltdd.cringempone.data.dto.Streaming;
 import com.ltdd.cringempone.data.dto.TopDTO;
@@ -37,7 +38,7 @@ public class BaseAPIService {
         } catch (Exception e) {
             String err = e.getMessage() != null ? e.getMessage() : "";
             Log.e(LOG_TAG, "getRequest: " + err);
-            return String.format("{\"err\":\"404\",\"mess:\":\"No respond\"}");
+            return String.format("{\"error\":\"404\",\"mess:\":\"No respond\"}");
         }
     }
     public ArrayList<TopDTO> getTop100List(String top100res) {

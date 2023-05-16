@@ -23,10 +23,18 @@ public class LocalStorageService {
         }
         return instance;
     }
-//    public void initLocalStorage(Context context){
-//        if (this.context == null){
-//            this.context = context;
-//        }
-//        getSharedPreferences("LocalStorage", Context.MODE_PRIVATE);
-//    }
+    public void initLocalStorage(Context context){
+        if (this.context == null){
+            this.context = context;
+        }
+        prefs = context.getSharedPreferences("LocalStorage", Context.MODE_PRIVATE);
+    }
+    public String getString(String key){
+        return prefs.getString(key, "");
+    }
+    public void putString(String key, String value){
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(key, value);
+        editor.commit();
+    }
 }

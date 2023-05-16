@@ -20,6 +20,7 @@ import com.ltdd.cringempone.api.BaseAPIService;
 import com.ltdd.cringempone.data.dto.ItemDTO;
 import com.ltdd.cringempone.data.dto.TopDTO;
 import com.ltdd.cringempone.databinding.Top100ChildrenItemBinding;
+import com.ltdd.cringempone.service.LocalStorageService;
 import com.ltdd.cringempone.service.MediaControlReceiver;
 import com.ltdd.cringempone.ui.musicplayer.PlayerActivity;
 import com.ltdd.cringempone.ui.musicplayer.adapter.ParentItemAdapter;
@@ -43,25 +44,12 @@ public class Top100Fragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentTop100Binding.inflate(inflater, container, false);
-//        Button btn = binding.btnGotoPlayer;
         RecyclerView parentRecycleViewItem = binding.getRoot().findViewById(R.id.top100_parent_recyclerview);
-
-//        btn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                CoreHelper.MediaProgressDialog.showDialog(v.getContext());
-//                MediaControlReceiver.getInstance().addPlaylist(new ArrayList<>() { });
-//
-//                Intent it = new Intent(v.getContext(), PlayerActivity.class);
-//                startActivity(it);
-//            }
-//        });
-        SharedPreferences prefs = getContext().getSharedPreferences("LocalStorage", Context.MODE_PRIVATE);
-        if (prefs.getString("top100s", "").contains("err")){
+        if (LocalStorageService.getInstance().getString("top100s").contains("err")){
             top100s = BaseAPIService.getInstance().getTop100List(BaseAPIService.getInstance().getRequest("top100"));
         }
         else{
-            top100s = BaseAPIService.getInstance().getTop100List(prefs.getString("top100s", ""));
+            top100s = BaseAPIService.getInstance().getTop100List(LocalStorageService.getInstance().getString("top100s"));
         }
         if(top100s != null){
             LinearLayoutManager layoutManager = new LinearLayoutManager(binding.getRoot().getContext());
