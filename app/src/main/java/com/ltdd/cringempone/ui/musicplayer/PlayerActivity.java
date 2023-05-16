@@ -19,7 +19,7 @@ import com.ltdd.cringempone.data.dto.SongInfoDTO;
 import com.ltdd.cringempone.service.MediaAction;
 import com.ltdd.cringempone.service.MediaControlReceiver;
 import com.ltdd.cringempone.ui.musicplayer.adapter.PlayerPagerAdapter;
-import com.ltdd.cringempone.utils.Helper;
+import com.ltdd.cringempone.utils.CoreHelper;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator;
@@ -35,9 +35,6 @@ public class PlayerActivity extends AppCompatActivity {
         setContentView(layout.activity_player);
         getSupportActionBar().hide();
         mediaControl = MediaControlReceiver.getInstance();
-        if (!mediaControl.isRegister){
-            mediaControl.registerReceiver(this);
-        }
         addControl();
     }
     public void addControl(){

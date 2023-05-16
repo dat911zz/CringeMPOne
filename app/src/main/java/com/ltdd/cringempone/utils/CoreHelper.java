@@ -11,17 +11,15 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.android.volley.toolbox.ImageLoader;
 import com.ltdd.cringempone.data.dto.ItemDTO;
 import com.ltdd.cringempone.data.dto.SongInfoDTO;
-import com.nostra13.universalimageloader.core.listener.SimpleImageLoadingListener;
 
 import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;
 import java.net.URL;
 
-public class Helper {
+public class CoreHelper {
     public static class ImageUtil{
         public static Drawable LoadImageFromWebOperations(String url) {
             try {
@@ -29,7 +27,7 @@ public class Helper {
                 Drawable d = Drawable.createFromStream(is, "src name");
                 return d;
             } catch (Exception e) {
-                Log.e("Helper", "LoadImageFromWebOperations: " + e.getMessage());
+                Log.e("CoreHelper", "LoadImageFromWebOperations: " + e.getMessage());
                 return null;
             }
         }

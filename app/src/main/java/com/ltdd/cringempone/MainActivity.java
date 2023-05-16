@@ -27,6 +27,7 @@ import com.ltdd.cringempone.api.BaseAPIService;
 import com.ltdd.cringempone.api.CringeAPIService;
 import com.ltdd.cringempone.data.dto.TopDTO;
 import com.ltdd.cringempone.databinding.ActivityMainBinding;
+import com.ltdd.cringempone.service.MediaControlReceiver;
 import com.ltdd.cringempone.ui.homebottom.HomeFragmentBottom;
 import com.ltdd.cringempone.ui.person.PersonFragment;
 import com.ltdd.cringempone.ui.settings.SettingsFragment;
@@ -57,6 +58,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setSupportActionBar(binding.appBarMain.toolbar);
+        addControl();
+    }
+    public void addControl(){
+        if (!MediaControlReceiver.getInstance().isRegister){
+            MediaControlReceiver.getInstance().registerReceiver(this);
+        }
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
         // Passing each menu ID as a set of Ids because each

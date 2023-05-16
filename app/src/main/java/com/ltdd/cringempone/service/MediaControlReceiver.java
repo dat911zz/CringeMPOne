@@ -28,7 +28,6 @@ import com.ltdd.cringempone.api.BaseAPIService;
 import com.ltdd.cringempone.data.dto.ItemDTO;
 import com.ltdd.cringempone.data.dto.SongInfoDTO;
 import com.ltdd.cringempone.ui.musicplayer.PlayerViewHolder;
-import com.ltdd.cringempone.utils.Helper;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -106,14 +105,9 @@ public class MediaControlReceiver extends BroadcastReceiver {
     public void addPlaylist(ArrayList<ItemDTO> items){
         if (exoPlayer != null){
             exoPlayer.clearMediaItems();
+            playList.clear();
         }
         playList.addAll(items);
-    }
-    public void addSongIntoPlaylist(){
-
-    }
-    public void sendBroadcast(){
-
     }
     public void addControl(Context context, PlayerViewHolder viewHolder){
         viewHolder.getPlay().setOnClickListener(v -> {

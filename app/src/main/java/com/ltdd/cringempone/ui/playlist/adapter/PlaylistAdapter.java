@@ -51,17 +51,12 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
         holder.title.setText(item.getTitle());
         holder.artistsNames.setText(item.getArtistsNames());
         Picasso.get().load(item.getImgLink()).into(holder.img);
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                MediaControlReceiver.getInstance().addPlaylist((ArrayList<ItemDTO>) items);
-            }
-        }, 0);
         holder.setItemClickListener(new RecyclerViewItemClickListener() {
             @Override
             public void onClick(View view, int position, boolean isLongClick) {
-                MediaControlReceiver.getInstance().setCurrentPos(position);
+                if (position != MediaControlReceiver.getInstance().getCurrentPos()){
+                    MediaControlReceiver.getInstance().setCurrentPos(position);
+                }
                 Intent mediaIntent = new Intent(view.getContext(), PlayerActivity.class);
                 view.getContext().startActivity(mediaIntent);
             }

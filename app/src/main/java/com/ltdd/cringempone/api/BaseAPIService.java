@@ -1,9 +1,6 @@
 package com.ltdd.cringempone.api;
 
-import android.os.Build;
 import android.util.Log;
-
-import androidx.annotation.RequiresApi;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -12,12 +9,11 @@ import com.ltdd.cringempone.data.dto.SongInfoDTO;
 import com.ltdd.cringempone.data.dto.Streaming;
 import com.ltdd.cringempone.data.dto.TopDTO;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 public class BaseAPIService {
-    private String hostAPI = "https://cringe-mp3-api.vercel.app/";
+    private String hostAPI = "https://cringe-mp3-api.vercel.app/api/";
     private String LOG_TAG = "Base API Service";
     static GsonBuilder builder;
     static Gson gson;

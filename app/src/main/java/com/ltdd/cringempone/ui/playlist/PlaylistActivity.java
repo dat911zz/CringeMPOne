@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,9 +19,10 @@ import com.ltdd.cringempone.R;
 import com.ltdd.cringempone.api.BaseAPIService;
 import com.ltdd.cringempone.data.dto.ItemDTO;
 import com.ltdd.cringempone.data.dto.PlaylistDTO;
+import com.ltdd.cringempone.service.MediaControlReceiver;
 import com.ltdd.cringempone.ui.playlist.adapter.PlaylistAdapter;
 import com.ltdd.cringempone.ui.playlist.model.PlaylistItem;
-import com.ltdd.cringempone.utils.Helper;
+import com.ltdd.cringempone.utils.CoreHelper;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -75,7 +77,13 @@ public class PlaylistActivity extends AppCompatActivity {
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         PlaylistAdapter adapter = new PlaylistAdapter(playlist.song.items);
-
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                MediaControlReceiver.getInstance().addPlaylist((ArrayList<ItemDTO>) playlist.song.items);
+            }
+        }, 0);
         holder.pSongList.setLayoutManager(linearLayoutManager);
         holder.pSongList.setAdapter(adapter);
     }
