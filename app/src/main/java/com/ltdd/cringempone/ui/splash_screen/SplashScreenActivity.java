@@ -13,6 +13,7 @@ import com.ltdd.cringempone.MainActivity;
 import com.ltdd.cringempone.R;
 import com.ltdd.cringempone.api.BaseAPIService;
 import com.ltdd.cringempone.data.dto.TopDTO;
+import com.ltdd.cringempone.service.LocalStorageService;
 
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
@@ -25,6 +26,7 @@ public class SplashScreenActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Handler handler = new Handler();
+        LocalStorageService.getInstance().initLocalStorage(this);
         fetchDataFromServer();
         handler.postDelayed(new Runnable() {
             @Override
@@ -32,28 +34,11 @@ public class SplashScreenActivity extends AppCompatActivity {
                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
                 finish();
             }
-        }, 5000);
+        }, 3000);
     }
     public void fetchDataFromServer(){
-        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
-        exec.scheduleAtFixedRate(new Runnable() {
-            @Override
-            public void run() {
-                SharedPreferences prefs = getSharedPreferences("LocalStorage", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = prefs.edit();
-                //Fetch new data from server
-                String top100res = BaseAPIService.getInstance().getRequest("top100");
-                editor.putString("top100s", top100res);
-                editor.commit();
-//                ArrayList<TopDTO> top100List = BaseAPIService.getInstance().getTop100List(top100res);
-//                top100List.forEach(item -> {
-//                    item.items.forEach(playlist ->{
-//                        editor.putString(playlist.encodeId, BaseAPIService.getInstance().getRequest("getDetailPlaylist", playlist.encodeId));
-//                    });
-//                });
-//                editor.commit();
-                Log.d("SP", "fetchDataFromServer: run every 1 hour");
-            }
-        }, 0, 1, TimeUnit.HOURS);
+        if (!LocalStorageService.getInstance().getString("top100s").equals("")){
+            LocalStorageService.getInstance().putString("top100s", BaseAPIService.getInstance().getRequest("top100"));
+        }
     }
 }

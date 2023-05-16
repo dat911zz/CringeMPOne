@@ -28,7 +28,6 @@ import com.ltdd.cringempone.databinding.ActivityPlayerBinding;
 public class PlayerActivity extends AppCompatActivity {
     private String TAG = "APP";
     private MediaControlReceiver mediaControl;
-    ActivityPlayerBinding binding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,10 +41,6 @@ public class PlayerActivity extends AppCompatActivity {
         btn.setOnClickListener(v -> {
             onBackPressed();
         });
-    }
-    @Override
-    protected void onStart() {
-        super.onStart();
         this.runOnUiThread(() -> {
             mediaControl.addControl(this, new PlayerViewHolder(
                     findViewById(id.seekBar),
@@ -65,5 +60,9 @@ public class PlayerActivity extends AppCompatActivity {
             Intent playIntent = new Intent(MediaAction.ACTION_PLAY);
             sendBroadcast(playIntent);
         });
+    }
+    @Override
+    protected void onStart() {
+        super.onStart();
     }
 }

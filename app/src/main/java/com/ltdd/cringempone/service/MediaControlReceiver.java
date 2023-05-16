@@ -56,30 +56,37 @@ public class MediaControlReceiver extends BroadcastReceiver {
             // Get the current playback state of ExoPlayer
             int playbackState = exoPlayer.getPlaybackState();
             boolean isPause = playbackState == Player.STATE_READY && !exoPlayer.isPlaying();
-            switch (act){
-                case MediaAction.ACTION_PLAY:
-                    exoPlayer.setPlayWhenReady(true);
-                    if (currentPos >= 0 && !isPause){
-                        MediaItem mediaItem = MediaItem.fromUri(BaseAPIService
-                                        .getInstance()
-                                        .getStreaming(playList.get(currentPos).encodeId)
-                                ._128
-                        );
-                        exoPlayer.setMediaItem(mediaItem);
-                        exoPlayer.prepare();
-                    }
-                    exoPlayer.play();
-                    break;
-                case MediaAction.ACTION_PAUSE:
-                    exoPlayer.setPlayWhenReady(false);
-                    exoPlayer.pause();
-                    break;
-                case MediaAction.ACTION_STOP:
-                    exoPlayer.setPlayWhenReady(false);
-                    exoPlayer.stop();
-                    exoPlayer.release();
-                    setExoPlayer(null);
-                    break;
+            try{
+                switch (act){
+                    case MediaAction.ACTION_PLAY:
+                        exoPlayer.setPlayWhenReady(true);
+                        if (currentPos >= 0 && !isPause){
+                            String songLink = LocalStorageService.getInstance().getString("m_link" + playList.get(currentPos).encodeId);
+                            if (songLink.contains("error") || songLink.equals("")){
+                                String resData = BaseAPIService.getInstance().getStreaming(playList.get(currentPos).encodeId)._128;
+                                LocalStorageService.getInstance().putString("m_link" + playList.get(currentPos).encodeId, resData);
+                                songLink = resData;
+                            }
+                            MediaItem mediaItem = MediaItem.fromUri(songLink);
+                            exoPlayer.setMediaItem(mediaItem);
+                            exoPlayer.prepare();
+                        }
+                        exoPlayer.play();
+                        break;
+                    case MediaAction.ACTION_PAUSE:
+                        exoPlayer.setPlayWhenReady(false);
+                        exoPlayer.pause();
+                        break;
+                    case MediaAction.ACTION_STOP:
+                        exoPlayer.setPlayWhenReady(false);
+                        exoPlayer.stop();
+                        exoPlayer.release();
+                        setExoPlayer(null);
+                        break;
+                }
+
+            }catch(Exception ex){
+                Log.e("Reciver", "onReceive: " + ex.getMessage());
             }
         }
     }
