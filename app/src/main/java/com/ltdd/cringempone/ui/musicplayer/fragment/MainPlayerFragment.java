@@ -1,7 +1,9 @@
 package com.ltdd.cringempone.ui.musicplayer.fragment;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -15,6 +17,7 @@ import com.google.android.exoplayer2.Player;
 import com.ltdd.cringempone.R;
 import com.ltdd.cringempone.databinding.FragmentMainPlayerBinding;
 import com.ltdd.cringempone.service.MediaControlReceiver;
+import com.ltdd.cringempone.utils.CoreHelper;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -22,9 +25,6 @@ import com.ltdd.cringempone.service.MediaControlReceiver;
  * create an instance of this fragment.
  */
 public class MainPlayerFragment extends Fragment {
-
-    private static final String SONG_NAME = "songName";
-    private static final String ARTIST = "artist";
     private String songName;
     private String artist;
     private View view;
@@ -32,21 +32,24 @@ public class MainPlayerFragment extends Fragment {
     public MainPlayerFragment() {
         // Required empty public constructor
     }
-    public static MainPlayerFragment newInstance(String songName, String artist) {
-        MainPlayerFragment fragment = new MainPlayerFragment();
-        Bundle args = new Bundle();
-        args.putString(SONG_NAME, songName);
-        args.putString(ARTIST, artist);
-        fragment.setArguments(args);
-        return fragment;
+    public static MainPlayerFragment newInstance() {
+        return new MainPlayerFragment();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null){
-            songName = getArguments().getString(SONG_NAME);
-            artist = getArguments().getString(ARTIST);
+        if (MediaControlReceiver.getInstance().getCurrentSong() != null){
+            songName = MediaControlReceiver.getInstance().getCurrentSong().title;
+            artist = MediaControlReceiver.getInstance().getCurrentSong().artistsNames;
+        }
+        else {
+            CoreHelper.CustomsDialog.showAlertDialog(
+                    this.getContext(),
+                    "Lỗi",
+                    "Đã xảy ra lỗi, vui lòng kiểm tra lại kết nối mạng!",
+                    R.drawable.baseline_error_24
+            );
         }
     }
 

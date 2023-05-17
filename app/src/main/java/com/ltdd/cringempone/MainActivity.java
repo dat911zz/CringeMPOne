@@ -1,9 +1,7 @@
 package com.ltdd.cringempone;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
@@ -23,25 +21,20 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
-import com.ltdd.cringempone.api.BaseAPIService;
-import com.ltdd.cringempone.api.CringeAPIService;
-import com.ltdd.cringempone.data.dto.TopDTO;
 import com.ltdd.cringempone.databinding.ActivityMainBinding;
 import com.ltdd.cringempone.service.MediaControlReceiver;
 import com.ltdd.cringempone.ui.homebottom.HomeFragmentBottom;
 import com.ltdd.cringempone.ui.person.PersonFragment;
 import com.ltdd.cringempone.ui.settings.SettingsFragment;
 
-import java.util.ArrayList;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
     BottomNavigationView bottomNavigationView;
+    PersonFragment personFragment = new PersonFragment();
+    HomeFragmentBottom homeFragmentBottom = new HomeFragmentBottom();
+    SettingsFragment settingsFragment = new SettingsFragment();
     String TAG = "APP";
     String[] testRs = new String[1];
     @SuppressLint("MissingInflatedId")
@@ -79,9 +72,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
         bottomNavigationView.setSelectedItemId(R.id.person);
     }
-    PersonFragment personFragment = new PersonFragment();
-    HomeFragmentBottom homeFragmentBottom = new HomeFragmentBottom();
-    SettingsFragment settingsFragment = new SettingsFragment();
 
     @Override
     protected void onStart() {

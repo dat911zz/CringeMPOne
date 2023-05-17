@@ -1,13 +1,9 @@
 package com.ltdd.cringempone.ui.top100;
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,8 +17,6 @@ import com.ltdd.cringempone.data.dto.ItemDTO;
 import com.ltdd.cringempone.data.dto.TopDTO;
 import com.ltdd.cringempone.databinding.Top100ChildrenItemBinding;
 import com.ltdd.cringempone.service.LocalStorageService;
-import com.ltdd.cringempone.service.MediaControlReceiver;
-import com.ltdd.cringempone.ui.musicplayer.PlayerActivity;
 import com.ltdd.cringempone.ui.musicplayer.adapter.ParentItemAdapter;
 import com.ltdd.cringempone.ui.musicplayer.model.ChildItem;
 import com.ltdd.cringempone.ui.musicplayer.model.ParentItem;
@@ -45,7 +39,7 @@ public class Top100Fragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentTop100Binding.inflate(inflater, container, false);
         RecyclerView parentRecycleViewItem = binding.getRoot().findViewById(R.id.top100_parent_recyclerview);
-        if (LocalStorageService.getInstance().getString("top100s").contains("err")){
+        if (LocalStorageService.getInstance().getString("top100s").contains("error") || LocalStorageService.getInstance().getString("top100s").equals("")){
             top100s = BaseAPIService.getInstance().getTop100List(BaseAPIService.getInstance().getRequest("top100"));
         }
         else{
@@ -85,7 +79,7 @@ public class Top100Fragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        CoreHelper.MediaProgressDialog.hideDialog();
+        CoreHelper.CustomsDialog.hideDialog();
     }
 
     @Override

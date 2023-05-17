@@ -37,7 +37,8 @@ public class SplashScreenActivity extends AppCompatActivity {
         }, 3000);
     }
     public void fetchDataFromServer(){
-        if (!LocalStorageService.getInstance().getString("top100s").equals("")){
+        String top100s = LocalStorageService.getInstance().getString("top100s");
+        if (!top100s.equals("") && !top100s.contains("error")){
             LocalStorageService.getInstance().putString("top100s", BaseAPIService.getInstance().getRequest("top100"));
         }
     }

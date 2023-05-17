@@ -8,3 +8,5 @@ public class Streaming {
     @SerializedName(value = "320")
     public String _320;
 }
+
+

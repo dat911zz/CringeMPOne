@@ -47,15 +47,12 @@ public class PlaylistActivity extends AppCompatActivity {
 
     }
     public void loadData(){
-        String playListData = LocalStorageService.getInstance().getString(playlistId);
-        if (playListData.contains("error") || playListData.equals("") || playListData.contains("not found")){
-            String resData = BaseAPIService.getInstance().getRequest("getPlaylist", playlistId);
-            LocalStorageService.getInstance().putString(playlistId, resData);
-            playlist = new BaseAPIService.Converter<>(PlaylistDTO.class).get(resData);
+        String res = LocalStorageService.getInstance().getString(playlistId);
+        if (res.contains("error") || res.equals("") || res.contains("not found")){
+            res = BaseAPIService.getInstance().getRequest("getPlaylist", playlistId);
+            LocalStorageService.getInstance().putString(playlistId, res);
         }
-        else{
-            playlist = new BaseAPIService.Converter<>(PlaylistDTO.class).get(LocalStorageService.getInstance().getString(playlistId));
-        }
+        playlist = new BaseAPIService.Converter<>(PlaylistDTO.class).get(res);
     }
     public void initViewHolder(){
         holder = new PlaylistViewHolder(
