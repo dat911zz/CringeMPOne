@@ -4,54 +4,75 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 
 import com.ltdd.cringempone.R;
+import com.ltdd.cringempone.api.*;
+import com.ltdd.cringempone.data.dto.LyricDTO;
+import com.ltdd.cringempone.databinding.FragmentLyricPlayerBinding;
+import com.ltdd.cringempone.service.LocalStorageService;
+import com.ltdd.cringempone.service.MediaControlReceiver;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link LyricPlayerFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
+
 public class LyricPlayerFragment extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String LYRIC = "lyric";
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public LyricPlayerFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @return A new instance of fragment LyricPlayerFragment.
-     */
-    // TODO: Rename and change types and number of parameters
+    FragmentLyricPlayerBinding binding;
+    public LyricPlayerFragment() {}
     public static LyricPlayerFragment newInstance() {
-        LyricPlayerFragment fragment = new LyricPlayerFragment();
-        return fragment;
+        return new LyricPlayerFragment();
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_lyric_player, container, false);
+        binding = FragmentLyricPlayerBinding.inflate(inflater, container, false);
+        addControl();
+        return binding.getRoot();
+    }
+    private void addControl(){
+        ArrayList<String> lyrics = new ArrayList<>();
+        binding.fragmentLyricPlayerListview.setAdapter(
+                new ArrayAdapter<>(
+                        this.getContext(),
+                        R.layout.fragment_lyric_player_list_item_layout,
+                        R.id.fragment_lyric_list_item_list_content,
+                        fetchLyricData())
+        );
+    }
+    private List<String> fetchLyricData(){
+        String res = LocalStorageService.getInstance().getString("lrc_" + MediaControlReceiver.getInstance().getCurrentSong().encodeId);
+        if (res.contains("error") || res.equals("")){
+            res = BaseAPIService.getInstance().getRequest(
+                    "getLyric",
+                    MediaControlReceiver.getInstance().getCurrentSong().encodeId
+            );
+            LocalStorageService.getInstance().putString("lrc_" + MediaControlReceiver.getInstance().getCurrentSong().encodeId, res);
+        }
+        return convertRes2Sentences(res);
+    }
+    private List<String> convertRes2Sentences(String res){
+        List<String> sentences = new ArrayList<>();
+
+        new BaseAPIService.Converter<>(LyricDTO.class).get(res).sentences.forEach(sentence -> {
+            String result = "";
+            for(LyricDTO.Word word : sentence.words){
+                result += " " + word.data;
+            }
+            sentences.add(result);
+//            Log.e("App", "convertRes2Sentences: " + result);
+        });
+
+        return sentences;
     }
 }
