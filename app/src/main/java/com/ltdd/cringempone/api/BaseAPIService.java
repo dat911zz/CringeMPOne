@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.ltdd.cringempone.data.dto.ResponseDTO;
+import com.ltdd.cringempone.data.dto.SearchDTO;
 import com.ltdd.cringempone.data.dto.SongInfoDTO;
 import com.ltdd.cringempone.data.dto.Streaming;
 import com.ltdd.cringempone.data.dto.TopDTO;
@@ -62,6 +63,15 @@ public class BaseAPIService {
             return null;
         }
         return new Converter<Streaming>(Streaming.class).get(res);
+    }
+
+    public SearchDTO getSearchResult(String txtSearch)
+    {
+        String res = getRequest("search", txtSearch);
+        if (res.contains("err")){
+            return null;
+        }
+        return new Converter<SearchDTO>(SearchDTO.class).get(res);
     }
     public static class Converter<T>{
         final Class<T> cls;
