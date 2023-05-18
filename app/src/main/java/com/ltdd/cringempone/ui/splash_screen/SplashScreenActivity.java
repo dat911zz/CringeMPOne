@@ -1,24 +1,14 @@
 package com.ltdd.cringempone.ui.splash_screen;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.ltdd.cringempone.MainActivity;
-import com.ltdd.cringempone.R;
 import com.ltdd.cringempone.api.BaseAPIService;
-import com.ltdd.cringempone.data.dto.TopDTO;
 import com.ltdd.cringempone.service.LocalStorageService;
-
-import java.util.ArrayList;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class SplashScreenActivity extends AppCompatActivity {
 
