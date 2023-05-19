@@ -75,7 +75,7 @@
                     android:text="Thể loại"
                     android:textColor="@color/textColor"
                     android:layout_marginTop="15dp"
-                    android:id="@+id/fragment_info_player_container_type_lb"
+                    android:id="@+id/fragment_info_player_container_genre_lb"
                     android:layout_below="@id/fragment_info_player_container_artists_lb"
                     />
                 <TextView
@@ -85,7 +85,7 @@
                     android:textColor="@color/textColor"
                     android:layout_marginTop="15dp"
                     android:id="@+id/fragment_info_player_container_releaseTime_lb"
-                    android:layout_below="@id/fragment_info_player_container_type_lb"
+                    android:layout_below="@id/fragment_info_player_container_genre_lb"
                     />
                 <TextView
                     android:layout_width="wrap_content"
@@ -125,7 +125,7 @@
                     android:text="Thể loại"
                     android:textColor="@color/white"
                     android:layout_marginTop="15dp"
-                    android:id="@+id/fragment_info_player_container_type_txt"
+                    android:id="@+id/fragment_info_player_container_genre_txt"
                     android:layout_below="@id/fragment_info_player_container_artists_txt"
                     />
                 <TextView
@@ -135,7 +135,7 @@
                     android:textColor="@color/white"
                     android:layout_marginTop="15dp"
                     android:id="@+id/fragment_info_player_container_releaseTime_txt"
-                    android:layout_below="@id/fragment_info_player_container_type_txt"
+                    android:layout_below="@id/fragment_info_player_container_genre_txt"
                     />
                 <TextView
                     android:layout_width="wrap_content"

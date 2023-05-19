@@ -40,17 +40,7 @@ public class LyricPlayerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentLyricPlayerBinding.inflate(inflater, container, false);
-        addControl();
         ViewPagerPlayerController.getInstance().setFragmentLyricPlayerBinding(binding);
         return binding.getRoot();
-    }
-    private void addControl(){
-        binding.fragmentLyricPlayerListview.setAdapter(
-                new ArrayAdapter<>(
-                        this.getContext(),
-                        R.layout.fragment_lyric_player_list_item_layout,
-                        R.id.fragment_lyric_list_item_list_content,
-                        BaseAPIService.getInstance().fetchLyricData())
-        );
     }
 }

@@ -3,7 +3,7 @@ package com.ltdd.cringempone.data.dto;
 import java.util.ArrayList;
 
 public class SongInfoDTO {
-    public SongInfoDTO(String encodeId, String title, String alias, boolean isOffical, String username, String artistsNames, ArrayList<ArtistDTO> artists, boolean isWorldWide, String thumbnailM, String link, String thumbnail, int duration, boolean zingChoice, boolean isPrivate, boolean preRelease, int releaseDate, ArrayList<String> genreIds, ArrayList<Object> indicators, int radioId, boolean isIndie, String mvlink, int streamingStatus, boolean allowAudioAds, boolean hasLyric, int userid, ArrayList<GenreDTO> genres, ArrayList<ComposerDTO> composers, String distributor, AlbumDTO albumDTO, RadioDTO radioDTO, boolean isRBT, int like, int listen, boolean liked, int comment, Streaming streaming) {
+    public SongInfoDTO(String encodeId, String title, String alias, boolean isOffical, String username, String artistsNames, ArrayList<ArtistDTO> artists, boolean isWorldWide, String thumbnailM, String link, String thumbnail, int duration, boolean zingChoice, boolean isPrivate, boolean preRelease, int releaseDate, ArrayList<String> genreIds, ArrayList<Object> indicators, int radioId, boolean isIndie, String mvlink, int streamingStatus, boolean allowAudioAds, boolean hasLyric, int userid, ArrayList<GenreDTO> genres, ArrayList<ComposerDTO> composers, String distributor, AlbumDTO album, RadioDTO radio, boolean isRBT, int like, int listen, boolean liked, int comment, Streaming streaming) {
         this.encodeId = encodeId;
         this.title = title;
         this.alias = alias;
@@ -32,8 +32,8 @@ public class SongInfoDTO {
         this.genres = genres;
         this.composers = composers;
         this.distributor = distributor;
-        this.albumDTO = albumDTO;
-        this.radioDTO = radioDTO;
+        this.album = album;
+        this.radio = radio;
         this.isRBT = isRBT;
         this.like = like;
         this.listen = listen;
@@ -70,8 +70,8 @@ public class SongInfoDTO {
     public ArrayList<GenreDTO> genres;
     public ArrayList<ComposerDTO> composers;
     public String distributor;
-    public AlbumDTO albumDTO;
-    public RadioDTO radioDTO;
+    public AlbumDTO album;
+    public RadioDTO radio;
     public boolean isRBT;
     public int like;
     public int listen;

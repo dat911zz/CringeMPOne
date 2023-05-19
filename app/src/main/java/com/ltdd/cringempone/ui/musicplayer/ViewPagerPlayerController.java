@@ -2,19 +2,16 @@ package com.ltdd.cringempone.ui.musicplayer;
 
 import com.ltdd.cringempone.api.BaseAPIService;
 
-import android.os.Handler;
 import android.widget.ArrayAdapter;
 
 import com.ltdd.cringempone.R;
 import com.ltdd.cringempone.data.dto.GenreDTO;
-import com.ltdd.cringempone.data.dto.ItemDTO;
 import com.ltdd.cringempone.data.dto.SongInfoDTO;
 import com.ltdd.cringempone.databinding.FragmentInfoPlayerBinding;
 import com.ltdd.cringempone.databinding.FragmentLyricPlayerBinding;
 import com.ltdd.cringempone.databinding.FragmentMainPlayerBinding;
 import com.ltdd.cringempone.service.LocalStorageService;
 import com.ltdd.cringempone.service.MediaControlReceiver;
-import com.ltdd.cringempone.ui.musicplayer.fragment.LyricPlayerFragment;
 import com.squareup.picasso.Picasso;
 
 import java.sql.Timestamp;
@@ -60,7 +57,14 @@ public class ViewPagerPlayerController {
         return instance;
     }
 
-    public void loadDataIntoFragments(ItemDTO songInfo){
+    public void loadDataIntoFragments(String songId){
+
+        String res = LocalStorageService.getInstance().getString("sinfo_" + songId);
+        if (res.equals("") || res.contains("error")){
+            res = BaseAPIService.getInstance().getRequest("getSongInfo", songId);
+            LocalStorageService.getInstance().putString("sinfo_" + songId, res);
+        }
+        SongInfoDTO songInfo = new BaseAPIService.Converter<>(SongInfoDTO.class).get(res);
         //MainPlayer
         fragmentMainPlayerBinding.txtTitle.setText(songInfo.artistsNames);
         fragmentMainPlayerBinding.txtSongName.setText(songInfo.title);
@@ -75,34 +79,20 @@ public class ViewPagerPlayerController {
         );
         //Info
         SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy, hh:mm aa");
-        String date = df.format(new Date(new Timestamp(Long.parseLong(songInfo.releaseDate) * 1000L).getTime()));// Convert epoch time to timeStamp
+        String date = df.format(new Date(new Timestamp(songInfo.releaseDate * 1000L).getTime()));// Convert epoch time to timeStamp
         fragmentInfoPlayerBinding.fragmentInfoPlayerContainerSongName.setText(songInfo.title);
         fragmentInfoPlayerBinding.fragmentInfoPlayerContainerArtists.setText(songInfo.artistsNames);
         Picasso.get().load(songInfo.thumbnailM).fit().into(fragmentInfoPlayerBinding.fragmentInfoPlayerContainerImg);
-        fragmentInfoPlayerBinding.fragmentInfoPlayerContainerAlbumTxt.setText(songInfo.isAlbum ? "" : songInfo.title);
+        fragmentInfoPlayerBinding.fragmentInfoPlayerContainerAlbumTxt.setText(songInfo.album.title);
         fragmentInfoPlayerBinding.fragmentInfoPlayerContainerArtistsTxt.setText(songInfo.artistsNames);
-
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                String res = LocalStorageService.getInstance().getString("sif_" + songInfo.encodeId);
-//                if (res.contains("error") || res.equals("")){
-//                    res = BaseAPIService.getInstance().getRequest("getCategoryMV", songInfo.genreIds.get(0));
-//                    LocalStorageService.getInstance().putString("sif_" + songInfo.encodeId, res);
-//                }
-//                GenreDTO grs = new BaseAPIService.Converter<>(GenreDTO.class).get(res);
-//                String genres = "";
-//                for(GenreDTO.Child genreDTO : grs.childs){
-//                    if (songInfo.genreIds.get(1).equals(genreDTO.id)){
-//                        genres += genreDTO.name + ", ";
-//                    }
-//                }
-//                genres = genres.substring(0, genres.length() - 2);
-//                fragmentInfoPlayerBinding.fragmentInfoPlayerContainerTypeTxt.setText(genres);
-//            }
-//        }, 50);
-
-
+        String genres = "";
+        for (int i = 0; i < songInfo.genres.size(); i++) {
+            genres += songInfo.genres.get(i).name;
+            if(i != songInfo.genres.size() - 1){
+                genres += ", ";
+            }
+        }
+        fragmentInfoPlayerBinding.fragmentInfoPlayerContainerGenreTxt.setText(genres);
         fragmentInfoPlayerBinding.fragmentInfoPlayerContainerReleaseTimeTxt.setText(date);
         fragmentInfoPlayerBinding.fragmentInfoPlayerContainerDistributorTxt.setText(songInfo.distributor);
     }
