@@ -7,12 +7,12 @@ import android.os.StrictMode;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.SearchView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.MenuItemCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -25,6 +25,7 @@ import com.ltdd.cringempone.databinding.ActivityMainBinding;
 import com.ltdd.cringempone.service.MediaControlReceiver;
 import com.ltdd.cringempone.ui.homebottom.HomeFragmentBottom;
 import com.ltdd.cringempone.ui.person.PersonFragment;
+import com.ltdd.cringempone.ui.search.SearchResult;
 import com.ltdd.cringempone.ui.settings.SettingsFragment;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
@@ -86,10 +87,11 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-        MenuItem menuItem = menu.findItem(R.id.action_login);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
+        MenuItem menuItem = menu.findItem(R.id.action_search);
+
         return super.onCreateOptionsMenu(menu);
     }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         int id = item.getItemId();
@@ -104,6 +106,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             case R.id.action_settings:
                 Toast.makeText(getBaseContext(),"Settings",Toast.LENGTH_SHORT).show();
                 break;
+            case R.id.action_search:
+                Toast.makeText(this, "Search", Toast.LENGTH_SHORT).show();
+                Intent intent1 = new Intent(MainActivity.this,SearchResult.class);
+                startActivity(intent1);
             default:
         }
         return super.onOptionsItemSelected(item);
