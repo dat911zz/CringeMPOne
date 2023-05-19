@@ -57,9 +57,7 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
                 if (position != MediaControlReceiver.getInstance().getCurrentPos()){
                     MediaControlReceiver.getInstance().setCurrentPos(position);
                 }
-                Intent mediaIntent = new Intent(view.getContext(), PlayerActivity.class);
-                mediaIntent.putExtra("currentSong", MediaControlReceiver.getInstance().getCurrentSong().encodeId);
-                view.getContext().startActivity(mediaIntent);
+                view.getContext().startActivity(new Intent(view.getContext(), PlayerActivity.class));
             }
         });
     }

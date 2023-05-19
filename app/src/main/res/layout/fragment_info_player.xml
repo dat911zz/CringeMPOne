@@ -7,12 +7,148 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <androidx.cardview.widget.CardView
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            >
+            android:layout_height="300dp"
+            android:padding="15dp"
+            android:id="@+id/fragment_info_player_container">
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:id="@+id/fragment_info_player_container_img"
+                android:background="@color/textColor"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/fragment_info_player_container_songName"
+                android:text="Xác định"
+                android:layout_marginLeft="15dp"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:layout_toEndOf="@id/fragment_info_player_container_img"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/fragment_info_player_container_artists"
+                android:layout_toEndOf="@id/fragment_info_player_container_img"
+                android:text="test test"
+                android:layout_marginLeft="15dp"
+                android:textSize="20dp"
+                android:layout_marginTop="15dp"
+                android:layout_below="@id/fragment_info_player_container_songName"
+                android:textColor="@color/textColor"
+                />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/black"
+                android:layout_below="@id/fragment_info_player_container_img"
+                android:layout_marginTop="15dp"
+                android:id="@+id/fragment_info_player_container_divider"/>
+            <RelativeLayout
+                android:layout_width="130dp"
+                android:layout_height="match_parent"
+                android:id="@+id/fragment_info_player_container_lbContainer"
+                android:layout_below="@id/fragment_info_player_container_divider">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Album"
+                    android:textColor="@color/textColor"
+                    android:layout_marginTop="15dp"
+                    android:id="@+id/fragment_info_player_container_album_lb"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nhạc sĩ"
+                    android:textColor="@color/textColor"
+                    android:layout_marginTop="15dp"
+                    android:layout_below="@id/fragment_info_player_container_album_lb"
+                    android:id="@+id/fragment_info_player_container_artists_lb"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Thể loại"
+                    android:textColor="@color/textColor"
+                    android:layout_marginTop="15dp"
+                    android:id="@+id/fragment_info_player_container_type_lb"
+                    android:layout_below="@id/fragment_info_player_container_artists_lb"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ngày phát hành"
+                    android:textColor="@color/textColor"
+                    android:layout_marginTop="15dp"
+                    android:id="@+id/fragment_info_player_container_releaseTime_lb"
+                    android:layout_below="@id/fragment_info_player_container_type_lb"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nhà cung cấp"
+                    android:textColor="@color/textColor"
+                    android:layout_marginTop="15dp"
+                    android:id="@+id/fragment_info_player_container_distributor_lb"
+                    android:layout_below="@id/fragment_info_player_container_releaseTime_lb"
+                    />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/fragment_info_player_container_divider"
+                android:layout_toEndOf="@id/fragment_info_player_container_lbContainer">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Album"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="15dp"
+                    android:id="@+id/fragment_info_player_container_album_txt"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nhạc sĩ"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="15dp"
+                    android:layout_below="@id/fragment_info_player_container_album_txt"
+                    android:id="@+id/fragment_info_player_container_artists_txt"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Thể loại"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="15dp"
+                    android:id="@+id/fragment_info_player_container_type_txt"
+                    android:layout_below="@id/fragment_info_player_container_artists_txt"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ngày phát hành"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="15dp"
+                    android:id="@+id/fragment_info_player_container_releaseTime_txt"
+                    android:layout_below="@id/fragment_info_player_container_type_txt"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nhà cung cấp"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="15dp"
+                    android:id="@+id/fragment_info_player_container_distributor_txt"
+                    android:layout_below="@id/fragment_info_player_container_releaseTime_txt"
+                    />
+            </RelativeLayout>
 
-        </androidx.cardview.widget.CardView>
+        </RelativeLayout>
     </RelativeLayout>
 
 </FrameLayout>

@@ -19,6 +19,7 @@ import com.ltdd.cringempone.R;
 import com.ltdd.cringempone.api.BaseAPIService;
 import com.ltdd.cringempone.data.dto.ItemDTO;
 import com.ltdd.cringempone.data.dto.PlaylistDTO;
+import com.ltdd.cringempone.databinding.ActivityPlaylistBinding;
 import com.ltdd.cringempone.service.LocalStorageService;
 import com.ltdd.cringempone.service.MediaControlReceiver;
 import com.ltdd.cringempone.ui.playlist.adapter.PlaylistAdapter;
@@ -34,10 +35,12 @@ public class PlaylistActivity extends AppCompatActivity {
     private String playlistId;
     private PlaylistDTO playlist;
     private PlaylistViewHolder holder;
+    ActivityPlaylistBinding binding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_playlist);
+        binding = ActivityPlaylistBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         getSupportActionBar().hide();
         playlistId = getIntent().getStringExtra("playlistId");
         Log.e("???", "onCreate: ??? " + playlistId);
@@ -56,11 +59,11 @@ public class PlaylistActivity extends AppCompatActivity {
     }
     public void initViewHolder(){
         holder = new PlaylistViewHolder(
-                findViewById(R.id.playlist_header_img),
-                findViewById(R.id.playlist_header_title),
-                findViewById(R.id.playlist_header_total_song),
-                findViewById(R.id.playlist_header_total_time),
-                findViewById(R.id.playlist_songList)
+                binding.playlistHeaderImg,
+                binding.playlistHeaderTitle,
+                binding.playlistHeaderTotalSong,
+                binding.playlistHeaderTotalTime,
+                binding.playlistSongList
         );
     }
     public void addControl(){

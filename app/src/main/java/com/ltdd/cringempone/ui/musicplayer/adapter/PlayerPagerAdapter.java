@@ -28,7 +28,7 @@ public class PlayerPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position){
             case PLAYER_INFO:
-                return InfoPlayerFragment.newInstance("123", "123");
+                return InfoPlayerFragment.getInstance();
             case PLAYER_MAIN:
                 return MainPlayerFragment.newInstance();
             case PLAYER_LYRIC:

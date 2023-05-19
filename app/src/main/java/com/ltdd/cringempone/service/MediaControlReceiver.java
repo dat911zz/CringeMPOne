@@ -1,38 +1,28 @@
 package com.ltdd.cringempone.service;
 
-import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Color;
-import android.media.Image;
-import android.media.browse.MediaBrowser;
 import android.os.Handler;
 import android.util.Log;
-import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.SeekBar;
-
-import androidx.appcompat.widget.AppCompatButton;
-
-import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.ltdd.cringempone.R;
 import com.ltdd.cringempone.api.BaseAPIService;
 import com.ltdd.cringempone.data.dto.ItemDTO;
-import com.ltdd.cringempone.data.dto.SongInfoDTO;
+import com.ltdd.cringempone.data.dto.Streaming;
 import com.ltdd.cringempone.ui.musicplayer.PlayerViewHolder;
+import com.ltdd.cringempone.ui.musicplayer.ViewPagerPlayerController;
+import com.ltdd.cringempone.utils.CoreHelper;
 import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
 
 public class MediaControlReceiver extends BroadcastReceiver {
+    private final static String TAG = "BroadcastReceiver";
     private static MediaControlReceiver instance; // Singleton instance
     private ExoPlayer exoPlayer;
     private ArrayList<ItemDTO> playList = new ArrayList<>();
@@ -59,19 +49,29 @@ public class MediaControlReceiver extends BroadcastReceiver {
             try{
                 switch (act){
                     case MediaAction.ACTION_PLAY:
-                        exoPlayer.setPlayWhenReady(true);
-                        if (currentPos >= 0 && !isPause){
-                            String songLink = LocalStorageService.getInstance().getString("m_link" + playList.get(currentPos).encodeId);
-                            if (songLink.contains("error") || songLink.equals("")){
-                                String resData = BaseAPIService.getInstance().getStreaming(playList.get(currentPos).encodeId)._128;
-                                LocalStorageService.getInstance().putString("m_link" + playList.get(currentPos).encodeId, resData);
-                                songLink = resData;
+                        new Handler().postDelayed(() -> {
+                            Log.i(TAG, "onReceive: ");
+                            //Load data into viewpager
+                            ViewPagerPlayerController.getInstance().loadDataIntoFragments(getCurrentSong());
+                            //Play song
+                            exoPlayer.setPlayWhenReady(true);
+                            if (currentPos >= 0 && !isPause){
+                                try {
+                                    String songLink = LocalStorageService.getInstance().getString("m_link" + playList.get(currentPos).encodeId);
+                                    if (songLink.contains("error") || songLink.equals("") || BaseAPIService.getInstance().isDown(songLink)) {
+                                        songLink = BaseAPIService.getInstance().getStreaming(playList.get(currentPos).encodeId).data._128;
+                                        LocalStorageService.getInstance().putString("m_link" + playList.get(currentPos).encodeId, songLink);
+                                    }
+                                    MediaItem mediaItem = MediaItem.fromUri(songLink);
+                                    exoPlayer.removeMediaItem(0);
+                                    exoPlayer.setMediaItem(mediaItem);
+                                    exoPlayer.prepare();
+                                }catch (Exception ex) {
+                                    Log.e(TAG, "onReceive: " + ex.getMessage());
+                                }
                             }
-                            MediaItem mediaItem = MediaItem.fromUri(songLink);
-                            exoPlayer.setMediaItem(mediaItem);
-                            exoPlayer.prepare();
-                        }
-                        exoPlayer.play();
+                            exoPlayer.play();
+                        },200);
                         break;
                     case MediaAction.ACTION_PAUSE:
                         exoPlayer.setPlayWhenReady(false);
@@ -129,22 +129,10 @@ public class MediaControlReceiver extends BroadcastReceiver {
         });
 
         viewHolder.getSkipNext().setOnClickListener(v -> {
-            if (currentPos + 1 <= playList.size() - 1){
-                currentPos++;
-            }
-            else{
-                exoPlayer.seekTo(0);
-            }
-            context.sendBroadcast(new Intent(MediaAction.ACTION_PLAY));
+            seekToNextSong(context);
         });
         viewHolder.getSkipPrev().setOnClickListener(v -> {
-            if (currentPos - 1 >= 0){
-                currentPos--;
-            }
-            else{
-                exoPlayer.seekTo(0);
-            }
-            context.sendBroadcast(new Intent(MediaAction.ACTION_PLAY));
+            seekToPrevSong(context);
         });
         viewHolder.getLoop().setOnClickListener(v -> {
 
@@ -165,7 +153,6 @@ public class MediaControlReceiver extends BroadcastReceiver {
         int duration = ((int) exoPlayer.getDuration());
         viewHolder.getSeekBar().setMax(duration);
         viewHolder.getEnd().setText(createTimeText(duration));
-
         exoPlayer.addListener(new Player.Listener() {
             @Override
             public void onPlaybackStateChanged(int playbackState) {
@@ -173,8 +160,9 @@ public class MediaControlReceiver extends BroadcastReceiver {
                 // Example: Update UI based on playback state
                 if (playbackState == Player.STATE_BUFFERING) {
                     // Show buffering indicator
-
+                    Log.i(TAG, "onPlaybackStateChanged: buffering...");
                 } else if (playbackState == Player.STATE_READY) {
+                    Log.i(TAG, "onPlaybackStateChanged: play");
                     // Playback is ready, update UI accordingly
                     if (exoPlayer.getPlayWhenReady()) {
                         // Player is in play state
@@ -186,10 +174,12 @@ public class MediaControlReceiver extends BroadcastReceiver {
                     } else {
                         // Player is in pause state
                         // Example: Handle pause event with a Handler
+                        Log.i(TAG, "onPlaybackStateChanged: pause");
                         viewHolder.getPlay().setBackgroundResource(R.drawable.baseline_play_arrow_24);
                     }
                 } else if (playbackState == Player.STATE_ENDED) {
                     // Playback ended, update UI accordingly
+                    Log.i(TAG, "onPlaybackStateChanged: ended");
                 }
             }
         });
@@ -200,6 +190,9 @@ public class MediaControlReceiver extends BroadcastReceiver {
                     exoPlayer.seekTo(progress);
                     viewHolder.getSeekBar().setProgress(progress);
                     Log.i("On progress", "onProgressChanged: " + seekBar.getMax());
+                }
+                if (progress == seekBar.getMax()){
+                    seekToNextSong(context);
                 }
             }
             //#region Các hàm không xài tới
@@ -228,6 +221,24 @@ public class MediaControlReceiver extends BroadcastReceiver {
             }
         }, 0);
 
+    }
+    public void seekToNextSong(Context context){
+        if (currentPos + 1 <= playList.size() - 1){
+            currentPos++;
+        }
+        else{
+            exoPlayer.seekTo(0);
+        }
+        context.sendBroadcast(new Intent(MediaAction.ACTION_PLAY));
+    }
+    public void seekToPrevSong(Context context){
+        if (currentPos - 1 >= 0){
+            currentPos--;
+        }
+        else{
+            exoPlayer.seekTo(0);
+        }
+        context.sendBroadcast(new Intent(MediaAction.ACTION_PLAY));
     }
     private String createTimeText(int time){
         String timeText;
