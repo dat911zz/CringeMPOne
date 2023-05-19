@@ -30,7 +30,12 @@
         android:layout_below="@id/cardView"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="30dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:text="Banh Não Đi Bạn"
+        android:maxLines="1"
+        android:maxLength="30"
+        android:ellipsize="marquee"
         android:textColor="@color/textColor"
         android:textSize="25dp"/>
     <TextView

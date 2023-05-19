@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -27,6 +28,7 @@ public class MediaControlReceiver extends BroadcastReceiver {
     private ExoPlayer exoPlayer;
     private ArrayList<ItemDTO> playList = new ArrayList<>();
     private int currentPos;
+    private boolean isSkip = false;
     public boolean isRegister;
     private Boolean isShuffle = false
             , isLoop = false;
@@ -55,8 +57,11 @@ public class MediaControlReceiver extends BroadcastReceiver {
                             ViewPagerPlayerController.getInstance().loadDataIntoFragments(getCurrentSong().encodeId);
                             //Play song
                             exoPlayer.setPlayWhenReady(true);
-                            if (currentPos >= 0 && !isPause){
+                            if (currentPos >= 0 && !isPause || isSkip){
                                 try {
+                                    if (isSkip){
+                                        isSkip = false;
+                                    }
                                     String songLink = LocalStorageService.getInstance().getString("m_link" + playList.get(currentPos).encodeId);
                                     if (songLink.contains("error") || songLink.equals("") || BaseAPIService.getInstance().isDown(songLink)) {
                                         songLink = BaseAPIService.getInstance().getStreaming(playList.get(currentPos).encodeId).data._128;
@@ -116,37 +121,69 @@ public class MediaControlReceiver extends BroadcastReceiver {
         }
         playList.addAll(items);
     }
+    public static long lastClickTime = 0;
+    public static final long DOUBLE_CLICK_TIME_DELTA = 500;
+
+    public static boolean isDoubleClick(){
+        long clickTime = System.currentTimeMillis();
+        if(clickTime - lastClickTime < DOUBLE_CLICK_TIME_DELTA){
+            lastClickTime = clickTime;
+            return true;
+        }
+        lastClickTime = clickTime;
+        return false;
+    }
     public void addControl(Context context, PlayerViewHolder viewHolder){
         viewHolder.getPlay().setOnClickListener(v -> {
-            if(!exoPlayer.isPlaying()) {
-                viewHolder.getPlay().setBackgroundResource(R.drawable.baseline_pause_24);
-                context.sendBroadcast(new Intent(MediaAction.ACTION_PLAY));
-            }
-            else{
-                viewHolder.getPlay().setBackgroundResource(R.drawable.baseline_play_arrow_24);
-                context.sendBroadcast(new Intent(MediaAction.ACTION_PAUSE));
+            if (!isDoubleClick()){
+                if(!exoPlayer.isPlaying()) {
+                    viewHolder.getPlay().setBackgroundResource(R.drawable.baseline_pause_24);
+                    context.sendBroadcast(new Intent(MediaAction.ACTION_PAUSE));
+                    context.sendBroadcast(new Intent(MediaAction.ACTION_PLAY));
+                }
+                else{
+                    viewHolder.getPlay().setBackgroundResource(R.drawable.baseline_play_arrow_24);
+                    context.sendBroadcast(new Intent(MediaAction.ACTION_PAUSE));
+                    context.sendBroadcast(new Intent(MediaAction.ACTION_PAUSE));
+                }
             }
         });
-
         viewHolder.getSkipNext().setOnClickListener(v -> {
-            seekToNextSong(context);
+            if (!isDoubleClick()){
+                isSkip = true;
+                seekToNextSong(context);
+            }
         });
         viewHolder.getSkipPrev().setOnClickListener(v -> {
-            seekToPrevSong(context);
+            if (!isDoubleClick()){
+                isSkip = true;
+                seekToPrevSong(context);
+            }
         });
         viewHolder.getLoop().setOnClickListener(v -> {
-
+            if (!isDoubleClick()){
+                if (!isLoop){
+                    isLoop = true;
+                    viewHolder.getLoop().setBackground(v.getResources().getDrawable(R.drawable.baseline_loop_24_on));
+                    exoPlayer.setRepeatMode(Player.REPEAT_MODE_ONE);
+                }
+                else{
+                    isLoop = false;
+                    viewHolder.getLoop().setBackground(v.getResources().getDrawable(R.drawable.baseline_loop_24));
+                    exoPlayer.setRepeatMode(Player.REPEAT_MODE_OFF);
+                }
+            }
         });
         viewHolder.getShuffle().setOnClickListener(v -> {
-            if (!isShuffle){
-                exoPlayer.setShuffleModeEnabled(true);
-                isShuffle = true;
-                viewHolder.getShuffle().setBackground(v.getResources().getDrawable(R.drawable.baseline_shuffle_24_on));
-            }
-            else{
-                exoPlayer.setShuffleModeEnabled(false);
-                isShuffle = false;
-                viewHolder.getShuffle().setBackground(v.getResources().getDrawable(R.drawable.baseline_shuffle_24));
+            if (!isDoubleClick()){
+                if (!isShuffle){
+                    isShuffle = true;
+                    viewHolder.getShuffle().setBackground(v.getResources().getDrawable(R.drawable.baseline_shuffle_24_on));
+                }
+                else{
+                    isShuffle = false;
+                    viewHolder.getShuffle().setBackground(v.getResources().getDrawable(R.drawable.baseline_shuffle_24));
+                }
             }
         });
         //Jump to current pos of current playing song
@@ -191,7 +228,7 @@ public class MediaControlReceiver extends BroadcastReceiver {
                     viewHolder.getSeekBar().setProgress(progress);
                     Log.i("On progress", "onProgressChanged: " + seekBar.getMax());
                 }
-                if (progress == seekBar.getMax()){
+                if (progress == seekBar.getMax() && !isLoop){
                     seekToNextSong(context);
                 }
             }

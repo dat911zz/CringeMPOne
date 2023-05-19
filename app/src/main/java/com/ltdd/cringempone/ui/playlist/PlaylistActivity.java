@@ -75,16 +75,11 @@ public class PlaylistActivity extends AppCompatActivity {
                 TimeUnit.SECONDS.toMinutes(playlist.song.totalDuration) -
                         TimeUnit.HOURS.toMinutes(TimeUnit.SECONDS.toHours(playlist.song.totalDuration))
         ));
-
+        binding.playlistBackBtn.setOnClickListener(v -> onBackPressed());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         PlaylistAdapter adapter = new PlaylistAdapter(playlist.song.items);
         Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                MediaControlReceiver.getInstance().addPlaylist((ArrayList<ItemDTO>) playlist.song.items);
-            }
-        }, 0);
+        handler.postDelayed(() -> MediaControlReceiver.getInstance().addPlaylist(playlist.song.items), 0);
         holder.pSongList.setLayoutManager(linearLayoutManager);
         holder.pSongList.setAdapter(adapter);
     }
