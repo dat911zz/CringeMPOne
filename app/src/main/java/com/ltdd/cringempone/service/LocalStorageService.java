@@ -37,4 +37,9 @@ public class LocalStorageService {
         editor.putString(key, value);
         editor.commit();
     }
+    public void clear(){
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.clear();
+        editor.commit();
+    }
 }

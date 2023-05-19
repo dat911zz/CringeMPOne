@@ -52,7 +52,7 @@ public class MediaControlReceiver extends BroadcastReceiver {
                         new Handler().postDelayed(() -> {
                             Log.i(TAG, "onReceive: ");
                             //Load data into viewpager
-                            ViewPagerPlayerController.getInstance().loadDataIntoFragments(getCurrentSong());
+                            ViewPagerPlayerController.getInstance().loadDataIntoFragments(getCurrentSong().encodeId);
                             //Play song
                             exoPlayer.setPlayWhenReady(true);
                             if (currentPos >= 0 && !isPause){
@@ -141,12 +141,12 @@ public class MediaControlReceiver extends BroadcastReceiver {
             if (!isShuffle){
                 exoPlayer.setShuffleModeEnabled(true);
                 isShuffle = true;
-                viewHolder.getShuffle().setTextColor(v.getResources().getColor(R.color.btn_off));
+                viewHolder.getShuffle().setBackground(v.getResources().getDrawable(R.drawable.baseline_shuffle_24_on));
             }
             else{
                 exoPlayer.setShuffleModeEnabled(false);
                 isShuffle = false;
-                viewHolder.getShuffle().setTextColor(v.getResources().getColor(R.color.btn_on));
+                viewHolder.getShuffle().setBackground(v.getResources().getDrawable(R.drawable.baseline_shuffle_24));
             }
         });
         //Jump to current pos of current playing song
