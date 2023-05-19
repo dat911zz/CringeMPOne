@@ -108,14 +108,16 @@ public class BaseAPIService {
     public List<String> convertRes2Sentences(String res){
         List<String> sentences = new ArrayList<>();
 
-        new BaseAPIService.Converter<>(LyricDTO.class).get(res).sentences.forEach(sentence -> {
-            String result = "";
-            for(LyricDTO.Word word : sentence.words){
-                result += " " + word.data;
-            }
-            sentences.add(result);
-        });
-
+        LyricDTO lyricDTO = new BaseAPIService.Converter<>(LyricDTO.class).get(res);
+        if (lyricDTO.sentences != null){
+            lyricDTO.sentences.forEach(sentence -> {
+                String result = "";
+                for(LyricDTO.Word word : sentence.words){
+                    result += " " + word.data;
+                }
+                sentences.add(result);
+            });
+        }
         return sentences;
     }
     public boolean isDown(String url){

@@ -17,6 +17,7 @@ import com.squareup.picasso.Picasso;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 public class ViewPagerPlayerController {
     private static ViewPagerPlayerController instance;
@@ -70,13 +71,18 @@ public class ViewPagerPlayerController {
         fragmentMainPlayerBinding.txtSongName.setText(songInfo.title);
         MediaControlReceiver.getInstance().executeDisc(fragmentMainPlayerBinding.imgDisc);
         //Lyric
-        fragmentLyricPlayerBinding.fragmentLyricPlayerListview.setAdapter(
-                new ArrayAdapter<>(
-                        fragmentLyricPlayerBinding.getRoot().getContext(),
-                        R.layout.fragment_lyric_player_list_item_layout,
-                        R.id.fragment_lyric_list_item_list_content,
-                        BaseAPIService.getInstance().fetchLyricData())
-        );
+        List<String> lyric = BaseAPIService.getInstance().fetchLyricData();
+        if (lyric.size() > 0){
+            fragmentLyricPlayerBinding.fragmentLyricPlayerListview.setAdapter(
+                    new ArrayAdapter<>(
+                            fragmentLyricPlayerBinding.getRoot().getContext(),
+                            R.layout.fragment_lyric_player_list_item_layout,
+                            R.id.fragment_lyric_list_item_list_content,
+                            lyric
+                            )
+            );
+        }
+
         //Info
         SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy, hh:mm aa");
         String date = df.format(new Date(new Timestamp(songInfo.releaseDate * 1000L).getTime()));// Convert epoch time to timeStamp
