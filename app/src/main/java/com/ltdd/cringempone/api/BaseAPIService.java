@@ -5,14 +5,26 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import com.ltdd.cringempone.data.dto.GenreDTO;
+import com.ltdd.cringempone.data.dto.LyricDTO;
 import com.ltdd.cringempone.data.dto.ResponseDTO;
 import com.ltdd.cringempone.data.dto.SearchDTO;
 import com.ltdd.cringempone.data.dto.SongInfoDTO;
 import com.ltdd.cringempone.data.dto.Streaming;
 import com.ltdd.cringempone.data.dto.TopDTO;
+import com.ltdd.cringempone.service.LocalStorageService;
+import com.ltdd.cringempone.service.MediaControlReceiver;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
+import java.net.CookieHandler;
+import java.net.CookieManager;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 public class BaseAPIService {
     private String hostAPI = "https://cringe-mp3-api.vercel.app/api/";
@@ -20,6 +32,7 @@ public class BaseAPIService {
     static GsonBuilder builder;
     static Gson gson;
     public static BaseAPIService getInstance(){
+        CookieHandler.setDefault(new CookieManager());
         return new BaseAPIService();
     }
     public BaseAPIService() {
@@ -31,6 +44,22 @@ public class BaseAPIService {
         httpGetRequest.execute(hostAPI + path + "/" + (pram.length <= 0  ? "" : pram[0]));
         try {
             if (httpGetRequest.get() == null){
+                throw new Exception("No Respond!");
+            }
+            String result = httpGetRequest.get();
+            Log.i("BaseAPI", result);
+            return result;
+        } catch (Exception e) {
+            String err = e.getMessage() != null ? e.getMessage() : "";
+            Log.e(LOG_TAG, "getRequest: " + err);
+            return String.format("{\"error\":\"404\",\"mess:\":\"No respond\"}");
+        }
+    }
+    public String getRequestFromURL(String url) {
+        HttpGetRequest httpGetRequest = new HttpGetRequest();
+        httpGetRequest.execute(url);
+        try {
+            if (httpGetRequest.get() == null) {
                 throw new Exception("No Respond!");
             }
             String result = httpGetRequest.get();
@@ -59,10 +88,54 @@ public class BaseAPIService {
     }
     public Streaming getStreaming(String songId){
         String res = getRequest("getStreaming", songId);
-        if (res.contains("err")){
-            return null;
+        Streaming streaming = new Converter<>(Streaming.class).get(res);
+        if (streaming.url != null){
+            streaming = new Converter<Streaming>(Streaming.class).get(getRequestFromURL(streaming.url));
+            streaming = new Converter<Streaming>(Streaming.class).get(getRequestFromURL(streaming.url));
         }
-        return new Converter<Streaming>(Streaming.class).get(res);
+        return streaming;
+    }
+    public List<String> fetchLyricData(){
+        String res = LocalStorageService.getInstance().getString("lrc_" + MediaControlReceiver.getInstance().getCurrentSong().encodeId);
+        if (res.contains("error") || res.equals("")){
+            res = BaseAPIService.getInstance().getRequest(
+                    "getLyric",
+                    MediaControlReceiver.getInstance().getCurrentSong().encodeId
+            );
+            LocalStorageService.getInstance().putString("lrc_" + MediaControlReceiver.getInstance().getCurrentSong().encodeId, res);
+        }
+        return convertRes2Sentences(res);
+    }
+    public List<String> convertRes2Sentences(String res){
+        List<String> sentences = new ArrayList<>();
+
+        LyricDTO lyricDTO = new BaseAPIService.Converter<>(LyricDTO.class).get(res);
+        if (lyricDTO.sentences != null){
+            lyricDTO.sentences.forEach(sentence -> {
+                String result = "";
+                for(LyricDTO.Word word : sentence.words){
+                    result += " " + word.data;
+                }
+                sentences.add(result);
+            });
+        }
+        return sentences;
+    }
+    public boolean isDown(String url){
+        try{
+            HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+            conn.setRequestMethod("GET");
+            conn.connect();
+            int code = conn.getResponseCode();
+            if (code == 404 || code == 403 || code == 500){
+                return true;
+            }
+            return false;
+        } catch (MalformedURLException e) {
+            return true;
+        } catch (IOException e) {
+            return true;
+        }
     }
 
     public SearchDTO getSearchResult(String txtSearch)
@@ -79,11 +152,21 @@ public class BaseAPIService {
             this.cls = cls;
         }
         public T get(String jsonRes){
-            return gson.fromJson(jsonRes, cls);
+            try{
+                return gson.fromJson(jsonRes, cls);
+            }catch (Exception ex){
+                Log.e("API Converter", "get: " + ex.getMessage());
+                return null;
+            }
         }
         public ArrayList<T> getList(String jsonRes){
-            Type listType = TypeToken.getParameterized(ArrayList.class, cls).getType();
-            return gson.fromJson(jsonRes, listType);
+            try{
+                return gson.fromJson(jsonRes, TypeToken.getParameterized(ArrayList.class, cls).getType());
+            }catch (Exception ex){
+                Log.e("API Converter", "getList: " + ex.getMessage());
+                return null;
+            }
+
         }
     }
 }

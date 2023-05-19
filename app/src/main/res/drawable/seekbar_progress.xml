@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@android:id/background">
+        <shape android:shape="rectangle">
+            <solid
+                android:color="@color/btn_off" />
+            <corners android:radius="2dp" />
+        </shape>
+    </item>
     <item android:id="@android:id/progress">
         <clip>
-            <shape>
-                <corners android:radius="50dp" />
+            <shape android:shape="rectangle">
                 <gradient
                     android:endColor="#DF64CF"
                     android:startColor="#7700FF"
                     android:useLevel="true"
                     android:type="linear" />
+                <corners android:radius="2dp" />
             </shape>
         </clip>
     </item>

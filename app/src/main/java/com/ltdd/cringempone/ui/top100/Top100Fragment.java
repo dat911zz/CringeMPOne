@@ -39,11 +39,14 @@ public class Top100Fragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentTop100Binding.inflate(inflater, container, false);
         RecyclerView parentRecycleViewItem = binding.getRoot().findViewById(R.id.top100_parent_recyclerview);
-        if (LocalStorageService.getInstance().getString("top100s").contains("error") || LocalStorageService.getInstance().getString("top100s").equals("")){
-            top100s = BaseAPIService.getInstance().getTop100List(BaseAPIService.getInstance().getRequest("top100"));
+        String res = LocalStorageService.getInstance().getString("top100s");
+        if (res.contains("error") || res.equals("")){
+            res = BaseAPIService.getInstance().getRequest("top100");
+            top100s = BaseAPIService.getInstance().getTop100List(res);
+            LocalStorageService.getInstance().putString("top100s", res);
         }
         else{
-            top100s = BaseAPIService.getInstance().getTop100List(LocalStorageService.getInstance().getString("top100s"));
+            top100s = BaseAPIService.getInstance().getTop100List(res);
         }
         if(top100s != null){
             LinearLayoutManager layoutManager = new LinearLayoutManager(binding.getRoot().getContext());

@@ -26,6 +26,8 @@ import java.util.List;
 public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.PlaylistViewHolder> {
     private List<PlaylistItem> playlistItemList;
     private List<ItemDTO> items;
+    int lastClickedPos = 0;
+
 
     public PlaylistAdapter(ArrayList<ItemDTO> items) {
         this.items = items;
@@ -57,11 +59,17 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
                 if (position != MediaControlReceiver.getInstance().getCurrentPos()){
                     MediaControlReceiver.getInstance().setCurrentPos(position);
                 }
-                Intent mediaIntent = new Intent(view.getContext(), PlayerActivity.class);
-                mediaIntent.putExtra("currentSong", MediaControlReceiver.getInstance().getCurrentSong().encodeId);
-                view.getContext().startActivity(mediaIntent);
+                view.getContext().startActivity(new Intent(view.getContext(), PlayerActivity.class));
             }
         });
+        if (position == MediaControlReceiver.getInstance().getCurrentPos()){
+            holder.title.setText("▶  " + holder.title.getText());
+        }
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
     }
 
     @Override

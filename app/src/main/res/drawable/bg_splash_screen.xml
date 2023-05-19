@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:drawable="@color/textSubtitleColor"/>
-
-    <item
-        android:drawable="@mipmap/ic_launcher"
-        android:gravity="center">
+        android:drawable="@drawable/gradient_background_theme_2"/>
+    <item>
+        <bitmap android:gravity="center"
+            android:src="@drawable/disklogov2"/>
     </item>
-</selector>
+</layer-list>
