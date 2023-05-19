@@ -28,13 +28,8 @@ public class SplashScreenActivity extends AppCompatActivity {
         Handler handler = new Handler();
         LocalStorageService.getInstance().initLocalStorage(this);
         fetchDataFromServer();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                finish();
-            }
-        }, 3000);
+        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        finish();
     }
     public void fetchDataFromServer(){
         String top100s = LocalStorageService.getInstance().getString("top100s");
