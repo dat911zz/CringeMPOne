@@ -44,6 +44,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.ltdd.cringempone.MainActivity;
 import com.ltdd.cringempone.R;
+import com.ltdd.cringempone.firebase.DBUser;
 
 import java.util.Arrays;
 
@@ -68,7 +69,7 @@ public class RegisterActivity extends AppCompatActivity {
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser != null){
-            Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+            Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
             startActivity(intent);
         }
     }
@@ -176,8 +177,8 @@ public class RegisterActivity extends AppCompatActivity {
                         if(task.isSuccessful()){
                             FirebaseUser currentUser = mAuth.getCurrentUser();
                             //Thêm dử liệu users vào Realtime
-//                            UsersTest users = new UsersTest(currentUser.getEmail(),currentUser.getDisplayName());
-//                            userDbRef.push().setValue(users);
+                            DBUser users = new DBUser();
+                            users.createUser(currentUser.getUid(),currentUser.getDisplayName(),currentUser.getEmail());
 
                             Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
                             startActivity(intent);
@@ -257,9 +258,10 @@ public class RegisterActivity extends AppCompatActivity {
                                     if(task.isSuccessful()){
                                         //Tạo tài khoản thành công thì trở về màn hình đăng nhập
                                         Toast.makeText(RegisterActivity.this, "Tạo tài khoản thành công. Vui lòng xác nhận Email.", Toast.LENGTH_SHORT).show();
-                                        //Thêm dử liệu users vào realtime
-//                                        UsersTest users = new UsersTest(email,userName);
-//                                        userDbRef.push().setValue(users);
+                                        FirebaseUser currentUser = mAuth.getCurrentUser();
+                                        //Thêm dử liệu users vào Realtime
+                                        DBUser users = new DBUser();
+                                        users.createUser(currentUser.getUid(),userName,currentUser.getEmail(),password);
 
                                         Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                                         startActivity(intent);
@@ -297,8 +299,8 @@ public class RegisterActivity extends AppCompatActivity {
                                         if (task.isSuccessful()) {
                                             FirebaseUser currentUser = mAuth.getCurrentUser();
                                             //Thêm dử liệu users vào Realtime
-//                                            UsersTest users = new UsersTest(currentUser.getEmail(), currentUser.getDisplayName());
-//                                            userDbRef.push().setValue(users);
+                                            DBUser users = new DBUser();
+                                            users.createUser(currentUser.getUid(),currentUser.getDisplayName(),currentUser.getEmail());
 
                                             Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
                                             startActivity(intent);

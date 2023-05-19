@@ -39,9 +39,11 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.ltdd.cringempone.MainActivity;
 import com.ltdd.cringempone.R;
+import com.ltdd.cringempone.firebase.DBUser;
 
 import java.util.Arrays;
 
@@ -188,6 +190,11 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
+                            FirebaseUser currentUser = mAuth.getCurrentUser();
+                            //Thêm dử liệu users vào Realtime
+                            DBUser users = new DBUser();
+                            users.createUser(currentUser.getUid(),currentUser.getDisplayName(),currentUser.getEmail());
+
                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                             startActivity(intent);
                             finish();
@@ -228,6 +235,11 @@ public class LoginActivity extends AppCompatActivity {
                                     @Override
                                     public void onComplete(@NonNull Task<AuthResult> task) {
                                         if (task.isSuccessful()) {
+                                            FirebaseUser currentUser = mAuth.getCurrentUser();
+                                            //Thêm dử liệu users vào Realtime
+                                            DBUser users = new DBUser();
+                                            users.createUser(currentUser.getUid(),currentUser.getDisplayName(),currentUser.getEmail());
+
                                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                             startActivity(intent);
                                             finish();
