@@ -13,7 +13,7 @@ public class SearchPlaylistDTO {
     public boolean isIndie;
     public String releaseDate;
     public String sortDescription;
-    public int releasedAt;
+    public long releasedAt;
     public ArrayList<String> genreIds;
     @SerializedName(value = "PR")
     public boolean pR;

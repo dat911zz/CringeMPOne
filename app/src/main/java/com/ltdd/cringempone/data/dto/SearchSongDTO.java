@@ -20,11 +20,10 @@ public class SearchSongDTO {
     public boolean preRelease;
     public int releaseDate;
     public ArrayList<String> genreIds;
-    public ArrayList<AlbumDTO> album;
     public String distributor;
     public ArrayList<String> indicators;
     public boolean isIndie;
     public int streamingStatus;
-    public int downloadPrivileges;
     public boolean allowAudioAds;
+    public boolean hasLyric;
 }
