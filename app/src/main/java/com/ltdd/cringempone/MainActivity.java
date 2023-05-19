@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.view.View;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,6 +46,7 @@ import com.ltdd.cringempone.ui.activity.LoginActivity;
 import com.ltdd.cringempone.ui.activity.RegisterActivity;
 import com.ltdd.cringempone.ui.homebottom.HomeFragmentBottom;
 import com.ltdd.cringempone.ui.person.PersonFragment;
+import com.ltdd.cringempone.ui.search.SearchResult;
 import com.ltdd.cringempone.ui.settings.SettingsFragment;
 
 import java.io.IOException;
@@ -108,7 +110,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         setContentView(binding.getRoot());
         setSupportActionBar(binding.appBarMain.toolbar);
         addControl();
-
     }
     public void addControl(){
         if (!MediaControlReceiver.getInstance().isRegister){
@@ -187,16 +188,17 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         int id = item.getItemId();
         switch (id){
             case R.id.action_login:
-                Intent intent = new Intent(this, LoginActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(this, LoginActivity.class));
                 break;
             case R.id.action_register:
-                Intent intent1 = new Intent(this, RegisterActivity.class);
-                startActivity(intent1);
+                startActivity(new Intent(this, RegisterActivity.class));
                 break;
             case R.id.action_settings:
                 Toast.makeText(getBaseContext(),"Settings",Toast.LENGTH_SHORT).show();
                 break;
+            case R.id.action_search:
+                Toast.makeText(this, "Search", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(MainActivity.this,SearchResult.class));
             default:
         }
         return super.onOptionsItemSelected(item);
