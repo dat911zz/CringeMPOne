@@ -55,7 +55,7 @@ public class SearchMediaControl extends BroadcastReceiver {
                         if (currentPos >= 0 && !isPause){
                             String songLink = LocalStorageService.getInstance().getString("m_link" + playList.get(currentPos).encodeId);
                             if (songLink.contains("error") || songLink.equals("")){
-                                String resData = BaseAPIService.getInstance().getStreaming(playList.get(currentPos).encodeId)._128;
+                                String resData = BaseAPIService.getInstance().getStreaming(playList.get(currentPos).encodeId).data._128;
                                 LocalStorageService.getInstance().putString("m_link" + playList.get(currentPos).encodeId, resData);
                                 songLink = resData;
                             }
