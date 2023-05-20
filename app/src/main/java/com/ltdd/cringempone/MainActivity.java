@@ -1,9 +1,7 @@
 package com.ltdd.cringempone;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
@@ -16,31 +14,36 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.MenuItemCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
-import com.ltdd.cringempone.api.BaseAPIService;
-import com.ltdd.cringempone.api.CringeAPIService;
-import com.ltdd.cringempone.data.dto.TopDTO;
 import com.ltdd.cringempone.databinding.ActivityMainBinding;
+import com.ltdd.cringempone.service.MediaControlReceiver;
 import com.ltdd.cringempone.ui.homebottom.HomeFragmentBottom;
 import com.ltdd.cringempone.ui.person.PersonFragment;
 import com.ltdd.cringempone.ui.settings.SettingsFragment;
-
-import java.util.ArrayList;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import com.ltdd.cringempone.ui.slideshow.SlideshowFragment;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
     private AppBarConfiguration mAppBarConfiguration;
+
     private ActivityMainBinding binding;
+
     BottomNavigationView bottomNavigationView;
+    PersonFragment personFragment = new PersonFragment();
+    HomeFragmentBottom homeFragmentBottom = new HomeFragmentBottom();
+
+    SlideshowFragment slideshowFragment = new SlideshowFragment();
+
+    SettingsFragment settingsFragment = new SettingsFragment();
     String TAG = "APP";
     String[] testRs = new String[1];
     @SuppressLint("MissingInflatedId")
@@ -57,10 +60,36 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setSupportActionBar(binding.appBarMain.toolbar);
+
+        addControl();
+        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                Fragment fragment;
+                switch (item.getItemId()) {
+                    case R.id.person:
+                        fragment = new PersonFragment();
+                        setTitle("Cá Nhân");
+                        binding.navView.getMenu().findItem(R.id.nav_gallery).setChecked(true);
+                        loadFragment(fragment);
+                        return true;
+                    case R.id.home:
+                        fragment = new HomeFragmentBottom();
+                        binding.navView.getMenu().findItem(R.id.nav_home).setChecked(true);
+                        setTitle("Trang Chủ");
+                        loadFragment(fragment);
+                        return true;
+                }
+                return true;
+            }
+        });
+    }
+    public void addControl(){
+        if (!MediaControlReceiver.getInstance().isRegister){
+            MediaControlReceiver.getInstance().registerReceiver(this);
+        }
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow, R.id.nav_top100)
                 .setOpenableLayout(drawer)
@@ -70,12 +99,9 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         NavigationUI.setupWithNavController(navigationView, navController);
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
-        bottomNavigationView.setSelectedItemId(R.id.person);
+        bottomNavigationView.setSelectedItemId(R.id.home);
+        bottomNavigationView.getMenu().findItem(R.id.home).setChecked(true);
     }
-    PersonFragment personFragment = new PersonFragment();
-    HomeFragmentBottom homeFragmentBottom = new HomeFragmentBottom();
-    SettingsFragment settingsFragment = new SettingsFragment();
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -122,14 +148,30 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
         switch (item.getItemId()) {
-            case R.id.person:
-                getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_main, personFragment).commit();
+            case R.id.nav_gallery:
+                loadFragment(personFragment);
+                bottomNavigationView.getMenu().findItem(R.id.home).setChecked(false);
+                bottomNavigationView.getMenu().findItem(R.id.person).setChecked(true);
+                bottomNavigationView.setSelectedItemId(R.id.person);
                 return true;
-
-            case R.id.home:
-                getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_main, homeFragmentBottom).commit();
+            case R.id.nav_home:
+                loadFragment(homeFragmentBottom);
+                bottomNavigationView.getMenu().findItem(R.id.person).setChecked(false);
+                bottomNavigationView.getMenu().findItem(R.id.home).setChecked(true);
+                bottomNavigationView.setSelectedItemId(R.id.home);
+                return true;
+            case R.id.nav_slideshow:
+                loadFragment(slideshowFragment);
                 return true;
         }
         return false;
+    }
+    private void loadFragment(Fragment fragment) {
+        // load fragment
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.nav_host_fragment_content_main, fragment);
+        transaction.addToBackStack(null);
+        getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+        transaction.commit();
     }
 }
