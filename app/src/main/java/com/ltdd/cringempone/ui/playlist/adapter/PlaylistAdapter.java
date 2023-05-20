@@ -26,6 +26,8 @@ import java.util.List;
 public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.PlaylistViewHolder> {
     private List<PlaylistItem> playlistItemList;
     private List<ItemDTO> items;
+    int lastClickedPos = 0;
+
 
     public PlaylistAdapter(ArrayList<ItemDTO> items) {
         this.items = items;
@@ -51,21 +53,23 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
         holder.title.setText(item.getTitle());
         holder.artistsNames.setText(item.getArtistsNames());
         Picasso.get().load(item.getImgLink()).into(holder.img);
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                MediaControlReceiver.getInstance().addPlaylist((ArrayList<ItemDTO>) items);
-            }
-        }, 0);
         holder.setItemClickListener(new RecyclerViewItemClickListener() {
             @Override
             public void onClick(View view, int position, boolean isLongClick) {
-                MediaControlReceiver.getInstance().setCurrentPos(position);
-                Intent mediaIntent = new Intent(view.getContext(), PlayerActivity.class);
-                view.getContext().startActivity(mediaIntent);
+                if (position != MediaControlReceiver.getInstance().getCurrentPos()){
+                    MediaControlReceiver.getInstance().setCurrentPos(position);
+                }
+                view.getContext().startActivity(new Intent(view.getContext(), PlayerActivity.class));
             }
         });
+        if (position == MediaControlReceiver.getInstance().getCurrentPos()){
+            holder.title.setText("▶  " + holder.title.getText());
+        }
+    }
+
+    @Override
+    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
     }
 
     @Override

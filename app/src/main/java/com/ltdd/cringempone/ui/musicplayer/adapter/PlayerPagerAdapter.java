@@ -28,15 +28,9 @@ public class PlayerPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position){
             case PLAYER_INFO:
-                return InfoPlayerFragment.newInstance("123", "123");
+                return InfoPlayerFragment.getInstance();
             case PLAYER_MAIN:
-                MediaControlReceiver mediaControl = MediaControlReceiver.getInstance();
-                return MainPlayerFragment.newInstance(
-                        mediaControl.getCurrentSong() != null ?
-                                mediaControl.getCurrentSong().title : "---",
-                        mediaControl.getCurrentSong() != null ?
-                                mediaControl.getCurrentSong().artists.get(0).name : "---"
-                );
+                return MainPlayerFragment.newInstance();
             case PLAYER_LYRIC:
                 return LyricPlayerFragment.newInstance();
         }

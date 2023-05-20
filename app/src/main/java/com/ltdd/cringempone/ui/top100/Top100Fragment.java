@@ -1,14 +1,9 @@
 package com.ltdd.cringempone.ui.top100;
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,12 +16,11 @@ import com.ltdd.cringempone.api.BaseAPIService;
 import com.ltdd.cringempone.data.dto.ItemDTO;
 import com.ltdd.cringempone.data.dto.TopDTO;
 import com.ltdd.cringempone.databinding.Top100ChildrenItemBinding;
-import com.ltdd.cringempone.service.MediaControlReceiver;
-import com.ltdd.cringempone.ui.musicplayer.PlayerActivity;
+import com.ltdd.cringempone.service.LocalStorageService;
 import com.ltdd.cringempone.ui.musicplayer.adapter.ParentItemAdapter;
 import com.ltdd.cringempone.ui.musicplayer.model.ChildItem;
 import com.ltdd.cringempone.ui.musicplayer.model.ParentItem;
-import com.ltdd.cringempone.utils.Helper;
+import com.ltdd.cringempone.utils.CoreHelper;
 import com.ltdd.cringempone.databinding.FragmentTop100Binding;
 
 import java.util.ArrayList;
@@ -44,27 +38,16 @@ public class Top100Fragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentTop100Binding.inflate(inflater, container, false);
-        Button btn = binding.btnGotoPlayer;
         RecyclerView parentRecycleViewItem = binding.getRoot().findViewById(R.id.top100_parent_recyclerview);
-
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Helper.MediaProgressDialog.showDialog(v.getContext());
-                MediaControlReceiver.getInstance().addPlaylist(new ArrayList<>() { });
-
-                Intent it = new Intent(v.getContext(), PlayerActivity.class);
-                startActivity(it);
-            }
-        });
-        SharedPreferences prefs = getContext().getSharedPreferences("LocalStorage", Context.MODE_PRIVATE);
-        if (prefs.getString("top100s", "").contains("err")){
-            top100s = BaseAPIService.getInstance().getTop100List(BaseAPIService.getInstance().getRequest("top100"));
+        String res = LocalStorageService.getInstance().getString("top100s");
+        if (res.contains("error") || res.equals("")){
+            res = BaseAPIService.getInstance().getRequest("top100");
+            top100s = BaseAPIService.getInstance().getTop100List(res);
+            LocalStorageService.getInstance().putString("top100s", res);
         }
         else{
-            top100s = BaseAPIService.getInstance().getTop100List(prefs.getString("top100s", ""));
+            top100s = BaseAPIService.getInstance().getTop100List(res);
         }
-
         if(top100s != null){
             LinearLayoutManager layoutManager = new LinearLayoutManager(binding.getRoot().getContext());
             ParentItemAdapter parentItemAdapter = new ParentItemAdapter(ParentItemList(top100s));
@@ -99,7 +82,7 @@ public class Top100Fragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Helper.MediaProgressDialog.hideDialog();
+        CoreHelper.CustomsDialog.hideDialog();
     }
 
     @Override

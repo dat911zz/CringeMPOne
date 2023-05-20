@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,9 +19,12 @@ import com.ltdd.cringempone.R;
 import com.ltdd.cringempone.api.BaseAPIService;
 import com.ltdd.cringempone.data.dto.ItemDTO;
 import com.ltdd.cringempone.data.dto.PlaylistDTO;
+import com.ltdd.cringempone.databinding.ActivityPlaylistBinding;
+import com.ltdd.cringempone.service.LocalStorageService;
+import com.ltdd.cringempone.service.MediaControlReceiver;
 import com.ltdd.cringempone.ui.playlist.adapter.PlaylistAdapter;
 import com.ltdd.cringempone.ui.playlist.model.PlaylistItem;
-import com.ltdd.cringempone.utils.Helper;
+import com.ltdd.cringempone.utils.CoreHelper;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -31,10 +35,12 @@ public class PlaylistActivity extends AppCompatActivity {
     private String playlistId;
     private PlaylistDTO playlist;
     private PlaylistViewHolder holder;
+    ActivityPlaylistBinding binding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_playlist);
+        binding = ActivityPlaylistBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         getSupportActionBar().hide();
         playlistId = getIntent().getStringExtra("playlistId");
         Log.e("???", "onCreate: ??? " + playlistId);
@@ -44,23 +50,20 @@ public class PlaylistActivity extends AppCompatActivity {
 
     }
     public void loadData(){
-        SharedPreferences prefs = getSharedPreferences("LocalStorage", Context.MODE_PRIVATE);
-        if (prefs.getString(playlistId, "").equals("")){
-            playlist = new BaseAPIService.Converter<>(PlaylistDTO.class)
-                    .get(BaseAPIService.getInstance().getRequest("getDetailPlaylist", playlistId));
+        String res = LocalStorageService.getInstance().getString(playlistId);
+        if (res.contains("error") || res.equals("") || res.contains("not found")){
+            res = BaseAPIService.getInstance().getRequest("getPlaylist", playlistId);
+            LocalStorageService.getInstance().putString(playlistId, res);
         }
-        else{
-            playlist = new BaseAPIService.Converter<>(PlaylistDTO.class)
-                    .get(prefs.getString(playlistId, ""));
-        }
+        playlist = new BaseAPIService.Converter<>(PlaylistDTO.class).get(res);
     }
     public void initViewHolder(){
         holder = new PlaylistViewHolder(
-                findViewById(R.id.playlist_header_img),
-                findViewById(R.id.playlist_header_title),
-                findViewById(R.id.playlist_header_total_song),
-                findViewById(R.id.playlist_header_total_time),
-                findViewById(R.id.playlist_songList)
+                binding.playlistHeaderImg,
+                binding.playlistHeaderTitle,
+                binding.playlistHeaderTotalSong,
+                binding.playlistHeaderTotalTime,
+                binding.playlistSongList
         );
     }
     public void addControl(){
@@ -72,10 +75,11 @@ public class PlaylistActivity extends AppCompatActivity {
                 TimeUnit.SECONDS.toMinutes(playlist.song.totalDuration) -
                         TimeUnit.HOURS.toMinutes(TimeUnit.SECONDS.toHours(playlist.song.totalDuration))
         ));
-
+        binding.playlistBackBtn.setOnClickListener(v -> onBackPressed());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         PlaylistAdapter adapter = new PlaylistAdapter(playlist.song.items);
-
+        Handler handler = new Handler();
+        handler.postDelayed(() -> MediaControlReceiver.getInstance().addPlaylist(playlist.song.items), 0);
         holder.pSongList.setLayoutManager(linearLayoutManager);
         holder.pSongList.setAdapter(adapter);
     }

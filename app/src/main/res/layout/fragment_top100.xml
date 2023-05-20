@@ -14,16 +14,15 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/top100_parent_recyclerview"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:scrollbars="horizontal"
-            android:layout_above="@id/btn_goto_player"
             android:layout_alignParentTop="true"/>
-        <Button
-            android:id="@+id/btn_goto_player"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:layout_alignParentBottom="true"
-            android:text="Media Player Test"/>
+<!--        <Button-->
+<!--            android:id="@+id/btn_goto_player"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="100dp"-->
+<!--            android:layout_alignParentBottom="true"-->
+<!--            android:text="Media Player Test"/>-->
     </RelativeLayout>
 
 </FrameLayout>

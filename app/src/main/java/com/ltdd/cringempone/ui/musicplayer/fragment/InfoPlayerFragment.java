@@ -9,58 +9,33 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.ltdd.cringempone.R;
+import com.ltdd.cringempone.databinding.FragmentInfoPlayerBinding;
+import com.ltdd.cringempone.ui.musicplayer.ViewPagerPlayerController;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link InfoPlayerFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class InfoPlayerFragment extends Fragment {
+    FragmentInfoPlayerBinding binding;
+    private static InfoPlayerFragment instance;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public InfoPlayerFragment() {
-        // Required empty public constructor
+    private InfoPlayerFragment() {
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment InfoPlayerFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static InfoPlayerFragment newInstance(String param1, String param2) {
-        InfoPlayerFragment fragment = new InfoPlayerFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+    public static InfoPlayerFragment getInstance(){
+        if (instance == null){
+            instance = new InfoPlayerFragment();
+        }
+        return instance;
     }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_info_player, container, false);
+        binding = FragmentInfoPlayerBinding.inflate(inflater);
+        ViewPagerPlayerController.getInstance().setFragmentInfoPlayerBinding(binding);
+        return binding.getRoot();
     }
 }
