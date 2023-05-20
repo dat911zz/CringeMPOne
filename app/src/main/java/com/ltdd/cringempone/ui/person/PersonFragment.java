@@ -24,11 +24,6 @@ public class PersonFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_person, container, false);
-        bindingView();
         return view;
-    }
-
-    private void bindingView() {
-        viewPager = view.findViewById(R.id.viewPager);
     }
 }
