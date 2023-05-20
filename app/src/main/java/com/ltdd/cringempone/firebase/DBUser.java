@@ -5,7 +5,7 @@ import android.util.Log;
 import com.google.firebase.database.DatabaseReference;
 
 public class DBUser {
-    String uid,email,password,nameUser;
+    String uid,email,password,nameUser, EmailVerified;
     Database DB = new Database();
     DatabaseReference userRef = DB.database.getReference("Users");
 
@@ -24,11 +24,14 @@ public class DBUser {
     public String getNameUser() {
         return nameUser;
     }
+    public String getIsEmailVerified() {
+        return EmailVerified;
+    }
 
-    public void createUser(String uid, String nameUser, String email, String password)
+    public void createUser(String uid, String nameUser, String email, String password, String EmailVerified)
     {
         try {
-            User user = new User(password,email, nameUser, uid);
+            User user = new User(password,email, nameUser, uid, EmailVerified);
             userRef.child(uid).setValue(user);
         }catch (Exception e)
         {
@@ -39,12 +42,13 @@ public class DBUser {
     public void createUser(String uid, String nameUser, String email)
     {
         try {
-            User user = new User(password, email, nameUser, uid);
+            User user = new User(email, nameUser, uid);
             userRef.child(uid).setValue(user);
         }catch (Exception e)
         {
             Log.e("Error",e.getMessage());
         }
     }
+
 
 }

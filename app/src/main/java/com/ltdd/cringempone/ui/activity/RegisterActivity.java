@@ -260,8 +260,9 @@ public class RegisterActivity extends AppCompatActivity {
                                         Toast.makeText(RegisterActivity.this, "Tạo tài khoản thành công. Vui lòng xác nhận Email.", Toast.LENGTH_SHORT).show();
                                         FirebaseUser currentUser = mAuth.getCurrentUser();
                                         //Thêm dử liệu users vào Realtime
+                                        //Email mới tạo sẽ được xét trạng thái emailVerified là false vì người dùng chưa xác nhận email
                                         DBUser users = new DBUser();
-                                        users.createUser(currentUser.getUid(),userName,currentUser.getEmail(),password);
+                                        users.createUser(currentUser.getUid(),userName,currentUser.getEmail(),password, String.valueOf(currentUser.isEmailVerified()));
 
                                         Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                                         startActivity(intent);
