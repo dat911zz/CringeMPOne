@@ -41,6 +41,8 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.ltdd.cringempone.MainActivity;
 import com.ltdd.cringempone.R;
 import com.ltdd.cringempone.firebase.DBUser;
@@ -276,9 +278,20 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
-                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                startActivity(intent);
-                                finish();
+                                FirebaseUser currentUser = mAuth.getCurrentUser();
+                                if(currentUser.isEmailVerified()==true){
+                                    //Email đã được xác nhận và người dùng đăng nhập vào tài khoản
+                                    // thì sẽ update trạng thái emailVerified thành true
+                                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users");
+                                    databaseReference.child(currentUser.getUid()).child("emailVerified").setValue(String.valueOf(currentUser.isEmailVerified()));
+                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                }else
+                                {
+                                    Toast.makeText(LoginActivity.this, "Email chưa được xác nhận", Toast.LENGTH_SHORT).show();
+                                }
+
                             } else {
                                 Toast.makeText(LoginActivity.this, "Email hoặc mật khẩu không chính xác.",
                                         Toast.LENGTH_SHORT).show();
