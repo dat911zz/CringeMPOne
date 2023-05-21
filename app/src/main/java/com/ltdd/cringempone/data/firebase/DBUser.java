@@ -63,12 +63,11 @@ public class DBUser {
 
     public String getIdUser()
     {
-        String idUser;
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
         if (firebaseUser != null)
         {
-            return idUser = firebaseUser.getUid();
+            return  firebaseUser.getUid();
         }
         return null;
     }

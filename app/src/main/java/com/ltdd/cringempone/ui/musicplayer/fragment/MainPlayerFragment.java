@@ -92,6 +92,7 @@ public class MainPlayerFragment extends Fragment {
         });
         binding.txtSongName.setText(songName);
         binding.txtTitle.setText(artist);
+        checkFSong(idSong);
         binding.favoriteSong.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -130,7 +131,7 @@ public class MainPlayerFragment extends Fragment {
 
             }
         });
-        checkFSong(idSong);
+
     }
 
     public void checkFSong(String idSong) {
