@@ -49,7 +49,6 @@ import com.ltdd.cringempone.ui.activity.LoginActivity;
 import com.ltdd.cringempone.ui.activity.RegisterActivity;
 import com.ltdd.cringempone.ui.homebottom.HomeFragmentBottom;
 import com.ltdd.cringempone.ui.person.PersonFragment;
-import com.ltdd.cringempone.ui.search.SearchResult;
 import com.ltdd.cringempone.ui.slideshow.SlideshowFragment;
 import com.ltdd.cringempone.utils.CoreHelper;
 import com.ltdd.cringempone.ui.search.SearchResultActivity;

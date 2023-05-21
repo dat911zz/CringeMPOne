@@ -75,7 +75,7 @@ public class MainPlayerFragment extends Fragment{
             artist = MediaControlReceiver.getInstance().getCurrentSong().artistsNames;
             idSong = MediaControlReceiver.getInstance().getCurrentSong().encodeId;
         } else {
-            CoreHelper.CustomsDialog.showAlertDialog(
+            CustomsDialog.showAlertDialog(
                     this.getContext(),
                     "Lỗi",
                     "Đã xảy ra lỗi, vui lòng kiểm tra lại kết nối mạng!",
