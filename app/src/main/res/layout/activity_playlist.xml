@@ -6,29 +6,33 @@
     android:layout_height="match_parent"
     android:background="@drawable/gradient_background_theme_1"
     tools:context=".ui.playlist.PlaylistActivity">
-    <androidx.appcompat.widget.AppCompatButton
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:background="@drawable/baseline_keyboard_arrow_down_24"
-        android:id="@+id/playlist_backBtn"/>
+
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/playlist_header"
         app:cardBackgroundColor="@android:color/transparent"
         app:cardElevation="0dp">
-
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="270dp"
-            android:layout_alignParentTop="true">
+            android:layout_height="wrap_content"
+            android:minHeight="270dp"
 
+            android:layout_alignParentTop="true">
+            <androidx.appcompat.widget.AppCompatButton
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/baseline_keyboard_arrow_down_24"
+                android:rotation="90"
+                android:id="@+id/playlist_backBtn"/>
             <ImageView
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_marginTop="40dp"
                 android:id="@+id/playlist_header_img"
-                android:layout_width="165dp"
-                android:layout_height="165dp"
-                android:layout_centerHorizontal="true"
-                android:background="@mipmap/ic_disc" />
+                android:background="@mipmap/ic_disc"
+                android:layout_centerHorizontal="true"/>
 
             <TextView
                 android:id="@+id/playlist_header_title"
@@ -36,30 +40,36 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/playlist_header_img"
                 android:layout_centerHorizontal="true"
-                android:layout_margin="8dp"
+                android:layout_marginStart="9dp"
+                android:layout_marginTop="9dp"
+                android:layout_marginEnd="9dp"
+                android:layout_marginBottom="9dp"
+                android:ellipsize="marquee"
+                android:maxLength="60"
+                android:maxLines="2"
                 android:text="playlist title"
+                android:textAlignment="center"
                 android:textColor="@color/white"
                 android:textSize="20dp"
                 android:textStyle="bold" />
-
             <TextView
-                android:id="@+id/playlist_header_total_song"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:id="@+id/playlist_header_total_song"
                 android:layout_below="@id/playlist_header_title"
                 android:layout_centerHorizontal="true"
+                android:textColor="@color/textSubtitleColor"
                 android:layout_margin="5dp"
-                android:text="Tổng số bài hát: "
-                android:textColor="@color/textSubtitleColor" />
-
+                android:text="Tổng số bài hát: "/>
             <TextView
-                android:id="@+id/playlist_header_total_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:id="@+id/playlist_header_total_time"
                 android:layout_below="@id/playlist_header_total_song"
                 android:layout_centerHorizontal="true"
-                android:text="Thời lượng: "
-                android:textColor="@color/textSubtitleColor" />
+                android:textColor="@color/textSubtitleColor"
+                android:layout_marginBottom="20dp"
+                android:text="Thời lượng: "/>
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
 
