@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 
 public class DBUser {
-    String uid,email,password,nameUser;
+    String uid,email,password,nameUser, EmailVerified;
     Database DB = new Database();
     DatabaseReference userRef = DB.database.getReference("Users");
     FirebaseAuth firebaseAuth;
@@ -36,7 +36,21 @@ public class DBUser {
         return nameUser;
     }
 
+    public String getEmailVerified() {
+        return EmailVerified;
+    }
+
     public DBUser() {
+    }
+    public void createUser(String uid, String nameUser, String email, String password, String EmailVerified)
+    {
+        try {
+            User user = new User(password,email, nameUser, uid, EmailVerified);
+            userRef.child(uid).setValue(user);
+        }catch (Exception e)
+        {
+            Log.e("Error",e.getMessage());
+        }
     }
 
     public void createUser(String uid, String nameUser, String email, String password)
