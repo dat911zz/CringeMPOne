@@ -1,7 +1,12 @@
 package com.ltdd.cringempone;
 
+import static com.ltdd.cringempone.ui.account.AccountFragment.imageAvatar;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.provider.MediaStore;
@@ -36,8 +41,7 @@ import com.facebook.login.LoginManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.*;
 import com.ltdd.cringempone.databinding.ActivityMainBinding;
 import com.ltdd.cringempone.service.MediaControlReceiver;
 import com.ltdd.cringempone.service.MediaControlReceiver;
@@ -58,15 +62,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     private ActivityMainBinding binding;
 
     BottomNavigationView bottomNavigationView;
-    PersonFragment personFragment = new PersonFragment();
     HomeFragmentBottom homeFragmentBottom = new HomeFragmentBottom();
 
     SlideshowFragment slideshowFragment = new SlideshowFragment();
 
     SettingsFragment settingsFragment = new SettingsFragment();
     PersonFragment personFragment = new PersonFragment();
-    HomeFragmentBottom homeFragmentBottom = new HomeFragmentBottom();
-    SettingsFragment settingsFragment = new SettingsFragment();
     TextView tvName;
     TextView tvEmail;
     ImageView imgAvatar;
@@ -186,8 +187,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                             startActivity(intent);
                             break;
                         }
-
-
                     }
                 }
                 drawer.closeDrawer(GravityCompat.START);

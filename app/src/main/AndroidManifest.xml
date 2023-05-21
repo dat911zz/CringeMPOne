@@ -17,6 +17,9 @@
         android:theme="@style/Theme.CringeMPOne"
         tools:targetApi="31">
         <activity
+            android:name=".ui.person.PersonActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.search.SearchResult"
             android:exported="false" />
         <activity
@@ -48,8 +51,14 @@
             android:name=".api.BaseAPIService"
             android:enabled="true"
             android:exported="true" />
-        <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
-        <meta-data android:name="com.facebook.sdk.ClientToken" android:value="@string/facebook_client_token"/>
+
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+        <meta-data
+            android:name="com.facebook.sdk.ClientToken"
+            android:value="@string/facebook_client_token" />
+
         <activity
             android:name=".ui.musicplayer.PlayerActivity"
             android:exported="true" />
@@ -65,7 +74,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>
