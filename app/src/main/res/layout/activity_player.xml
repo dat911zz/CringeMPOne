@@ -17,6 +17,7 @@
             android:layout_centerVertical="true"
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:layout_marginLeft="10dp"
             android:background="@drawable/baseline_keyboard_arrow_down_24"/>
         <TextView
             android:id="@+id/player_top_tittle"
