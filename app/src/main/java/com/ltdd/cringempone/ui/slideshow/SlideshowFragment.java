@@ -1,30 +1,29 @@
 package com.ltdd.cringempone.ui.slideshow;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
-        import android.os.Bundle;
-        import android.view.LayoutInflater;
-        import android.view.View;
-        import android.view.ViewGroup;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-        import androidx.annotation.NonNull;
-        import androidx.annotation.Nullable;
-        import androidx.fragment.app.Fragment;
-        import androidx.recyclerview.widget.LinearLayoutManager;
-        import androidx.recyclerview.widget.RecyclerView;
+import com.ltdd.cringempone.R;
+import com.ltdd.cringempone.api.BaseAPIService;
+import com.ltdd.cringempone.data.dto.ItemDTO;
+import com.ltdd.cringempone.data.dto.TopDTO;
+import com.ltdd.cringempone.databinding.Top100ChildrenItemBinding;
+import com.ltdd.cringempone.service.LocalStorageService;
+import com.ltdd.cringempone.ui.musicplayer.adapter.ParentItemAdapter;
+import com.ltdd.cringempone.ui.musicplayer.model.ChildItem;
+import com.ltdd.cringempone.ui.musicplayer.model.ParentItem;
+import com.ltdd.cringempone.utils.CoreHelper;
+import com.ltdd.cringempone.databinding.FragmentTop100Binding;
 
-        import com.ltdd.cringempone.R;
-        import com.ltdd.cringempone.api.BaseAPIService;
-        import com.ltdd.cringempone.data.dto.ItemDTO;
-        import com.ltdd.cringempone.data.dto.TopDTO;
-        import com.ltdd.cringempone.databinding.Top100ChildrenItemBinding;
-        import com.ltdd.cringempone.service.LocalStorageService;
-        import com.ltdd.cringempone.ui.musicplayer.adapter.ParentItemAdapter;
-        import com.ltdd.cringempone.ui.musicplayer.model.ChildItem;
-        import com.ltdd.cringempone.ui.musicplayer.model.ParentItem;
-        import com.ltdd.cringempone.utils.CoreHelper;
-        import com.ltdd.cringempone.databinding.FragmentTop100Binding;
-
-        import java.util.ArrayList;
-        import java.util.List;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SlideshowFragment extends Fragment {
     private ArrayList<TopDTO> top100s;
@@ -79,7 +78,6 @@ public class SlideshowFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        CoreHelper.CustomsDialog.hideDialog();
     }
 
     @Override
