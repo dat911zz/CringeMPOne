@@ -17,44 +17,49 @@
         android:id="@+id/playlist_header"
         app:cardBackgroundColor="@android:color/transparent"
         app:cardElevation="0dp">
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="270dp"
             android:layout_alignParentTop="true">
+
             <ImageView
+                android:id="@+id/playlist_header_img"
                 android:layout_width="165dp"
                 android:layout_height="165dp"
-                android:id="@+id/playlist_header_img"
-                android:background="@mipmap/ic_disc"
-                android:layout_centerHorizontal="true"/>
+                android:layout_centerHorizontal="true"
+                android:background="@mipmap/ic_disc" />
+
             <TextView
+                android:id="@+id/playlist_header_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/playlist_header_title"
                 android:layout_below="@+id/playlist_header_img"
                 android:layout_centerHorizontal="true"
                 android:layout_margin="8dp"
-                android:textSize="20dp"
-                android:textStyle="bold"
+                android:text="playlist title"
                 android:textColor="@color/white"
-                android:text="playlist title"/>
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
             <TextView
+                android:id="@+id/playlist_header_total_song"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/playlist_header_total_song"
                 android:layout_below="@id/playlist_header_title"
                 android:layout_centerHorizontal="true"
-                android:textColor="@color/textSubtitleColor"
                 android:layout_margin="5dp"
-                android:text="Tổng số bài hát: "/>
+                android:text="Tổng số bài hát: "
+                android:textColor="@color/textSubtitleColor" />
+
             <TextView
+                android:id="@+id/playlist_header_total_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/playlist_header_total_time"
                 android:layout_below="@id/playlist_header_total_song"
                 android:layout_centerHorizontal="true"
-                android:textColor="@color/textSubtitleColor"
-                android:text="Thời lượng: "/>
+                android:text="Thời lượng: "
+                android:textColor="@color/textSubtitleColor" />
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
 

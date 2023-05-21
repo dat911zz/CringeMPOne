@@ -43,7 +43,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.ltdd.cringempone.MainActivity;
 import com.ltdd.cringempone.R;
-import com.ltdd.cringempone.firebase.DBUser;
+import com.ltdd.cringempone.data.firebase.DBUser;
+import com.ltdd.cringempone.ui.musicplayer.ViewPagerPlayerController;
 
 import java.util.Arrays;
 
@@ -239,7 +240,6 @@ public class LoginActivity extends AppCompatActivity {
                                             //Thêm dử liệu users vào Realtime
                                             DBUser users = new DBUser();
                                             users.createUser(currentUser.getUid(),currentUser.getDisplayName(),currentUser.getEmail());
-
                                             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                             startActivity(intent);
                                             finish();

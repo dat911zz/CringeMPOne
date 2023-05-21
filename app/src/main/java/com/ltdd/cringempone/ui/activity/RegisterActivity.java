@@ -44,7 +44,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.ltdd.cringempone.MainActivity;
 import com.ltdd.cringempone.R;
-import com.ltdd.cringempone.firebase.DBUser;
+import com.ltdd.cringempone.data.firebase.DBUser;
 
 import java.util.Arrays;
 

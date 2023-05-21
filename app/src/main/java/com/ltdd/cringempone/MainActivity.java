@@ -15,7 +15,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.view.View;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,7 +45,7 @@ import com.ltdd.cringempone.ui.activity.LoginActivity;
 import com.ltdd.cringempone.ui.activity.RegisterActivity;
 import com.ltdd.cringempone.ui.homebottom.HomeFragmentBottom;
 import com.ltdd.cringempone.ui.person.PersonFragment;
-import com.ltdd.cringempone.ui.search.SearchResult;
+import com.ltdd.cringempone.ui.search.SearchResultActivity;
 import com.ltdd.cringempone.ui.settings.SettingsFragment;
 
 import java.io.IOException;
@@ -109,6 +108,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setSupportActionBar(binding.appBarMain.toolbar);
+        Intent intent = getIntent();
+        Toast.makeText(this, ""+intent.getStringExtra("id"), Toast.LENGTH_SHORT).show();
         addControl();
     }
     public void addControl(){
@@ -198,7 +199,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 break;
             case R.id.action_search:
                 Toast.makeText(this, "Search", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(MainActivity.this,SearchResult.class));
+                startActivity(new Intent(MainActivity.this, SearchResultActivity.class));
             default:
         }
         return super.onOptionsItemSelected(item);

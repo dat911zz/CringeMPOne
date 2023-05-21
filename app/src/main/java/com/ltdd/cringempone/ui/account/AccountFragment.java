@@ -127,7 +127,6 @@ public class AccountFragment extends Fragment {
                         if (task.isSuccessful()) {
                             Toast.makeText(getActivity(), "Cập nhật thành công", Toast.LENGTH_SHORT).show();
                             m.showUserInformation();
-
                         }
                     }
                 });

@@ -1,4 +1,4 @@
-package com.ltdd.cringempone.firebase;
+package com.ltdd.cringempone.data.firebase;
 
 import java.util.HashMap;
 import java.util.Map;

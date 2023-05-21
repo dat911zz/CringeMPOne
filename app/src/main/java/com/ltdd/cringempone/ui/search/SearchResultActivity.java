@@ -4,37 +4,24 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
+import android.speech.RecognizerIntent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import com.ltdd.cringempone.R;
 import com.ltdd.cringempone.api.BaseAPIService;
-import com.ltdd.cringempone.data.dto.ItemDTO;
-import com.ltdd.cringempone.data.dto.PlaylistDTO;
 import com.ltdd.cringempone.data.dto.SearchDTO;
-import com.ltdd.cringempone.data.dto.SearchPlaylistDTO;
 import com.ltdd.cringempone.databinding.ActivitySearchResultBinding;
-import com.ltdd.cringempone.service.LocalStorageService;
-import com.ltdd.cringempone.service.MediaControlReceiver;
-import com.ltdd.cringempone.ui.musicplayer.adapter.ParentItemAdapter;
-import com.ltdd.cringempone.ui.musicplayer.model.ChildItem;
-import com.ltdd.cringempone.ui.musicplayer.model.ParentItem;
-import com.ltdd.cringempone.ui.playlist.PlaylistActivity;
-import com.ltdd.cringempone.ui.playlist.adapter.PlaylistAdapter;
 import com.ltdd.cringempone.ui.search.adapter.SearchPlaylistAdapter;
 import com.ltdd.cringempone.ui.search.adapter.SongAdapter;
-import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-public class SearchResult extends AppCompatActivity {
+public class SearchResultActivity extends AppCompatActivity {
 
     ActivitySearchResultBinding binding;
     SearchDTO searchResult;
@@ -45,7 +32,9 @@ public class SearchResult extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivitySearchResultBinding.inflate(getLayoutInflater());
+        getSupportActionBar().hide();
         setContentView(binding.getRoot());
+        addControl();
 
     }
     public void loadData(String txtSearch){
@@ -54,17 +43,32 @@ public class SearchResult extends AppCompatActivity {
     public void initViewHolder(){
         holder = new SongViewHolder(binding.searchResultRecycleview);
     }
-    public void addControl(){
-
+    public void searchAction(){
         SongAdapter songAdapter = new SongAdapter(searchResult.songs);
         SearchPlaylistAdapter playlistAdapter = new SearchPlaylistAdapter(searchResult.playlists);
-
-
-
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
 
         holder.songList.setLayoutManager(linearLayoutManager);
         holder.songList.setAdapter(playlistAdapter);
+
+    }
+    public void addControl()
+    {
+        binding.btnSearchBack.setOnClickListener(v -> onBackPressed());
+        binding.btnSearch.setOnClickListener(v -> {
+            if (binding.txtSearch.getText().toString().equals(""))
+            {
+                Toast.makeText(this, "Vui lòng nhập dữ liệu cần tìm kiếm", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                initViewHolder();
+                loadData(binding.txtSearch.getText().toString());
+                searchAction();
+            }
+        });
+        binding.btnMic.setOnClickListener(v -> {
+            displaySpeechRecognizer();
+        });
     }
 
     @Override
@@ -77,15 +81,12 @@ public class SearchResult extends AppCompatActivity {
             public boolean onQueryTextSubmit(String query) {
                 initViewHolder();
                 loadData(query);
-                addControl();
+                searchAction();
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                initViewHolder();
-                loadData(newText);
-                addControl();
                 return false;
             }
         });
@@ -98,6 +99,24 @@ public class SearchResult extends AppCompatActivity {
         public SongViewHolder(RecyclerView songList) {
             this.songList = songList;
         }
+    }
+    private static final int SPEECH_REQUEST_CODE = 0;
+
+    private void displaySpeechRecognizer() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        startActivityForResult(intent, SPEECH_REQUEST_CODE);
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode,
+                                    Intent data) {
+        if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK) {
+            List<String> results = data.getStringArrayListExtra(
+                    RecognizerIntent.EXTRA_RESULTS);
+            String spokenText = results.get(0);
+            binding.txtSearch.setText(spokenText);
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
 }

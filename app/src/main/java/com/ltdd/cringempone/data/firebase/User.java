@@ -1,5 +1,6 @@
-package com.ltdd.cringempone.firebase;
+package com.ltdd.cringempone.data.firebase;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,7 +10,12 @@ public class User {
     private String email;
 
     private String uid;
-    Map<String, String> favoriteSong = new HashMap<String, String>();
+
+    public ArrayList<String> getFavoriteSong() {
+        return favoriteSong;
+    }
+
+    ArrayList<String> favoriteSong = new ArrayList<>();
     Map<String, Playlist> playlists = new HashMap<String, Playlist>();
 
 
@@ -29,20 +35,21 @@ public class User {
         return uid;
     }
 
-    public Map<String, String> getFavoriteSong() {
-        return favoriteSong;
-    }
+
 
     public Map<String, Playlist> getPlaylists() {
         return playlists;
     }
 
-    public User( String password, String email, String name, String uid) {
+    public User() {
+    }
+
+    public User(String password, String email, String name, String uid) {
         this.uid = uid;
         this.name = name;
         this.password = password;
         this.email = email;
-        this.favoriteSong = null;
+        this.favoriteSong.add("1");
         this.playlists = null;
     }
 
@@ -51,7 +58,7 @@ public class User {
         this.name = name;
         this.password = password;
         this.email = email;
-        this.favoriteSong = null;
+        this.favoriteSong.add("1");
         this.playlists = null;
     }
 
