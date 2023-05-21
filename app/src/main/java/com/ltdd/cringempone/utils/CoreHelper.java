@@ -1,13 +1,12 @@
 package com.ltdd.cringempone.utils;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -18,10 +17,39 @@ import com.ltdd.cringempone.data.dto.SongInfoDTO;
 
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class CoreHelper {
+    public static boolean isConnected(Context context){
+        ConnectivityManager cm = (ConnectivityManager)context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        if (activeNetwork != null && activeNetwork.isConnected()) {
+            try {
+                HttpURLConnection connection = null;
+                URL url = new URL("https://www.google.com/");
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
+                connection.setReadTimeout(1000);
+                connection.setConnectTimeout(1000);
+                connection.connect();
+                if (connection.getResponseCode() == 200) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } catch (IOException e) {
+                Log.i("warning", "Error checking internet connection", e);
+                return false;
+            }
+        }
+
+        return false;
+    }
     public static class ImageUtil{
         public static Drawable LoadImageFromWebOperations(String url) {
             try {
@@ -47,36 +75,6 @@ public class CoreHelper {
                 fr.addToBackStack(name); // name can be null
             }
             fr.commit();
-        }
-    }
-    public static class CustomsDialog {
-        public static ProgressDialog pgl;
-        public static void showDialog(Context context){
-            pgl = ProgressDialog.show(context, "Đang tải", "Vui lòng chờ trong giây lát...", true);
-        }
-        public static void showOptionalDialog(Context context, String title, String message){
-            pgl = ProgressDialog.show(context, title, message, false, true);
-        }
-        public static void showAlertDialog(Context context, String title, String message, int iconID){
-            new AlertDialog.Builder(context)
-                    .setTitle(title)
-                    .setMessage(message)
-                    // Specifying a listener allows you to take an action before dismissing the dialog.
-                    // The dialog is automatically dismissed when a dialog button is clicked.
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            // Continue with delete operation
-                            dialog.dismiss();
-                        }
-                    })
-                    // A null listener allows the button to dismiss the dialog and take no further action.
-                    .setIcon(iconID)
-                    .show();
-        }
-        public static void hideDialog(){
-            if (pgl != null){
-                pgl.dismiss();
-            }
         }
     }
     public static class Converter{

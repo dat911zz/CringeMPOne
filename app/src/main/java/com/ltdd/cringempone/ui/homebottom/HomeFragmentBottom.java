@@ -79,7 +79,6 @@ public class HomeFragmentBottom extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        CoreHelper.CustomsDialog.hideDialog();
     }
 
     @Override

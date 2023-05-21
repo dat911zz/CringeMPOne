@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -15,20 +16,25 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.exoplayer2.Player;
 import com.ltdd.cringempone.R;
 import com.ltdd.cringempone.api.BaseAPIService;
 import com.ltdd.cringempone.data.dto.ItemDTO;
 import com.ltdd.cringempone.data.dto.PlaylistDTO;
 import com.ltdd.cringempone.databinding.ActivityPlaylistBinding;
 import com.ltdd.cringempone.service.LocalStorageService;
+import com.ltdd.cringempone.service.MediaAction;
 import com.ltdd.cringempone.service.MediaControlReceiver;
 import com.ltdd.cringempone.ui.playlist.adapter.PlaylistAdapter;
 import com.ltdd.cringempone.ui.playlist.model.PlaylistItem;
 import com.ltdd.cringempone.utils.CoreHelper;
+import com.ltdd.cringempone.utils.CustomsDialog;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 public class PlaylistActivity extends AppCompatActivity {
@@ -39,6 +45,9 @@ public class PlaylistActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (!MediaControlReceiver.getInstance().isRegister){
+            MediaControlReceiver.getInstance().registerReceiver(this);
+        }
         binding = ActivityPlaylistBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         getSupportActionBar().hide();
@@ -49,6 +58,13 @@ public class PlaylistActivity extends AppCompatActivity {
         addControl();
 
     }
+
+    @Override
+    protected void onStop() {
+        CustomsDialog.hideDialog();
+        super.onStop();
+    }
+
     public void loadData(){
         String res = LocalStorageService.getInstance().getString(playlistId);
         if (res.contains("error") || res.equals("") || res.contains("not found")){
@@ -76,10 +92,13 @@ public class PlaylistActivity extends AppCompatActivity {
                         TimeUnit.HOURS.toMinutes(TimeUnit.SECONDS.toHours(playlist.song.totalDuration))
         ));
         binding.playlistBackBtn.setOnClickListener(v -> onBackPressed());
+
+        MediaControlReceiver.getInstance().addPlaylist(playlist.song.items);
+        MediaControlReceiver.getInstance().setCurrentPos(0);
+        sendBroadcast(new Intent(MediaAction.ACTION_PLAY));
+
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         PlaylistAdapter adapter = new PlaylistAdapter(playlist.song.items);
-        Handler handler = new Handler();
-        handler.postDelayed(() -> MediaControlReceiver.getInstance().addPlaylist(playlist.song.items), 0);
         holder.pSongList.setLayoutManager(linearLayoutManager);
         holder.pSongList.setAdapter(adapter);
     }
