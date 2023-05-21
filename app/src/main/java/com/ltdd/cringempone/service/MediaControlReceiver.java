@@ -1,48 +1,75 @@
 package com.ltdd.cringempone.service;
 
+import static android.content.Context.NOTIFICATION_SERVICE;
+
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.media.MediaMetadata;
+import android.os.Build;
 import android.os.Handler;
+import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.session.MediaSessionCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
+import androidx.core.app.NotificationCompat;
+import androidx.core.graphics.drawable.IconCompat;
+import androidx.media.session.MediaButtonReceiver;
+
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
+import com.ltdd.cringempone.MainActivity;
 import com.ltdd.cringempone.R;
 import com.ltdd.cringempone.api.BaseAPIService;
 import com.ltdd.cringempone.data.dto.ItemDTO;
 import com.ltdd.cringempone.data.dto.SongDTO;
 import com.ltdd.cringempone.data.dto.Streaming;
+import com.ltdd.cringempone.ui.musicplayer.PlayerActivity;
 import com.ltdd.cringempone.ui.musicplayer.PlayerViewHolder;
 import com.ltdd.cringempone.ui.musicplayer.ViewPagerPlayerController;
 import com.ltdd.cringempone.utils.CoreHelper;
 import com.ltdd.cringempone.utils.CustomsDialog;
 import com.squareup.picasso.Picasso;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
 public class MediaControlReceiver extends BroadcastReceiver {
     private final static String TAG = "BroadcastReceiver";
+    private Context context;
     private static MediaControlReceiver instance; // Singleton instance
     private ExoPlayer exoPlayer;
     private ArrayList<ItemDTO> playList = new ArrayList<>();
     private int currentPos;
     private boolean isSkip = false;
-
     public void setSkip(boolean skip) {
         isSkip = skip;
     }
-
     public boolean isRegister;
     private Boolean isShuffle = false
             , isLoop = false;
+    private static final String CHANNEL_ID = "media_playback_channel";
 
+    private PlaybackStateCompat.Builder mStateBuilder;
+    private NotificationManager mNotificationManager;
+    private static MediaSessionCompat mMediaSession;
+    private MediaSessionCompat.Token token;
     private MediaControlReceiver(){ }
     public static MediaControlReceiver getInstance(){
         if (instance == null){
@@ -100,17 +127,19 @@ public class MediaControlReceiver extends BroadcastReceiver {
                                 }
                             }
                             exoPlayer.play();
+                            controlNotification();
                         }, 0);
                         break;
                     case MediaAction.ACTION_PAUSE:
                         exoPlayer.setPlayWhenReady(false);
                         exoPlayer.pause();
+                        controlNotification();
                         break;
                     case MediaAction.ACTION_STOP:
                         exoPlayer.setPlayWhenReady(false);
                         exoPlayer.stop();
-                        exoPlayer.release();
-                        setExoPlayer(null);
+//                        exoPlayer.release();
+//                        setExoPlayer(null);
                         break;
                 }
 
@@ -120,11 +149,13 @@ public class MediaControlReceiver extends BroadcastReceiver {
         }
     }
     public void registerReceiver(Context context) {
+        this.context = context;
         isRegister = true;
         //Setup media control receiver
         exoPlayer = new ExoPlayer.Builder(context).build();
         setExoPlayer(exoPlayer);
-
+        //Setup view
+        setupView();
         //Register the broadcast receiver
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(MediaAction.ACTION_PLAY);
@@ -231,16 +262,20 @@ public class MediaControlReceiver extends BroadcastReceiver {
                         viewHolder.getSeekBar().setMax(duration);
                         viewHolder.getEnd().setText(createTimeText(duration));
                         viewHolder.getPlay().setBackgroundResource(R.drawable.baseline_pause_24);
+                        controlNotification();
                     } else {
                         // Player is in pause state
                         // Example: Handle pause event with a Handler
                         Log.i(TAG, "onPlaybackStateChanged: pause");
                         viewHolder.getPlay().setBackgroundResource(R.drawable.baseline_play_arrow_24);
+                        controlNotification();
                     }
                 } else if (playbackState == Player.STATE_ENDED) {
                     // Playback ended, update UI accordingly
                     Log.i(TAG, "onPlaybackStateChanged: ended");
                 }
+
+
             }
         });
         viewHolder.getSeekBar().setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -339,5 +374,173 @@ public class MediaControlReceiver extends BroadcastReceiver {
 
     public void setCurrentPos(int currentPos) {
         this.currentPos = currentPos;
+    }
+
+    private void setupView() {
+        mMediaSession = new MediaSessionCompat(context, this.getClass().getSimpleName());
+        mMediaSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS | MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
+
+        // Do not let MediaButtons restart the player when the app is not visible.
+        mMediaSession.setMediaButtonReceiver(null);
+
+        mStateBuilder = new PlaybackStateCompat.Builder().setActions(
+                PlaybackStateCompat.ACTION_PLAY |
+                        PlaybackStateCompat.ACTION_PAUSE |
+                        PlaybackStateCompat.ACTION_PLAY_PAUSE |
+                        PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS |
+                        PlaybackStateCompat.ACTION_SKIP_TO_NEXT |
+                        PlaybackStateCompat.ACTION_STOP);
+
+        mMediaSession.setPlaybackState(mStateBuilder.build());
+        mMediaSession.setCallback(new MySessionCallback());
+        mMediaSession.setActive(true);
+    }
+    public void controlNotification(){
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mMediaSession.setPlaybackState(mStateBuilder.build());
+                showNotification(mStateBuilder.build());
+            }
+        }, 600);
+    }
+    @RequiresApi(Build.VERSION_CODES.O)
+    private void createChannel() {
+        NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+        // The id of the channel.
+        String id = CHANNEL_ID;
+        // The user-visible name of the channel.
+        CharSequence name = "Media playback";
+        // The user-visible description of the channel.
+        String description = "Media playback controls";
+        int importance = NotificationManager.IMPORTANCE_LOW;
+        NotificationChannel mChannel = new NotificationChannel(id, name, importance);
+        // Configure the notification channel.
+        mChannel.setDescription(description);
+        mChannel.setShowBadge(false);
+        mChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+        mNotificationManager.createNotificationChannel(mChannel);
+    }
+    //Session
+    private class MySessionCallback extends MediaSessionCompat.Callback {
+        @Override
+        public void onPlay() {
+            mMediaSession.setPlaybackState(mStateBuilder.build());
+            showNotification(mStateBuilder.build());
+            if(!exoPlayer.isPlaying()) {
+                context.sendBroadcast(new Intent(MediaAction.ACTION_PLAY));
+            }
+            else{
+                context.sendBroadcast(new Intent(MediaAction.ACTION_PAUSE));
+            }
+        }
+        @Override
+        public void onSkipToPrevious() {
+            isSkip = true;
+            seekToPrevSong(context);
+        }
+
+        @Override
+        public void onSkipToNext() {
+            isSkip = true;
+            seekToNextSong(context);
+        }
+
+        @Override
+        public void onStop() {
+            NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            manager.cancel(0);
+            context.sendBroadcast(new Intent(MediaAction.ACTION_STOP));
+        }
+    }
+    public static class MediaReceiver extends BroadcastReceiver {
+
+        public MediaReceiver() {
+        }
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            MediaButtonReceiver.handleIntent(mMediaSession, intent);
+        }
+    }
+    private void showNotification(PlaybackStateCompat state) {
+
+        // You only need to create the channel on API 26+ devices
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            createChannel();
+        }
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID);
+
+        int icon;
+        String play_pause;
+        if (exoPlayer.isPlaying()) {
+            icon = R.drawable.baseline_pause_24;
+            play_pause = "Dừng";
+        } else {
+            icon = R.drawable.baseline_play_arrow_24;
+            play_pause = "Phát";
+        }
+
+        NotificationCompat.Action playPauseAction = new NotificationCompat.Action(
+                icon, play_pause,
+                MediaButtonReceiver.buildMediaButtonPendingIntent(context,
+                        PlaybackStateCompat.ACTION_PLAY_PAUSE));
+        NotificationCompat.Action prevAction = new NotificationCompat.Action(
+                R.drawable.baseline_skip_previous_24, "Bài Trước",
+                MediaButtonReceiver.buildMediaButtonPendingIntent(context,
+                        PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS));
+        NotificationCompat.Action nextAction = new NotificationCompat.Action(
+                R.drawable.baseline_skip_next_24, "Bài Sau",
+                MediaButtonReceiver.buildMediaButtonPendingIntent(context,
+                        PlaybackStateCompat.ACTION_SKIP_TO_NEXT));
+        NotificationCompat.Action exitAction = new NotificationCompat.Action(
+                android.R.drawable.ic_menu_close_clear_cancel, "Thoát",
+                MediaButtonReceiver.buildMediaButtonPendingIntent(context,
+                        PlaybackStateCompat.ACTION_STOP)
+        );
+        PendingIntent contentPendingIntent = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            contentPendingIntent = PendingIntent.getActivity
+                    (context, 0, new Intent(context, PlayerActivity.class), PendingIntent.FLAG_MUTABLE);
+        } else {
+            contentPendingIntent = PendingIntent.getActivity
+                    (context, 0, new Intent(context, PlayerActivity.class), PendingIntent.FLAG_ONE_SHOT);
+        }
+        mMediaSession.setMetadata(
+                new MediaMetadataCompat.Builder()
+                        // Title.
+                        .putString(MediaMetadata.METADATA_KEY_TITLE, getCurrentSong().title)
+                        // Artist.
+                        // Could also be the channel name or TV series.
+                        .putString(MediaMetadata.METADATA_KEY_ARTIST, getCurrentSong().artistsNames)
+                        // Album art.
+                        // Could also be a screenshot or hero image for video content
+                        // The URI scheme needs to be "content", "file", or "android.resource".
+                        .putBitmap(
+                                MediaMetadata.METADATA_KEY_ALBUM_ART, CoreHelper.ImageUtil.getBitmapFromURL(getCurrentSong().thumbnailM))
+                        // Duration.
+                        // If duration isn't set, such as for live broadcasts, then the progress
+                        // indicator won't be shown on the seekbar.
+                        .putLong(MediaMetadata.METADATA_KEY_DURATION, exoPlayer.getDuration()) // 4
+                        .build()
+        );
+        token = mMediaSession.getSessionToken();
+
+        builder.setContentIntent(contentPendingIntent)
+                .setSmallIcon(R.drawable.ic_play_circle)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .addAction(prevAction)
+                .addAction(playPauseAction)
+                .addAction(nextAction)
+                .addAction(exitAction)
+                .setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
+                        .setMediaSession(token)
+                        .setShowActionsInCompactView(0, 1, 2));
+
+        mNotificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+        mNotificationManager.notify(0, builder.build());
+
+
     }
 }
