@@ -3,7 +3,7 @@ package com.ltdd.cringempone.data.dto;
 import java.util.ArrayList;
 
 public class SongInfoDTO {
-    public SongInfoDTO(String encodeId, String title, String alias, boolean isOffical, String username, String artistsNames, ArrayList<ArtistDTO> artists, boolean isWorldWide, String thumbnailM, String link, String thumbnail, int duration, boolean zingChoice, boolean isPrivate, boolean preRelease, int releaseDate, ArrayList<String> genreIds, ArrayList<Object> indicators, int radioId, boolean isIndie, String mvlink, int streamingStatus, boolean allowAudioAds, boolean hasLyric, int userid, ArrayList<GenreDTO> genres, ArrayList<ComposerDTO> composers, String distributor, AlbumDTO album, RadioDTO radio, boolean isRBT, int like, int listen, boolean liked, int comment, Streaming streaming) {
+    public SongInfoDTO(String encodeId, String title, String alias, boolean isOffical, String username, String artistsNames, ArrayList<ArtistDTO> artists, boolean isWorldWide, String thumbnailM, String link, String thumbnail, int duration, boolean zingChoice, boolean isPrivate, boolean preRelease, int releaseDate, ArrayList<String> genreIds, ArrayList<Object> indicators, int radioId, boolean isIndie, String mvlink, int streamingStatus, int[] downloadPrivileges, boolean allowAudioAds, boolean hasLyric, int userid, ArrayList<GenreDTO> genres, ArrayList<ComposerDTO> composers, String distributor, AlbumDTO album, RadioDTO radio, boolean isRBT, int like, int listen, boolean liked, int comment, Streaming streaming) {
         this.encodeId = encodeId;
         this.title = title;
         this.alias = alias;
@@ -26,6 +26,7 @@ public class SongInfoDTO {
         this.isIndie = isIndie;
         this.mvlink = mvlink;
         this.streamingStatus = streamingStatus;
+        this.downloadPrivileges = downloadPrivileges;
         this.allowAudioAds = allowAudioAds;
         this.hasLyric = hasLyric;
         this.userid = userid;
@@ -64,6 +65,7 @@ public class SongInfoDTO {
     public boolean isIndie;
     public String mvlink;
     public int streamingStatus;
+    public int[] downloadPrivileges;
     public boolean allowAudioAds;
     public boolean hasLyric;
     public int userid;

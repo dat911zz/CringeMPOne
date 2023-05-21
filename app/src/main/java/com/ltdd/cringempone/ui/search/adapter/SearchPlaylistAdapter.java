@@ -12,14 +12,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ltdd.cringempone.R;
-import com.ltdd.cringempone.data.dto.ItemDTO;
 import com.ltdd.cringempone.data.dto.SearchPlaylistDTO;
 import com.ltdd.cringempone.service.MediaControlReceiver;
-import com.ltdd.cringempone.ui.musicplayer.PlayerActivity;
 import com.ltdd.cringempone.ui.musicplayer.RecyclerViewItemClickListener;
 import com.ltdd.cringempone.ui.playlist.PlaylistActivity;
 import com.ltdd.cringempone.ui.playlist.model.PlaylistItem;
-import com.ltdd.cringempone.ui.search.SearchMediaControl;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -58,8 +55,8 @@ public class SearchPlaylistAdapter extends RecyclerView.Adapter<SearchPlaylistAd
         holder.setItemClickListener(new RecyclerViewItemClickListener() {
             @Override
             public void onClick(View view, int position, boolean isLongClick) {
-                if (position != SearchMediaControl.getInstance().getCurrentPos()){
-                    SearchMediaControl.getInstance().setCurrentPos(position);
+                if (position != MediaControlReceiver.getInstance().getCurrentPos()){
+                    MediaControlReceiver.getInstance().setCurrentPos(position);
                 }
                 Toast.makeText(view.getContext(),"Child Item clicked: "+ item.getId() ,Toast.LENGTH_LONG).show();
                 Intent playlistIntent = new Intent(view.getContext(), PlaylistActivity.class);

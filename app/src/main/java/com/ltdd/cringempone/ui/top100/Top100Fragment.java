@@ -22,6 +22,7 @@ import com.ltdd.cringempone.ui.musicplayer.model.ChildItem;
 import com.ltdd.cringempone.ui.musicplayer.model.ParentItem;
 import com.ltdd.cringempone.utils.CoreHelper;
 import com.ltdd.cringempone.databinding.FragmentTop100Binding;
+import com.ltdd.cringempone.utils.CustomsDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,21 +40,26 @@ public class Top100Fragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         binding = FragmentTop100Binding.inflate(inflater, container, false);
         RecyclerView parentRecycleViewItem = binding.getRoot().findViewById(R.id.top100_parent_recyclerview);
-        String res = LocalStorageService.getInstance().getString("top100s");
-        if (res.contains("error") || res.equals("")){
-            res = BaseAPIService.getInstance().getRequest("top100");
-            top100s = BaseAPIService.getInstance().getTop100List(res);
-            LocalStorageService.getInstance().putString("top100s", res);
+        if (LocalStorageService.getInstance().getString("isConnect").equals("true")){
+            String res = LocalStorageService.getInstance().getString("top100s");
+            if (res.contains("error") || res.equals("")){
+                res = BaseAPIService.getInstance().getRequest("top100");
+                top100s = BaseAPIService.getInstance().getTop100List(res);
+                LocalStorageService.getInstance().putString("top100s", res);
+            }
+            else{
+                top100s = BaseAPIService.getInstance().getTop100List(res);
+            }
+            if(top100s != null){
+                LinearLayoutManager layoutManager = new LinearLayoutManager(binding.getRoot().getContext());
+                ParentItemAdapter parentItemAdapter = new ParentItemAdapter(ParentItemList(top100s));
+
+                parentRecycleViewItem.setAdapter(parentItemAdapter);
+                parentRecycleViewItem.setLayoutManager(layoutManager);
+            }
         }
         else{
-            top100s = BaseAPIService.getInstance().getTop100List(res);
-        }
-        if(top100s != null){
-            LinearLayoutManager layoutManager = new LinearLayoutManager(binding.getRoot().getContext());
-            ParentItemAdapter parentItemAdapter = new ParentItemAdapter(ParentItemList(top100s));
-
-            parentRecycleViewItem.setAdapter(parentItemAdapter);
-            parentRecycleViewItem.setLayoutManager(layoutManager);
+            CustomsDialog.showAlertDialog(getContext(), "Lỗi", "Vui lòng kiểm tra kết nối mạng!", R.drawable.baseline_error_24);
         }
         return binding.getRoot();
     }
@@ -82,12 +88,12 @@ public class Top100Fragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        CoreHelper.CustomsDialog.hideDialog();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        CustomsDialog.hideDialog();
     }
 
 }
