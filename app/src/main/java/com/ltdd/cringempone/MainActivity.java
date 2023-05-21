@@ -28,6 +28,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.core.view.MenuItemCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -36,19 +38,24 @@ import androidx.navigation.ui.NavigationUI;
 import com.bumptech.glide.Glide;
 import com.facebook.login.LoginManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.ltdd.cringempone.databinding.ActivityMainBinding;
+import com.ltdd.cringempone.service.LocalStorageService;
 import com.ltdd.cringempone.service.MediaControlReceiver;
 import com.ltdd.cringempone.ui.activity.LoginActivity;
 import com.ltdd.cringempone.ui.activity.RegisterActivity;
 import com.ltdd.cringempone.ui.homebottom.HomeFragmentBottom;
 import com.ltdd.cringempone.ui.person.PersonFragment;
-import com.ltdd.cringempone.ui.search.SearchResultActivity;
-import com.ltdd.cringempone.ui.settings.SettingsFragment;
+import com.ltdd.cringempone.ui.search.SearchResult;
+import com.ltdd.cringempone.ui.slideshow.SlideshowFragment;
+import com.ltdd.cringempone.utils.CoreHelper;
 
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
@@ -57,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     BottomNavigationView bottomNavigationView;
     PersonFragment personFragment = new PersonFragment();
     HomeFragmentBottom homeFragmentBottom = new HomeFragmentBottom();
-    SettingsFragment settingsFragment = new SettingsFragment();
+    SlideshowFragment slideshowFragment = new SlideshowFragment();
     TextView tvName;
     TextView tvEmail;
     ImageView imgAvatar;
@@ -89,7 +96,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
-
                     }
                 }});
 
@@ -104,13 +110,31 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             // Handle the exception here
             Log.e("MyApplication", "Uncaught exception occurred: " + ex.getMessage());
         });
-
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setSupportActionBar(binding.appBarMain.toolbar);
-        Intent intent = getIntent();
-        Toast.makeText(this, ""+intent.getStringExtra("id"), Toast.LENGTH_SHORT).show();
         addControl();
+        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                Fragment fragment;
+                switch (item.getItemId()) {
+                    case R.id.person:
+                        fragment = new PersonFragment();
+                        setTitle("Cá Nhân");
+                        binding.navView.getMenu().findItem(R.id.nav_gallery).setChecked(true);
+                        loadFragment(fragment);
+                        return true;
+                    case R.id.home:
+                        fragment = new HomeFragmentBottom();
+                        binding.navView.getMenu().findItem(R.id.nav_home).setChecked(true);
+                        setTitle("Trang Chủ");
+                        loadFragment(fragment);
+                        return true;
+                }
+                return true;
+            }
+        });
     }
     public void addControl(){
         if (!MediaControlReceiver.getInstance().isRegister){
@@ -139,6 +163,14 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         navClick();
 
 
+        bottomNavigationView.setSelectedItemId(R.id.home);
+        bottomNavigationView.getMenu().findItem(R.id.home).setChecked(true);
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                LocalStorageService.getInstance().putString("isConnect", Boolean.toString(CoreHelper.isConnected(getBaseContext())));
+            }
+        }, 0, 5000);
     }
 
     private void navClick()
@@ -157,8 +189,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                             startActivity(intent);
                             break;
                         }
-
-
                     }
                 }
                 drawer.closeDrawer(GravityCompat.START);
@@ -166,17 +196,16 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             }
         });
     }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.i(TAG, "onStart: " + testRs[0]);
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
@@ -199,7 +228,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 break;
             case R.id.action_search:
                 Toast.makeText(this, "Search", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(MainActivity.this, SearchResultActivity.class));
+                startActivity(new Intent(MainActivity.this,SearchResult.class));
             default:
         }
         return super.onOptionsItemSelected(item);
@@ -215,15 +244,31 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
         switch (item.getItemId()) {
-            case R.id.person:
-                getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_main, personFragment).commit();
+            case R.id.nav_gallery:
+                loadFragment(personFragment);
+                bottomNavigationView.getMenu().findItem(R.id.home).setChecked(false);
+                bottomNavigationView.getMenu().findItem(R.id.person).setChecked(true);
+                bottomNavigationView.setSelectedItemId(R.id.person);
                 return true;
-
-            case R.id.home:
-                getSupportFragmentManager().beginTransaction().replace(R.id.nav_host_fragment_content_main, homeFragmentBottom).commit();
+            case R.id.nav_home:
+                loadFragment(homeFragmentBottom);
+                bottomNavigationView.getMenu().findItem(R.id.person).setChecked(false);
+                bottomNavigationView.getMenu().findItem(R.id.home).setChecked(true);
+                bottomNavigationView.setSelectedItemId(R.id.home);
+                return true;
+            case R.id.nav_slideshow:
+                loadFragment(slideshowFragment);
                 return true;
         }
         return false;
+    }
+    private void loadFragment(Fragment fragment) {
+        // load fragment
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.nav_host_fragment_content_main, fragment);
+        transaction.addToBackStack(null);
+        getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+        transaction.commit();
     }
 
     @Override
@@ -243,10 +288,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         }
         return super.onPrepareOptionsMenu(menu);
     }
-
-
-
-
     public void showUserInformation()
     {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -279,7 +320,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             {
                 openGallery();
             }
-
         }
     }
 
@@ -289,10 +329,5 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         activityResultLauncher.launch(Intent.createChooser(intent, "Select picture"));
-
     }
-
-
-
-
 }

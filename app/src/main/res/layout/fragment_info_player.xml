@@ -11,7 +11,7 @@
             android:layout_margin="20dp"
             android:background="#3272738E"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="wrap_content"
             android:padding="15dp"
             android:id="@+id/fragment_info_player_container">
             <ImageView
@@ -53,8 +53,9 @@
                 android:layout_marginTop="15dp"
                 android:id="@+id/fragment_info_player_container_divider"/>
             <RelativeLayout
-                android:layout_width="130dp"
-                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
                 android:id="@+id/fragment_info_player_container_lbContainer"
                 android:layout_below="@id/fragment_info_player_container_divider">
                 <TextView
@@ -68,11 +69,32 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="Album"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginLeft="110dp"
+                    android:paddingLeft="10dp"
+                    android:id="@+id/fragment_info_player_container_album_txt"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="Nhạc sĩ"
                     android:textColor="@color/textColor"
                     android:layout_marginTop="15dp"
                     android:layout_below="@id/fragment_info_player_container_album_lb"
                     android:id="@+id/fragment_info_player_container_artists_lb"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Nhạc sĩ"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginLeft="110dp"
+                    android:paddingLeft="10dp"
+                    android:layout_below="@id/fragment_info_player_container_album_txt"
+                    android:id="@+id/fragment_info_player_container_artists_txt"
                     />
                 <TextView
                     android:layout_width="wrap_content"
@@ -86,11 +108,33 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="Thể loại"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginLeft="110dp"
+                    android:paddingLeft="10dp"
+                    android:id="@+id/fragment_info_player_container_genre_txt"
+                    android:layout_below="@id/fragment_info_player_container_artists_txt"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="Ngày phát hành"
                     android:textColor="@color/textColor"
                     android:layout_marginTop="15dp"
                     android:id="@+id/fragment_info_player_container_releaseTime_lb"
                     android:layout_below="@id/fragment_info_player_container_genre_lb"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ngày phát hành"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginLeft="110dp"
+                    android:paddingLeft="10dp"
+                    android:id="@+id/fragment_info_player_container_releaseTime_txt"
+                    android:layout_below="@id/fragment_info_player_container_genre_txt"
                     />
                 <TextView
                     android:layout_width="wrap_content"
@@ -101,58 +145,18 @@
                     android:id="@+id/fragment_info_player_container_distributor_lb"
                     android:layout_below="@id/fragment_info_player_container_releaseTime_lb"
                     />
-            </RelativeLayout>
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@id/fragment_info_player_container_divider"
-                android:layout_toEndOf="@id/fragment_info_player_container_lbContainer">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Album"
-                    android:textColor="@color/white"
-                    android:layout_marginTop="15dp"
-                    android:id="@+id/fragment_info_player_container_album_txt"
-                    />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Nhạc sĩ"
-                    android:textColor="@color/white"
-                    android:layout_marginTop="15dp"
-                    android:layout_below="@id/fragment_info_player_container_album_txt"
-                    android:id="@+id/fragment_info_player_container_artists_txt"
-                    />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Thể loại"
-                    android:textColor="@color/white"
-                    android:layout_marginTop="15dp"
-                    android:id="@+id/fragment_info_player_container_genre_txt"
-                    android:layout_below="@id/fragment_info_player_container_artists_txt"
-                    />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Ngày phát hành"
-                    android:textColor="@color/white"
-                    android:layout_marginTop="15dp"
-                    android:id="@+id/fragment_info_player_container_releaseTime_txt"
-                    android:layout_below="@id/fragment_info_player_container_genre_txt"
-                    />
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Nhà cung cấp"
                     android:textColor="@color/white"
                     android:layout_marginTop="15dp"
+                    android:layout_marginLeft="110dp"
+                    android:paddingLeft="10dp"
                     android:id="@+id/fragment_info_player_container_distributor_txt"
                     android:layout_below="@id/fragment_info_player_container_releaseTime_txt"
                     />
             </RelativeLayout>
-
         </RelativeLayout>
     </RelativeLayout>
 

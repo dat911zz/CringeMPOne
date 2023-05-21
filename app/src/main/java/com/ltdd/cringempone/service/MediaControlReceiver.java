@@ -9,18 +9,23 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.SeekBar;
+import android.widget.Toast;
+
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.Player;
 import com.ltdd.cringempone.R;
 import com.ltdd.cringempone.api.BaseAPIService;
 import com.ltdd.cringempone.data.dto.ItemDTO;
+import com.ltdd.cringempone.data.dto.SongDTO;
 import com.ltdd.cringempone.data.dto.Streaming;
 import com.ltdd.cringempone.ui.musicplayer.PlayerViewHolder;
 import com.ltdd.cringempone.ui.musicplayer.ViewPagerPlayerController;
 import com.ltdd.cringempone.utils.CoreHelper;
+import com.ltdd.cringempone.utils.CustomsDialog;
 import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class MediaControlReceiver extends BroadcastReceiver {
     private final static String TAG = "BroadcastReceiver";
@@ -29,6 +34,11 @@ public class MediaControlReceiver extends BroadcastReceiver {
     private ArrayList<ItemDTO> playList = new ArrayList<>();
     private int currentPos;
     private boolean isSkip = false;
+
+    public void setSkip(boolean skip) {
+        isSkip = skip;
+    }
+
     public boolean isRegister;
     private Boolean isShuffle = false
             , isLoop = false;
@@ -52,22 +62,36 @@ public class MediaControlReceiver extends BroadcastReceiver {
                 switch (act){
                     case MediaAction.ACTION_PLAY:
                         new Handler().postDelayed(() -> {
-                            Log.i(TAG, "onReceive: ");
+                            Log.i(TAG, "onReceive: play");
                             //Load data into viewpager
-                            ViewPagerPlayerController.getInstance().loadDataIntoFragments(getCurrentSong().encodeId);
+                            if (getCurrentSong() != null){
+                                ViewPagerPlayerController.getInstance().loadDataIntoFragments(getCurrentSong().encodeId);
+                            }
                             //Play song
                             exoPlayer.setPlayWhenReady(true);
-                            if (currentPos >= 0 && !isPause || isSkip){
+                            String songLink = LocalStorageService.getInstance().getString("m_link" + playList.get(currentPos).encodeId);
+                            String playingSongId = exoPlayer.getCurrentMediaItem() == null ? "" : exoPlayer.getCurrentMediaItem().mediaId;
+                            if (!isPause && !playingSongId.equals(getCurrentSong().encodeId) || isSkip){
                                 try {
                                     if (isSkip){
                                         isSkip = false;
                                     }
-                                    String songLink = LocalStorageService.getInstance().getString("m_link" + playList.get(currentPos).encodeId);
                                     if (songLink.contains("error") || songLink.equals("") || BaseAPIService.getInstance().isDown(songLink)) {
-                                        songLink = BaseAPIService.getInstance().getStreaming(playList.get(currentPos).encodeId).data._128;
+                                        Streaming streamingDTO = BaseAPIService.getInstance().getStreaming(playList.get(currentPos).encodeId);
+                                        if (streamingDTO.err.equals("-1150")){
+                                            LocalStorageService.getInstance().putString("err:-1150", playList.get(currentPos).encodeId);
+                                            exoPlayer.setPlayWhenReady(false);
+                                            exoPlayer.pause();
+                                            return;
+                                        }
+                                        songLink = streamingDTO.data._128;
                                         LocalStorageService.getInstance().putString("m_link" + playList.get(currentPos).encodeId, songLink);
                                     }
-                                    MediaItem mediaItem = MediaItem.fromUri(songLink);
+                                    LocalStorageService.getInstance().putString("currentPlaying", String.valueOf(currentPos));
+                                    MediaItem mediaItem = new MediaItem.Builder()
+                                            .setUri(songLink)
+                                            .setMediaId(getCurrentSong().encodeId)
+                                            .build();
                                     exoPlayer.removeMediaItem(0);
                                     exoPlayer.setMediaItem(mediaItem);
                                     exoPlayer.prepare();
@@ -76,7 +100,7 @@ public class MediaControlReceiver extends BroadcastReceiver {
                                 }
                             }
                             exoPlayer.play();
-                        },200);
+                        }, 0);
                         break;
                     case MediaAction.ACTION_PAUSE:
                         exoPlayer.setPlayWhenReady(false);
@@ -110,7 +134,7 @@ public class MediaControlReceiver extends BroadcastReceiver {
     }
     public void unregisterReceiver(Context context){
         //Unregister broadcast and release exoplayer instance
-        this.unregisterReceiver(context);
+        context.unregisterReceiver(this);
         exoPlayer.release();
         exoPlayer = null;
     }
@@ -138,12 +162,10 @@ public class MediaControlReceiver extends BroadcastReceiver {
             if (!isDoubleClick()){
                 if(!exoPlayer.isPlaying()) {
                     viewHolder.getPlay().setBackgroundResource(R.drawable.baseline_pause_24);
-                    context.sendBroadcast(new Intent(MediaAction.ACTION_PAUSE));
                     context.sendBroadcast(new Intent(MediaAction.ACTION_PLAY));
                 }
                 else{
                     viewHolder.getPlay().setBackgroundResource(R.drawable.baseline_play_arrow_24);
-                    context.sendBroadcast(new Intent(MediaAction.ACTION_PAUSE));
                     context.sendBroadcast(new Intent(MediaAction.ACTION_PAUSE));
                 }
             }
@@ -165,7 +187,7 @@ public class MediaControlReceiver extends BroadcastReceiver {
                 if (!isLoop){
                     isLoop = true;
                     viewHolder.getLoop().setBackground(v.getResources().getDrawable(R.drawable.baseline_loop_24_on));
-                    exoPlayer.setRepeatMode(Player.REPEAT_MODE_ONE);
+                    exoPlayer.setRepeatMode(Player.REPEAT_MODE_ALL);
                 }
                 else{
                     isLoop = false;
@@ -198,6 +220,7 @@ public class MediaControlReceiver extends BroadcastReceiver {
                 if (playbackState == Player.STATE_BUFFERING) {
                     // Show buffering indicator
                     Log.i(TAG, "onPlaybackStateChanged: buffering...");
+                    viewHolder.getPlay().setBackgroundResource(R.drawable.baseline_pause_24);
                 } else if (playbackState == Player.STATE_READY) {
                     Log.i(TAG, "onPlaybackStateChanged: play");
                     // Playback is ready, update UI accordingly
@@ -229,6 +252,12 @@ public class MediaControlReceiver extends BroadcastReceiver {
                     Log.i("On progress", "onProgressChanged: " + seekBar.getMax());
                 }
                 if (progress == seekBar.getMax() && !isLoop){
+                    if (isShuffle){
+                        final int min = 1;
+                        final int max = playList.size();
+                        final int random = new Random().nextInt((max - min) + 1) + min;
+                        setCurrentPos(random);
+                    }
                     seekToNextSong(context);
                 }
             }
