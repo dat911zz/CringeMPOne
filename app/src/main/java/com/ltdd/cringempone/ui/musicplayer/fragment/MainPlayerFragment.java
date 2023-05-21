@@ -30,7 +30,7 @@ import com.ltdd.cringempone.utils.CustomsDialog;
 
 import java.util.ArrayList;
 
-public class MainPlayerFragment extends Fragment {
+public class MainPlayerFragment extends Fragment{
     private String songName;
     private String artist;
     private String idSong;
@@ -74,9 +74,8 @@ public class MainPlayerFragment extends Fragment {
             songName = MediaControlReceiver.getInstance().getCurrentSong().title;
             artist = MediaControlReceiver.getInstance().getCurrentSong().artistsNames;
             idSong = MediaControlReceiver.getInstance().getCurrentSong().encodeId;
-        }
-        else {
-            CustomsDialog.showAlertDialog(
+        } else {
+            CoreHelper.CustomsDialog.showAlertDialog(
                     this.getContext(),
                     "Lỗi",
                     "Đã xảy ra lỗi, vui lòng kiểm tra lại kết nối mạng!",
@@ -91,6 +90,7 @@ public class MainPlayerFragment extends Fragment {
         });
         binding.txtSongName.setText(songName);
         binding.txtTitle.setText(artist);
+        checkFSong(idSong);
         binding.favoriteSong.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -129,7 +129,7 @@ public class MainPlayerFragment extends Fragment {
 
             }
         });
-        checkFSong(idSong);
+
     }
 
     public void checkFSong(String idSong) {
