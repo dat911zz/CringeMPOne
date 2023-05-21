@@ -20,6 +20,7 @@ import com.ltdd.cringempone.R.*;
 import com.ltdd.cringempone.api.BaseAPIService;
 import com.ltdd.cringempone.data.dto.ItemDTO;
 import com.ltdd.cringempone.data.dto.SongInfoDTO;
+import com.ltdd.cringempone.service.LocalStorageService;
 import com.ltdd.cringempone.service.MediaAction;
 import com.ltdd.cringempone.service.MediaControlReceiver;
 import com.ltdd.cringempone.ui.musicplayer.adapter.PlayerPagerAdapter;
@@ -80,6 +81,15 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
         indicator.attachTo(binding.pager);
         binding.pager.setCurrentItem(1);
         sendBroadcast(new Intent(MediaAction.ACTION_PLAY));
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                String err = LocalStorageService.getInstance().getString("err:-1150");
+                if (err.equals(MediaControlReceiver.getInstance().getCurrentSong().encodeId)){
+                    CustomsDialog.showAlertDialog(getBaseContext(), "Lỗi", "Bạn cần nâng cấp lên tài khoản vip để nghe bài này!", drawable.baseline_error_24);
+                }
+            }
+        }, 6000);
     }
     @Override
     protected void onStart() {

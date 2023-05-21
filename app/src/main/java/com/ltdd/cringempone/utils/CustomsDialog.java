@@ -13,6 +13,9 @@ import com.ltdd.cringempone.R;
 public class CustomsDialog {
     public static ProgressDialog pgl;
     public static void showLoadingDialog(Context context){
+        if (pgl != null && pgl.isShowing()){
+            pgl.dismiss();
+        }
         pgl = new ProgressDialog(context, ProgressDialog.THEME_HOLO_DARK);
         pgl.setMessage("Vui lòng chờ trong giây lát...");
         pgl.setCancelable(true);

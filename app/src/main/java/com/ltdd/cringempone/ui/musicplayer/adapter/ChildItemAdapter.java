@@ -47,7 +47,7 @@ public class ChildItemAdapter extends RecyclerView.Adapter<ChildItemAdapter.Chil
                 playlistIntent.putExtra("playlistId", childItem.getId());
                 CustomsDialog.showLoadingDialog(view.getContext());
                 new Handler().postDelayed(() -> view.getContext().startActivity(playlistIntent),0);
-                new Handler().postDelayed(() -> CustomsDialog.hideDialog(),2500);
+//                new Handler().postDelayed(() -> CustomsDialog.hideDialog(),2500);
             }
         });
         Picasso.get().load(childItem.getImg()).fit().into(childViewHolder.childItemImg);

@@ -80,6 +80,8 @@ public class MediaControlReceiver extends BroadcastReceiver {
                                         Streaming streamingDTO = BaseAPIService.getInstance().getStreaming(playList.get(currentPos).encodeId);
                                         if (streamingDTO.err.equals("-1150")){
                                             LocalStorageService.getInstance().putString("err:-1150", playList.get(currentPos).encodeId);
+                                            exoPlayer.setPlayWhenReady(false);
+                                            exoPlayer.pause();
                                             return;
                                         }
                                         songLink = streamingDTO.data._128;
@@ -98,7 +100,7 @@ public class MediaControlReceiver extends BroadcastReceiver {
                                 }
                             }
                             exoPlayer.play();
-                        }, 50);
+                        }, 0);
                         break;
                     case MediaAction.ACTION_PAUSE:
                         exoPlayer.setPlayWhenReady(false);
