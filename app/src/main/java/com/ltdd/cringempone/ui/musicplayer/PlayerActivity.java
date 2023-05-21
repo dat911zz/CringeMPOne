@@ -1,5 +1,7 @@
 package com.ltdd.cringempone.ui.musicplayer;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
@@ -11,6 +13,7 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
@@ -81,15 +84,29 @@ public class PlayerActivity extends AppCompatActivity implements View.OnClickLis
         indicator.attachTo(binding.pager);
         binding.pager.setCurrentItem(1);
         sendBroadcast(new Intent(MediaAction.ACTION_PLAY));
+        Context c = this;
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 String err = LocalStorageService.getInstance().getString("err:-1150");
                 if (err.equals(MediaControlReceiver.getInstance().getCurrentSong().encodeId)){
-                    CustomsDialog.showAlertDialog(getBaseContext(), "Lỗi", "Bạn cần nâng cấp lên tài khoản vip để nghe bài này!", drawable.baseline_error_24);
+                    new AlertDialog.Builder(c)
+                            .setTitle("Lỗi")
+                            .setMessage("Bạn cần nâng cấp lên tài khoản vip để nghe bài này!")
+                            // Specifying a listener allows you to take an action before dismissing the dialog.
+                            // The dialog is automatically dismissed when a dialog button is clicked.
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // Continue with delete operation
+                                    onBackPressed();
+                                }
+                            })
+                            // A null listener allows the button to dismiss the dialog and take no further action.
+                            .setIcon(drawable.baseline_error_24)
+                            .show();
                 }
             }
-        }, 6000);
+        }, 4000);
     }
     @Override
     protected void onStart() {

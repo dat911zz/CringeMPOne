@@ -3,14 +3,11 @@ package com.ltdd.cringempone;
 import static com.ltdd.cringempone.ui.account.AccountFragment.imageAvatar;
 
 import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -18,7 +15,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.view.View;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,9 +50,8 @@ import com.ltdd.cringempone.ui.activity.RegisterActivity;
 import com.ltdd.cringempone.ui.homebottom.HomeFragmentBottom;
 import com.ltdd.cringempone.ui.person.PersonFragment;
 import com.ltdd.cringempone.ui.search.SearchResult;
-import com.ltdd.cringempone.ui.settings.SettingsFragment;
-import com.ltdd.cringempone.utils.CoreHelper;
 import com.ltdd.cringempone.ui.slideshow.SlideshowFragment;
+import com.ltdd.cringempone.utils.CoreHelper;
 
 import java.io.IOException;
 import java.util.Timer;
@@ -73,11 +68,8 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     TextView tvName;
     TextView tvEmail;
     ImageView imgAvatar;
-
     public static final int REQUEST_CODE = 10;
     public static Uri uri = null;
-
-
     String TAG = "APP";
     String[] testRs = new String[1];
     NavigationView navigationView;
@@ -167,7 +159,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         showUserInformation();
         navClick();
 
-
         bottomNavigationView.setSelectedItemId(R.id.home);
         bottomNavigationView.getMenu().findItem(R.id.home).setChecked(true);
         new Timer().schedule(new TimerTask() {
@@ -205,13 +196,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     protected void onResume() {
         super.onResume();
     }
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        MediaControlReceiver.getInstance().unregisterReceiver(this);
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
@@ -239,7 +227,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         }
         return super.onOptionsItemSelected(item);
     }
-
     @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
@@ -276,7 +263,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         getSupportFragmentManager().beginTransaction().remove(fragment).commit();
         transaction.commit();
     }
-
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -316,7 +302,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         tvEmail.setText(email);
         Glide.with(this).load(photoUrl).error(R.drawable.avatar_default).into(imgAvatar);
     }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -328,7 +313,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             }
         }
     }
-
     public void openGallery()
     {
         Intent intent = new Intent();
@@ -336,4 +320,5 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         intent.setAction(Intent.ACTION_GET_CONTENT);
         activityResultLauncher.launch(Intent.createChooser(intent, "Select picture"));
     }
+
 }
