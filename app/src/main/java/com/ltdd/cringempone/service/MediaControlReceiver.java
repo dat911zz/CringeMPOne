@@ -10,8 +10,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.media.MediaMetadata;
 import android.os.Build;
 import android.os.Handler;
+import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
@@ -40,6 +45,8 @@ import com.ltdd.cringempone.ui.musicplayer.ViewPagerPlayerController;
 import com.ltdd.cringempone.utils.CoreHelper;
 import com.ltdd.cringempone.utils.CustomsDialog;
 import com.squareup.picasso.Picasso;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -131,9 +138,8 @@ public class MediaControlReceiver extends BroadcastReceiver {
                     case MediaAction.ACTION_STOP:
                         exoPlayer.setPlayWhenReady(false);
                         exoPlayer.stop();
-                        controlNotification();
-                        exoPlayer.release();
-                        setExoPlayer(null);
+//                        exoPlayer.release();
+//                        setExoPlayer(null);
                         break;
                 }
 
@@ -382,7 +388,8 @@ public class MediaControlReceiver extends BroadcastReceiver {
                         PlaybackStateCompat.ACTION_PAUSE |
                         PlaybackStateCompat.ACTION_PLAY_PAUSE |
                         PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS |
-                        PlaybackStateCompat.ACTION_SKIP_TO_NEXT);
+                        PlaybackStateCompat.ACTION_SKIP_TO_NEXT |
+                        PlaybackStateCompat.ACTION_STOP);
 
         mMediaSession.setPlaybackState(mStateBuilder.build());
         mMediaSession.setCallback(new MySessionCallback());
@@ -438,6 +445,13 @@ public class MediaControlReceiver extends BroadcastReceiver {
             isSkip = true;
             seekToNextSong(context);
         }
+
+        @Override
+        public void onStop() {
+            NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            manager.cancel(0);
+            context.sendBroadcast(new Intent(MediaAction.ACTION_STOP));
+        }
     }
     public static class MediaReceiver extends BroadcastReceiver {
 
@@ -480,32 +494,53 @@ public class MediaControlReceiver extends BroadcastReceiver {
                 R.drawable.baseline_skip_next_24, "Bài Sau",
                 MediaButtonReceiver.buildMediaButtonPendingIntent(context,
                         PlaybackStateCompat.ACTION_SKIP_TO_NEXT));
+        NotificationCompat.Action exitAction = new NotificationCompat.Action(
+                android.R.drawable.ic_menu_close_clear_cancel, "Thoát",
+                MediaButtonReceiver.buildMediaButtonPendingIntent(context,
+                        PlaybackStateCompat.ACTION_STOP)
+        );
         PendingIntent contentPendingIntent = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
             contentPendingIntent = PendingIntent.getActivity
                     (context, 0, new Intent(context, PlayerActivity.class), PendingIntent.FLAG_MUTABLE);
-        }
-        else
-        {
+        } else {
             contentPendingIntent = PendingIntent.getActivity
                     (context, 0, new Intent(context, PlayerActivity.class), PendingIntent.FLAG_ONE_SHOT);
         }
-
+        mMediaSession.setMetadata(
+                new MediaMetadataCompat.Builder()
+                        // Title.
+                        .putString(MediaMetadata.METADATA_KEY_TITLE, getCurrentSong().title)
+                        // Artist.
+                        // Could also be the channel name or TV series.
+                        .putString(MediaMetadata.METADATA_KEY_ARTIST, getCurrentSong().artistsNames)
+                        // Album art.
+                        // Could also be a screenshot or hero image for video content
+                        // The URI scheme needs to be "content", "file", or "android.resource".
+                        .putBitmap(
+                                MediaMetadata.METADATA_KEY_ALBUM_ART, CoreHelper.ImageUtil.getBitmapFromURL(getCurrentSong().thumbnailM))
+                        // Duration.
+                        // If duration isn't set, such as for live broadcasts, then the progress
+                        // indicator won't be shown on the seekbar.
+                        .putLong(MediaMetadata.METADATA_KEY_DURATION, exoPlayer.getDuration()) // 4
+                        .build()
+        );
         token = mMediaSession.getSessionToken();
 
-        builder.setContentTitle(getCurrentSong().title)
-                .setContentText(getCurrentSong().artistsNames)
-                .setContentIntent(contentPendingIntent)
-                .setSmallIcon(R.drawable.disklogov2)
+        builder.setContentIntent(contentPendingIntent)
+                .setSmallIcon(R.drawable.ic_play_circle)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .addAction(prevAction)
                 .addAction(playPauseAction)
                 .addAction(nextAction)
+                .addAction(exitAction)
                 .setStyle(new androidx.media.app.NotificationCompat.MediaStyle()
                         .setMediaSession(token)
                         .setShowActionsInCompactView(0, 1, 2));
 
         mNotificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
         mNotificationManager.notify(0, builder.build());
+
+
     }
 }
