@@ -3,14 +3,11 @@ package com.ltdd.cringempone;
 import static com.ltdd.cringempone.ui.account.AccountFragment.imageAvatar;
 
 import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -18,7 +15,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.view.View;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,9 +50,8 @@ import com.ltdd.cringempone.ui.activity.RegisterActivity;
 import com.ltdd.cringempone.ui.homebottom.HomeFragmentBottom;
 import com.ltdd.cringempone.ui.person.PersonFragment;
 import com.ltdd.cringempone.ui.search.SearchResult;
-import com.ltdd.cringempone.ui.settings.SettingsFragment;
-import com.ltdd.cringempone.utils.CoreHelper;
 import com.ltdd.cringempone.ui.slideshow.SlideshowFragment;
+import com.ltdd.cringempone.utils.CoreHelper;
 
 import java.io.IOException;
 import java.util.Timer;
@@ -209,7 +204,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        MediaControlReceiver.getInstance().unregisterReceiver(this);
     }
 
     @Override
