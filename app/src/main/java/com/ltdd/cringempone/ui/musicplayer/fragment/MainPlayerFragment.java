@@ -20,6 +20,8 @@ import com.ltdd.cringempone.databinding.FragmentMainPlayerBinding;
 import com.ltdd.cringempone.service.MediaControlReceiver;
 import com.ltdd.cringempone.ui.musicplayer.ViewPagerPlayerController;
 import com.ltdd.cringempone.utils.CoreHelper;
+import com.ltdd.cringempone.utils.CustomsDialog;
+
 public class MainPlayerFragment extends Fragment{
     private String songName;
     private String artist;
@@ -65,7 +67,7 @@ public class MainPlayerFragment extends Fragment{
             artist = MediaControlReceiver.getInstance().getCurrentSong().artistsNames;
         }
         else {
-            CoreHelper.CustomsDialog.showAlertDialog(
+            CustomsDialog.showAlertDialog(
                     this.getContext(),
                     "Lỗi",
                     "Đã xảy ra lỗi, vui lòng kiểm tra lại kết nối mạng!",

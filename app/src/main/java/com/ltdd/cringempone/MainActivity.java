@@ -3,11 +3,14 @@ package com.ltdd.cringempone;
 import static com.ltdd.cringempone.ui.account.AccountFragment.imageAvatar;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -41,6 +44,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.ltdd.cringempone.databinding.ActivityMainBinding;
+import com.ltdd.cringempone.service.LocalStorageService;
 import com.ltdd.cringempone.service.MediaControlReceiver;
 import com.ltdd.cringempone.ui.activity.LoginActivity;
 import com.ltdd.cringempone.ui.activity.RegisterActivity;
@@ -48,8 +52,11 @@ import com.ltdd.cringempone.ui.homebottom.HomeFragmentBottom;
 import com.ltdd.cringempone.ui.person.PersonFragment;
 import com.ltdd.cringempone.ui.search.SearchResult;
 import com.ltdd.cringempone.ui.settings.SettingsFragment;
+import com.ltdd.cringempone.utils.CoreHelper;
 
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
@@ -90,7 +97,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
-
                     }
                 }});
 
@@ -105,16 +111,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             // Handle the exception here
             Log.e("MyApplication", "Uncaught exception occurred: " + ex.getMessage());
         });
-
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setSupportActionBar(binding.appBarMain.toolbar);
         addControl();
     }
     public void addControl(){
-        if (!MediaControlReceiver.getInstance().isRegister){
-            MediaControlReceiver.getInstance().registerReceiver(this);
-        }
         drawer = binding.drawerLayout;
         navigationView = binding.navView;
         // Passing each menu ID as a set of Ids because each
@@ -137,7 +139,12 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         showUserInformation();
         navClick();
 
-
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                LocalStorageService.getInstance().putString("isConnect", Boolean.toString(CoreHelper.isConnected(getBaseContext())));
+            }
+        }, 0, 5000);
     }
 
     private void navClick()
@@ -156,8 +163,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                             startActivity(intent);
                             break;
                         }
-
-
                     }
                 }
                 drawer.closeDrawer(GravityCompat.START);
@@ -165,17 +170,17 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             }
         });
     }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Log.i(TAG, "onStart: " + testRs[0]);
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        MediaControlReceiver.getInstance().unregisterReceiver(this);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
@@ -242,10 +247,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         }
         return super.onPrepareOptionsMenu(menu);
     }
-
-
-
-
     public void showUserInformation()
     {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -278,7 +279,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             {
                 openGallery();
             }
-
         }
     }
 
@@ -288,10 +288,5 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         activityResultLauncher.launch(Intent.createChooser(intent, "Select picture"));
-
     }
-
-
-
-
 }

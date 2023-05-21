@@ -55,11 +55,8 @@ public class SearchResult extends AppCompatActivity {
         holder = new SongViewHolder(binding.searchResultRecycleview);
     }
     public void addControl(){
-
         SongAdapter songAdapter = new SongAdapter(searchResult.songs);
         SearchPlaylistAdapter playlistAdapter = new SearchPlaylistAdapter(searchResult.playlists);
-
-
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
 
@@ -69,7 +66,7 @@ public class SearchResult extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.search_menu,menu);
+        getMenuInflater().inflate(R.menu.search_menu, menu);
         MenuItem searchItem = menu.findItem(R.id.search_menuitem);
         SearchView searchView = (SearchView) searchItem.getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
