@@ -26,6 +26,7 @@ import com.ltdd.cringempone.databinding.FragmentMainPlayerBinding;
 import com.ltdd.cringempone.service.MediaControlReceiver;
 import com.ltdd.cringempone.ui.musicplayer.ViewPagerPlayerController;
 import com.ltdd.cringempone.utils.CoreHelper;
+import com.ltdd.cringempone.utils.CustomsDialog;
 
 import java.util.ArrayList;
 
@@ -35,11 +36,9 @@ public class MainPlayerFragment extends Fragment {
     private String idSong;
     private View view;
     private FragmentMainPlayerBinding binding;
-
     public MainPlayerFragment() {
         // Required empty public constructor
     }
-
     public static MainPlayerFragment newInstance() {
         return new MainPlayerFragment();
     }
@@ -59,25 +58,25 @@ public class MainPlayerFragment extends Fragment {
         addControl();
         return binding.getRoot();
     }
-
     @Override
     public void onResume() {
         super.onResume();
     }
 
-    public void addControl() {
+    public void addControl(){
         MediaControlReceiver.getInstance().getExoPlayer().addListener(new Player.Listener() {
             @Override
             public void onPlaybackStateChanged(int playbackState) {
                 Player.Listener.super.onPlaybackStateChanged(playbackState);
             }
         });
-        if (MediaControlReceiver.getInstance().getCurrentSong() != null) {
+        if (MediaControlReceiver.getInstance().getCurrentSong() != null){
             songName = MediaControlReceiver.getInstance().getCurrentSong().title;
             artist = MediaControlReceiver.getInstance().getCurrentSong().artistsNames;
             idSong = MediaControlReceiver.getInstance().getCurrentSong().encodeId;
-        } else {
-            CoreHelper.CustomsDialog.showAlertDialog(
+        }
+        else {
+            CustomsDialog.showAlertDialog(
                     this.getContext(),
                     "Lỗi",
                     "Đã xảy ra lỗi, vui lòng kiểm tra lại kết nối mạng!",

@@ -1,66 +1,89 @@
 package com.ltdd.cringempone.ui.homebottom;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.ltdd.cringempone.R;
+import com.ltdd.cringempone.api.BaseAPIService;
+import com.ltdd.cringempone.data.dto.ItemDTO;
+import com.ltdd.cringempone.data.dto.TopDTO;
+import com.ltdd.cringempone.databinding.Top100ChildrenItemBinding;
+import com.ltdd.cringempone.service.LocalStorageService;
+import com.ltdd.cringempone.ui.musicplayer.adapter.ParentItemAdapter;
+import com.ltdd.cringempone.ui.musicplayer.model.ChildItem;
+import com.ltdd.cringempone.ui.musicplayer.model.ParentItem;
+import com.ltdd.cringempone.utils.CoreHelper;
+import com.ltdd.cringempone.databinding.FragmentTop100Binding;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link HomeFragmentBottom#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.ArrayList;
+import java.util.List;
+
 public class HomeFragmentBottom extends Fragment {
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public HomeFragmentBottom() {
-        // Required empty public constructor
+    private ArrayList<TopDTO> top100s;
+    public static HomeFragmentBottom newInstance() {
+        return new HomeFragmentBottom();
     }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment SecondFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static HomeFragmentBottom newInstance(String param1, String param2) {
-        HomeFragmentBottom fragment = new HomeFragmentBottom();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private FragmentTop100Binding binding;
+    private Top100ChildrenItemBinding childrenItemBinding;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        binding = FragmentTop100Binding.inflate(inflater, container, false);
+        RecyclerView parentRecycleViewItem = binding.getRoot().findViewById(R.id.top100_parent_recyclerview);
+        if (LocalStorageService.getInstance().getString("top100s").contains("error") || LocalStorageService.getInstance().getString("top100s").equals("")){
+            top100s = BaseAPIService.getInstance().getTop100List(BaseAPIService.getInstance().getRequest("top100"));
         }
+        else{
+            top100s = BaseAPIService.getInstance().getTop100List(LocalStorageService.getInstance().getString("top100s"));
+        }
+        if(top100s != null){
+            LinearLayoutManager layoutManager = new LinearLayoutManager(binding.getRoot().getContext());
+            ParentItemAdapter parentItemAdapter = new ParentItemAdapter(ParentItemList(top100s));
+
+            parentRecycleViewItem.setAdapter(parentItemAdapter);
+            parentRecycleViewItem.setLayoutManager(layoutManager);
+        }
+        return binding.getRoot();
+    }
+    private List<ParentItem> ParentItemList(ArrayList<TopDTO> top100s) {
+        List<ParentItem> itemList = new ArrayList<>();
+        top100s.forEach((x) ->{
+            ParentItem item = new ParentItem(
+                    x.title,
+                    ChildItemList(x.items));
+            itemList.add(item);
+        });
+        return itemList;
+    }
+
+    // Method to pass the arguments
+    // for the elements
+    // of child RecyclerView
+    private List<ChildItem> ChildItemList(ArrayList<ItemDTO> top100)
+    {
+        List<ChildItem> ChildItemList = new ArrayList<>();
+        top100.forEach((x) ->{
+            ChildItemList.add(new ChildItem(x.encodeId, x.title, x.thumbnail));
+        });
+        return ChildItemList;
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home_bottom, container, false);
+    public void onDestroyView() {
+        super.onDestroyView();
     }
+
 }

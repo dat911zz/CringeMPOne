@@ -14,10 +14,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.ltdd.cringempone.R;
 import com.ltdd.cringempone.data.dto.ItemDTO;
+import com.ltdd.cringempone.service.MediaAction;
 import com.ltdd.cringempone.service.MediaControlReceiver;
 import com.ltdd.cringempone.ui.musicplayer.PlayerActivity;
 import com.ltdd.cringempone.ui.musicplayer.RecyclerViewItemClickListener;
 import com.ltdd.cringempone.ui.playlist.model.PlaylistItem;
+import com.ltdd.cringempone.utils.CoreHelper;
+import com.ltdd.cringempone.utils.CustomsDialog;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -26,9 +29,6 @@ import java.util.List;
 public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.PlaylistViewHolder> {
     private List<PlaylistItem> playlistItemList;
     private List<ItemDTO> items;
-    int lastClickedPos = 0;
-
-
     public PlaylistAdapter(ArrayList<ItemDTO> items) {
         this.items = items;
         this.playlistItemList = toPlaylistItemList(items);
@@ -53,16 +53,19 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
         holder.title.setText(item.getTitle());
         holder.artistsNames.setText(item.getArtistsNames());
         Picasso.get().load(item.getImgLink()).into(holder.img);
+
         holder.setItemClickListener(new RecyclerViewItemClickListener() {
             @Override
             public void onClick(View view, int position, boolean isLongClick) {
+                CustomsDialog.showLoadingDialog(view.getContext());
                 if (position != MediaControlReceiver.getInstance().getCurrentPos()){
                     MediaControlReceiver.getInstance().setCurrentPos(position);
                 }
                 view.getContext().startActivity(new Intent(view.getContext(), PlayerActivity.class));
             }
         });
-        if (position == MediaControlReceiver.getInstance().getCurrentPos()){
+        if ((MediaControlReceiver.getInstance().getExoPlayer().isPlaying() && position == MediaControlReceiver.getInstance().getCurrentPos())
+                || (MediaControlReceiver.getInstance().getCurrentSong() == null && position == 0)){
             holder.title.setText("▶  " + holder.title.getText());
         }
     }

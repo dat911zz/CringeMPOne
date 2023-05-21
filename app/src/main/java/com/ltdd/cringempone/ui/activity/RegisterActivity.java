@@ -1,7 +1,6 @@
 package com.ltdd.cringempone.ui.activity;
 
 import android.content.Intent;
-import android.content.IntentSender;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -24,15 +23,13 @@ import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.google.android.gms.auth.api.identity.BeginSignInRequest;
-import com.google.android.gms.auth.api.identity.BeginSignInResult;
-import com.google.android.gms.auth.api.identity.Identity;
 import com.google.android.gms.auth.api.identity.SignInClient;
-import com.google.android.gms.auth.api.identity.SignInCredential;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -55,9 +52,8 @@ public class RegisterActivity extends AppCompatActivity {
     TextView txtViewSignIn, txtViewBack;
     FirebaseAuth mAuth;
     DatabaseReference userDbRef;
-
     CallbackManager mCallbackManager;
-
+    GoogleSignInClient client;
     private SignInClient oneTapClient;
     private BeginSignInRequest signUpRequest;
     private static final int REQ_ONE_TAP = 2;  // Can be any integer unique to the Activity.
@@ -85,7 +81,13 @@ public class RegisterActivity extends AppCompatActivity {
         userDbRef = FirebaseDatabase.getInstance().getReference().child("Users");
         mAuth = FirebaseAuth.getInstance();
 
-        handleGoogleSignWindow();//Configure the One Tap client
+//        handleGoogleSignWindow();//Configure the One Tap client
+        GoogleSignInOptions options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                        .requestEmail()
+                                .build();
+
+        client = GoogleSignIn.getClient(this, options);
 
         showPasswordOnCheck();
         fbCallBack();
@@ -101,24 +103,27 @@ public class RegisterActivity extends AppCompatActivity {
         btnSignUpWithGoogle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                oneTapClient.beginSignIn(signUpRequest)//hiện màn hình oneTap UI của google
-                        .addOnSuccessListener(new OnSuccessListener<BeginSignInResult>() {
-                            @Override
-                            public void onSuccess(BeginSignInResult result) {
-                                try {
-                                    startIntentSenderForResult(
-                                            result.getPendingIntent().getIntentSender(), REQ_ONE_TAP, null, 0, 0, 0);
-                                } catch (IntentSender.SendIntentException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(RegisterActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
+//                oneTapClient.beginSignIn(signUpRequest)//hiện màn hình oneTap UI của google
+//                        .addOnSuccessListener(new OnSuccessListener<BeginSignInResult>() {
+//                            @Override
+//                            public void onSuccess(BeginSignInResult result) {
+//                                try {
+//                                    startIntentSenderForResult(
+//                                            result.getPendingIntent().getIntentSender(), REQ_ONE_TAP, null, 0, 0, 0);
+//                                } catch (IntentSender.SendIntentException e) {
+//                                    e.printStackTrace();
+//                                }
+//                            }
+//                        })
+//                        .addOnFailureListener(new OnFailureListener() {
+//                            @Override
+//                            public void onFailure(@NonNull Exception e) {
+//                                Toast.makeText(RegisterActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+//                            }
+//                        });
+
+                Intent intent = client.getSignInIntent();
+                startActivityForResult(intent, 1234);
             }
         });
 
@@ -191,18 +196,18 @@ public class RegisterActivity extends AppCompatActivity {
                 });
     }
 
-    private void handleGoogleSignWindow() {
-        oneTapClient = Identity.getSignInClient(RegisterActivity.this);
-        signUpRequest = BeginSignInRequest.builder()
-                .setGoogleIdTokenRequestOptions(BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
-                        .setSupported(true)
-                        // Your server's client ID, not your Android client ID.
-                        .setServerClientId(getString(R.string.default_web_client_id))
-                        // Only show accounts previously used to sign in.
-                        .setFilterByAuthorizedAccounts(false)
-                        .build())
-                .build();
-    }
+//    private void handleGoogleSignWindow() {
+//        oneTapClient = Identity.getSignInClient(RegisterActivity.this);
+//        signUpRequest = BeginSignInRequest.builder()
+//                .setGoogleIdTokenRequestOptions(BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
+//                        .setSupported(true)
+//                        // Your server's client ID, not your Android client ID.
+//                        .setServerClientId(getString(R.string.default_web_client_id))
+//                        // Only show accounts previously used to sign in.
+//                        .setFilterByAuthorizedAccounts(false)
+//                        .build())
+//                .build();
+//    }
 
     private void showPasswordOnCheck() {
         showPasswordCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -260,8 +265,9 @@ public class RegisterActivity extends AppCompatActivity {
                                         Toast.makeText(RegisterActivity.this, "Tạo tài khoản thành công. Vui lòng xác nhận Email.", Toast.LENGTH_SHORT).show();
                                         FirebaseUser currentUser = mAuth.getCurrentUser();
                                         //Thêm dử liệu users vào Realtime
+                                        //Email mới tạo sẽ được xét trạng thái emailVerified là false vì người dùng chưa xác nhận email
                                         DBUser users = new DBUser();
-                                        users.createUser(currentUser.getUid(),userName,currentUser.getEmail(),password);
+                                        users.createUser(currentUser.getUid(),userName,currentUser.getEmail(),password, String.valueOf(currentUser.isEmailVerified()));
 
                                         Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                                         startActivity(intent);
@@ -285,69 +291,71 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         mCallbackManager.onActivityResult(requestCode,resultCode,data);
-        switch (requestCode){
-            case REQ_ONE_TAP:
+        switch (requestCode) {
+//            case REQ_ONE_TAP:
+//                try {
+//                    SignInCredential credential = oneTapClient.getSignInCredentialFromIntent(data);
+//                    String idToken = credential.getGoogleIdToken();
+//                    if(idToken!=null){
+//                        AuthCredential authCredential = GoogleAuthProvider.getCredential(idToken,null);
+//                        mAuth.signInWithCredential(authCredential)
+//                                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+//                                    @Override
+//                                    public void onComplete(@NonNull Task<AuthResult> task) {
+//                                        if (task.isSuccessful()) {
+//                                            FirebaseUser currentUser = mAuth.getCurrentUser();
+//                                            //Thêm dử liệu users vào Realtime
+//                                            DBUser users = new DBUser();
+//                                            users.createUser(currentUser.getUid(),currentUser.getDisplayName(),currentUser.getEmail());
+//
+//                                            Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+//                                            startActivity(intent);
+//                                            finish();
+//                                        } else {
+//                                            Toast.makeText(RegisterActivity.this, task.getException().toString(), Toast.LENGTH_SHORT).show();
+//                                        }
+//                                    }
+//                                });
+//                    }
+//                } catch (ApiException e) {
+//                    switch (e.getStatusCode()){
+//                        case CommonStatusCodes.CANCELED:
+//                            showOneTapUI = false;
+//                            break;
+//                    }
+//                }
+//                break;
+            case 1234:
+                //Đăng ký tài khoản google vào firebase authentication bằng cách lấy IdToken
+                Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
                 try {
-                    SignInCredential credential = oneTapClient.getSignInCredentialFromIntent(data);
-                    String idToken = credential.getGoogleIdToken();
-                    if(idToken!=null){
-                        AuthCredential authCredential = GoogleAuthProvider.getCredential(idToken,null);
-                        mAuth.signInWithCredential(authCredential)
-                                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<AuthResult> task) {
-                                        if (task.isSuccessful()) {
-                                            FirebaseUser currentUser = mAuth.getCurrentUser();
-                                            //Thêm dử liệu users vào Realtime
-                                            DBUser users = new DBUser();
-                                            users.createUser(currentUser.getUid(),currentUser.getDisplayName(),currentUser.getEmail());
+                    GoogleSignInAccount account = task.getResult(ApiException.class);
+                    AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+                    FirebaseAuth.getInstance().signInWithCredential(credential)
+                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if (task.isSuccessful()) {
+                                        FirebaseUser currentUser = mAuth.getCurrentUser();
+                                        //Thêm dử liệu users vào Realtime
+                                        DBUser users = new DBUser();
+                                        users.createUser(currentUser.getUid(), currentUser.getDisplayName(), currentUser.getEmail());
 
-                                            Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-                                            startActivity(intent);
-                                            finish();
-                                        } else {
-                                            Toast.makeText(RegisterActivity.this, task.getException().toString(), Toast.LENGTH_SHORT).show();
-                                        }
+                                        Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    } else {
+                                        Toast.makeText(RegisterActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                     }
-                                });
-                    }
+                                }
+                            });
                 } catch (ApiException e) {
-                    switch (e.getStatusCode()){
-                        case CommonStatusCodes.CANCELED:
-                            showOneTapUI = false;
-                            break;
-                    }
+                    e.printStackTrace();
                 }
                 break;
         }
-//        if(requestCode==1234){
-//            //Đăng ký tài khoản google vào firebase authentication bằng cách lấy IdToken
-//            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-//            try {
-//                GoogleSignInAccount account = task.getResult(ApiException.class);
-//                AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(),null);
-//                FirebaseAuth.getInstance().signInWithCredential(credential)
-//                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-//                            @Override
-//                            public void onComplete(@NonNull Task<AuthResult> task) {
-//                                if(task.isSuccessful()){
-//                                    FirebaseUser currentUser = mAuth.getCurrentUser();
-//                                    //Thêm dử liệu users vào Realtime
-//                                    UsersTest users = new UsersTest(currentUser.getEmail(),currentUser.getDisplayName());
-//                                    userDbRef.push().setValue(users);
-//
-//                                    Intent intent = new Intent(RegisterActivity.this, TestUserProfile.class);
-//                                    startActivity(intent);
-//                                    finish();
-//                                }else{
-//                                    Toast.makeText(RegisterActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-//                                }
-//                            }
-//                        });
-//            } catch (ApiException e) {
-//                e.printStackTrace();
-//            }
-//        }
+
+
     }
 
     private void addControls(){
