@@ -6,6 +6,6 @@
         android:icon="@drawable/ic_library_music"/>
     <item
         android:id="@+id/home"
-        android:title="Khám Phá"
-        android:icon="@drawable/ic_play_circle"/>
+        android:title="Top 100"
+        android:icon="@drawable/ic_menu_auto_graph"/>
 </menu>

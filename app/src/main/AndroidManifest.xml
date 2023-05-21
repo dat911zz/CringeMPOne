@@ -47,6 +47,7 @@
                 <action android:name="com.ltdd.cringempone.ACTION_STOP" />
             </intent-filter>
         </receiver>
+
         <service
             android:name=".api.BaseAPIService"
             android:enabled="true"

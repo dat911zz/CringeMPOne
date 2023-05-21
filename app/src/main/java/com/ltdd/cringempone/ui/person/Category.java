@@ -1,14 +1,8 @@
 package com.ltdd.cringempone.ui.person;
 
-public class PersonItem {
-    private int resouceId;
-    private String title;
-
-    public void setResouceId(int resouceId) {
+public class Category {
+    public Category(int resouceId, String title) {
         this.resouceId = resouceId;
-    }
-
-    public void setTitle(String title) {
         this.title = title;
     }
 
@@ -20,8 +14,16 @@ public class PersonItem {
         return title;
     }
 
-    public PersonItem(int resouceId, String title) {
+    public void setResouceId(int resouceId) {
         this.resouceId = resouceId;
+    }
+
+    public void setTitle(String title) {
         this.title = title;
     }
+
+    private int resouceId;
+    private String title;
+
+
 }

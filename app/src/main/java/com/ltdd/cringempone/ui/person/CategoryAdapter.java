@@ -1,74 +1,61 @@
 package com.ltdd.cringempone.ui.person;
 
-import android.content.Context;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ltdd.cringempone.R;
 
 import java.util.List;
 
-public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder> {
+public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.CategoreViewHolder> {
 
-    public CategoryAdapter(Context context) {
-        this.context = context;
-    }
-
-    private Context context;
-    private List<CategoryPersonItem> categoryPersonItems;
-
-    public void setData(List<CategoryPersonItem> list) {
-        this.categoryPersonItems = list;
+    private List<Category> mListCategory;
+    void setData(List<Category> list) {
+        this.mListCategory = list;
         notifyDataSetChanged();
     }
-
     @NonNull
     @Override
-    public CategoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_fragmentperson,parent,false);
-        return new CategoryViewHolder(view);
+    public CategoreViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_category, parent, false);
+        return new CategoreViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CategoryViewHolder holder, int position) {
-        CategoryPersonItem categoryPersonItem = categoryPersonItems.get(position);
-        if (categoryPersonItem == null) {
+    public void onBindViewHolder(@NonNull CategoreViewHolder holder, int position) {
+        Category category = mListCategory.get(position);
+        if (category==null){
             return;
         }
-        holder.textView.setText(categoryPersonItem.getNameCategory());
-
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context, RecyclerView.HORIZONTAL, false);
-        holder.recyclerView.setLayoutManager(linearLayoutManager);
-        PersonItemAdapter personItemAdapter = new PersonItemAdapter();
-        personItemAdapter.setData(categoryPersonItem.getPersonItems());
-        holder.recyclerView.setAdapter(personItemAdapter);
+        holder.imgCategory.setImageResource(category.getResouceId());
+        holder.tvTitle.setText(category.getTitle());
+        return;
     }
 
     @Override
     public int getItemCount() {
-        if (categoryPersonItems != null) {
-            return categoryPersonItems.size();
+        if (mListCategory != null) {
+            return mListCategory.size();
         }
         return 0;
     }
 
-    public class CategoryViewHolder extends RecyclerView.ViewHolder {
+    public class CategoreViewHolder extends RecyclerView.ViewHolder {
+        private ImageView imgCategory;
+        private TextView tvTitle;
 
-        private TextView textView;
-        private RecyclerView recyclerView;
-
-        public CategoryViewHolder(@NonNull View itemView) {
-
+        public CategoreViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            textView = itemView.findViewById(R.id.textview_name_itemperson);
-            recyclerView = itemView.findViewById(R.id.recyle_personitem);
+            imgCategory = itemView.findViewById(R.id.img_category);
+            tvTitle = itemView.findViewById(R.id.tv_title);
         }
     }
 }

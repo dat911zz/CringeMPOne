@@ -43,17 +43,22 @@ import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.*;
 import com.ltdd.cringempone.databinding.ActivityMainBinding;
+import com.ltdd.cringempone.service.LocalStorageService;
 import com.ltdd.cringempone.service.MediaControlReceiver;
 import com.ltdd.cringempone.service.MediaControlReceiver;
 import com.ltdd.cringempone.ui.activity.LoginActivity;
 import com.ltdd.cringempone.ui.activity.RegisterActivity;
 import com.ltdd.cringempone.ui.homebottom.HomeFragmentBottom;
+import com.ltdd.cringempone.ui.person.PersonActivity;
 import com.ltdd.cringempone.ui.person.PersonFragment;
 import com.ltdd.cringempone.ui.search.SearchResult;
 import com.ltdd.cringempone.ui.settings.SettingsFragment;
+import com.ltdd.cringempone.utils.CoreHelper;
 import com.ltdd.cringempone.ui.slideshow.SlideshowFragment;
 
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
@@ -123,19 +128,16 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                Fragment fragment;
                 switch (item.getItemId()) {
                     case R.id.person:
-                        fragment = new PersonFragment();
+                        Intent intent = new Intent(MainActivity.this, PersonActivity.class);
+                        startActivity(intent);
                         setTitle("Cá Nhân");
                         binding.navView.getMenu().findItem(R.id.nav_gallery).setChecked(true);
-                        loadFragment(fragment);
                         return true;
                     case R.id.home:
-                        fragment = new HomeFragmentBottom();
                         binding.navView.getMenu().findItem(R.id.nav_home).setChecked(true);
                         setTitle("Trang Chủ");
-                        loadFragment(fragment);
                         return true;
                 }
                 return true;
@@ -146,8 +148,10 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         if (!MediaControlReceiver.getInstance().isRegister){
             MediaControlReceiver.getInstance().registerReceiver(this);
         }
-        DrawerLayout drawer = binding.drawerLayout;
-        NavigationView navigationView = binding.navView;
+        drawer = binding.drawerLayout;
+        navigationView = binding.navView;
+        // Passing each menu ID as a set of Ids because each
+        // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow, R.id.nav_top100)
                 .setOpenableLayout(drawer)
@@ -157,18 +161,14 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         NavigationUI.setupWithNavController(navigationView, navController);
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
-        bottomNavigationView.setSelectedItemId(R.id.person);
-
         tvName = navigationView.getHeaderView(0).findViewById(R.id.name);
         tvEmail = navigationView.getHeaderView(0).findViewById(R.id.email);
         imgAvatar = navigationView.getHeaderView(0).findViewById(R.id.imageView);
 
         showUserInformation();
         navClick();
-
-
-        bottomNavigationView.setSelectedItemId(R.id.home);
         bottomNavigationView.getMenu().findItem(R.id.home).setChecked(true);
+        bottomNavigationView.setSelectedItemId(R.id.home);
     }
 
     private void navClick()
@@ -244,10 +244,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         switch (item.getItemId()) {
             case R.id.nav_gallery:
-                loadFragment(personFragment);
-                bottomNavigationView.getMenu().findItem(R.id.home).setChecked(false);
-                bottomNavigationView.getMenu().findItem(R.id.person).setChecked(true);
-                bottomNavigationView.setSelectedItemId(R.id.person);
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
                 return true;
             case R.id.nav_home:
                 loadFragment(homeFragmentBottom);
@@ -287,10 +284,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         }
         return super.onPrepareOptionsMenu(menu);
     }
-
-
-
-
     public void showUserInformation()
     {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -323,7 +316,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             {
                 openGallery();
             }
-
         }
     }
 
@@ -333,10 +325,5 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         activityResultLauncher.launch(Intent.createChooser(intent, "Select picture"));
-
     }
-
-
-
-
 }
