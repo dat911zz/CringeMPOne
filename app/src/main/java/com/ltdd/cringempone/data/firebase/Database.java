@@ -1,4 +1,4 @@
-package com.ltdd.cringempone.firebase;
+package com.ltdd.cringempone.data.firebase;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;

@@ -1,18 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.search.SearchResult" >
+    tools:context=".ui.search.SearchResultActivity">
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_SearchBack"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/baseline_arrow_back_24"
+        android:backgroundTint="@color/bgDark" />
+
+    <EditText
+        android:id="@+id/txt_Search"
+        android:layout_width="325dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentTop="false"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="59dp"
+        android:layout_marginTop="20dp"
+        android:ems="10"
+        android:inputType="textPersonName" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_Mic"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="20dp"
+        android:layout_toEndOf="@id/txt_Search"
+        android:background="@drawable/ic_mic"
+        android:backgroundTint="@color/bgDark" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_Search"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_below="@id/txt_Search"
+        android:backgroundTint="@color/btn_on"
+        android:text="Tìm kiếm"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn_Search">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/search_result_recycleview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
     </RelativeLayout>
-</FrameLayout>
+
+</RelativeLayout>

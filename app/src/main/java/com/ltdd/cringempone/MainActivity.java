@@ -49,9 +49,10 @@ import com.ltdd.cringempone.ui.activity.LoginActivity;
 import com.ltdd.cringempone.ui.activity.RegisterActivity;
 import com.ltdd.cringempone.ui.homebottom.HomeFragmentBottom;
 import com.ltdd.cringempone.ui.person.PersonFragment;
-import com.ltdd.cringempone.ui.search.SearchResult;
 import com.ltdd.cringempone.ui.slideshow.SlideshowFragment;
 import com.ltdd.cringempone.utils.CoreHelper;
+import com.ltdd.cringempone.ui.search.SearchResultActivity;
+import com.ltdd.cringempone.ui.settings.SettingsFragment;
 
 import java.io.IOException;
 import java.util.Timer;
@@ -222,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
                 break;
             case R.id.action_search:
                 Toast.makeText(this, "Search", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(MainActivity.this,SearchResult.class));
+                startActivity(new Intent(MainActivity.this, SearchResultActivity.class));
             default:
         }
         return super.onOptionsItemSelected(item);

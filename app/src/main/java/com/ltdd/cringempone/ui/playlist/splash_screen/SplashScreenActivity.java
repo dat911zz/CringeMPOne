@@ -1,4 +1,4 @@
-package com.ltdd.cringempone.ui.splash_screen;
+package com.ltdd.cringempone.ui.playlist.splash_screen;
 
 import android.content.Intent;
 import android.os.Bundle;
