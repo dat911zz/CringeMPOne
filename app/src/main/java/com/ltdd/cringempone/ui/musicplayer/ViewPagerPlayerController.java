@@ -89,7 +89,7 @@ public class ViewPagerPlayerController {
                             )
                     );
                 }
-            }, 200);
+            }, 20);
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -112,7 +112,7 @@ public class ViewPagerPlayerController {
                     fragmentInfoPlayerBinding.fragmentInfoPlayerContainerReleaseTimeTxt.setText(date);
                     fragmentInfoPlayerBinding.fragmentInfoPlayerContainerDistributorTxt.setText(songInfo.distributor);
                 }
-            }, 100);
+            }, 50);
         }, 0);
 
 

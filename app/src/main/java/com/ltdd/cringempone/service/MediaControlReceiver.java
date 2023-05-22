@@ -51,6 +51,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class MediaControlReceiver extends BroadcastReceiver {
+    private PlayerViewHolder viewHolder;
     private final static String TAG = "BroadcastReceiver";
     private Context context;
     private static MediaControlReceiver instance; // Singleton instance
@@ -128,12 +129,18 @@ public class MediaControlReceiver extends BroadcastReceiver {
                             }
                             exoPlayer.play();
                             controlNotification();
+                            if (viewHolder != null){
+                                viewHolder.getPlay().setBackgroundResource(R.drawable.baseline_pause_24);
+                            }
                         }, 0);
                         break;
                     case MediaAction.ACTION_PAUSE:
                         exoPlayer.setPlayWhenReady(false);
                         exoPlayer.pause();
                         controlNotification();
+                        if (viewHolder != null){
+                            viewHolder.getPlay().setBackgroundResource(R.drawable.baseline_play_arrow_24);
+                        }
                         break;
                     case MediaAction.ACTION_STOP:
                         exoPlayer.setPlayWhenReady(false);
@@ -189,6 +196,7 @@ public class MediaControlReceiver extends BroadcastReceiver {
         return false;
     }
     public void addControl(Context context, PlayerViewHolder viewHolder){
+        this.viewHolder = viewHolder;
         viewHolder.getPlay().setOnClickListener(v -> {
             if (!isDoubleClick()){
                 if(!exoPlayer.isPlaying()) {
@@ -288,9 +296,7 @@ public class MediaControlReceiver extends BroadcastReceiver {
                 }
                 if (progress == seekBar.getMax() && !isLoop){
                     if (isShuffle){
-                        final int min = 1;
-                        final int max = playList.size();
-                        final int random = new Random().nextInt((max - min) + 1) + min;
+                        final int random = currentPos + 2;
                         setCurrentPos(random);
                     }
                     seekToNextSong(context);
