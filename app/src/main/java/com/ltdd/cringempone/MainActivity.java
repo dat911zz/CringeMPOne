@@ -40,14 +40,15 @@ import com.facebook.login.LoginManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.*;
 import com.ltdd.cringempone.databinding.ActivityMainBinding;
 import com.ltdd.cringempone.service.LocalStorageService;
+import com.ltdd.cringempone.service.MediaControlReceiver;
 import com.ltdd.cringempone.service.MediaControlReceiver;
 import com.ltdd.cringempone.ui.activity.LoginActivity;
 import com.ltdd.cringempone.ui.activity.RegisterActivity;
 import com.ltdd.cringempone.ui.homebottom.HomeFragmentBottom;
+import com.ltdd.cringempone.ui.person.PersonActivity;
 import com.ltdd.cringempone.ui.person.PersonFragment;
 import com.ltdd.cringempone.ui.search.SearchResult;
 import com.ltdd.cringempone.ui.slideshow.SlideshowFragment;
@@ -60,11 +61,16 @@ import java.util.TimerTask;
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
     private AppBarConfiguration mAppBarConfiguration;
+
     private ActivityMainBinding binding;
+
     BottomNavigationView bottomNavigationView;
-    PersonFragment personFragment = new PersonFragment();
     HomeFragmentBottom homeFragmentBottom = new HomeFragmentBottom();
+
     SlideshowFragment slideshowFragment = new SlideshowFragment();
+
+    SettingsFragment settingsFragment = new SettingsFragment();
+    PersonFragment personFragment = new PersonFragment();
     TextView tvName;
     TextView tvEmail;
     ImageView imgAvatar;
@@ -114,19 +120,16 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                Fragment fragment;
                 switch (item.getItemId()) {
                     case R.id.person:
-                        fragment = new PersonFragment();
+                        Intent intent = new Intent(MainActivity.this, PersonActivity.class);
+                        startActivity(intent);
                         setTitle("Cá Nhân");
                         binding.navView.getMenu().findItem(R.id.nav_gallery).setChecked(true);
-                        loadFragment(fragment);
                         return true;
                     case R.id.home:
-                        fragment = new HomeFragmentBottom();
                         binding.navView.getMenu().findItem(R.id.nav_home).setChecked(true);
                         setTitle("Trang Chủ");
-                        loadFragment(fragment);
                         return true;
                 }
                 return true;
@@ -150,23 +153,14 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         NavigationUI.setupWithNavController(navigationView, navController);
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(this);
-        bottomNavigationView.setSelectedItemId(R.id.person);
-
         tvName = navigationView.getHeaderView(0).findViewById(R.id.name);
         tvEmail = navigationView.getHeaderView(0).findViewById(R.id.email);
         imgAvatar = navigationView.getHeaderView(0).findViewById(R.id.imageView);
 
         showUserInformation();
         navClick();
-
-        bottomNavigationView.setSelectedItemId(R.id.home);
         bottomNavigationView.getMenu().findItem(R.id.home).setChecked(true);
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                LocalStorageService.getInstance().putString("isConnect", Boolean.toString(CoreHelper.isConnected(getBaseContext())));
-            }
-        }, 0, 5000);
+        bottomNavigationView.setSelectedItemId(R.id.home);
     }
 
     private void navClick()
@@ -192,6 +186,13 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
             }
         });
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.i(TAG, "onStart: " + testRs[0]);
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -238,10 +239,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
         switch (item.getItemId()) {
             case R.id.nav_gallery:
-                loadFragment(personFragment);
-                bottomNavigationView.getMenu().findItem(R.id.home).setChecked(false);
-                bottomNavigationView.getMenu().findItem(R.id.person).setChecked(true);
-                bottomNavigationView.setSelectedItemId(R.id.person);
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
                 return true;
             case R.id.nav_home:
                 loadFragment(homeFragmentBottom);
@@ -320,5 +318,4 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         intent.setAction(Intent.ACTION_GET_CONTENT);
         activityResultLauncher.launch(Intent.createChooser(intent, "Select picture"));
     }
-
 }

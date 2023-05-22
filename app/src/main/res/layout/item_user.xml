@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="6dp"
+    android:layout_marginTop="10dp"
+    android:layout_marginEnd="10dp">
+    <LinearLayout
+        android:background="@color/PrimaryColor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/bgDark">
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardview_img"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                app:cardBackgroundColor="@color/bgDark">
+                <ImageView
+                    android:id="@+id/img_user"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp" />
+            </androidx.cardview.widget.CardView>
+            <LinearLayout
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/cardview_img"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:gravity="center_horizontal"
+                android:layout_below="@id/cardview_img"
+                android:layout_alignParentStart="true">
+            </LinearLayout>
+        </RelativeLayout>
+        <TextView
+            android:id="@+id/tv_user"
+            android:layout_marginLeft="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textSize="16sp"
+            android:text="Category"
+            android:textColor="@color/white"></TextView>
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

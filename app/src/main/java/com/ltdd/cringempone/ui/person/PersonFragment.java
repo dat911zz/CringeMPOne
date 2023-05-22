@@ -16,10 +16,7 @@ import com.ltdd.cringempone.R;
 
 public class PersonFragment extends Fragment {
     View view;
-    ViewPager viewPager;
-    Runnable runnable;
-    Handler handler;
-    int currentItem;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

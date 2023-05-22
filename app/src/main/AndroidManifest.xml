@@ -19,6 +19,9 @@
         android:theme="@style/Theme.CringeMPOne"
         tools:targetApi="31">
         <activity
+            android:name=".ui.person.PersonActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.search.SearchResult"
             android:exported="false" />
         <activity
@@ -51,6 +54,7 @@
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
             </intent-filter>
         </receiver>
+
         <service
             android:name=".api.BaseAPIService"
             android:enabled="true"
