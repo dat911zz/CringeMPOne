@@ -40,10 +40,9 @@ import com.facebook.login.LoginManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.auth.*;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.ltdd.cringempone.databinding.ActivityMainBinding;
-import com.ltdd.cringempone.service.LocalStorageService;
-import com.ltdd.cringempone.service.MediaControlReceiver;
 import com.ltdd.cringempone.service.MediaControlReceiver;
 import com.ltdd.cringempone.ui.activity.LoginActivity;
 import com.ltdd.cringempone.ui.activity.RegisterActivity;
@@ -51,12 +50,10 @@ import com.ltdd.cringempone.ui.homebottom.HomeFragmentBottom;
 import com.ltdd.cringempone.ui.person.PersonActivity;
 import com.ltdd.cringempone.ui.person.PersonFragment;
 import com.ltdd.cringempone.ui.search.SearchResult;
+import com.ltdd.cringempone.ui.settings.SettingsFragment;
 import com.ltdd.cringempone.ui.slideshow.SlideshowFragment;
-import com.ltdd.cringempone.utils.CoreHelper;
 
 import java.io.IOException;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
 
@@ -69,8 +66,6 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
 
     SlideshowFragment slideshowFragment = new SlideshowFragment();
 
-    SettingsFragment settingsFragment = new SettingsFragment();
-    PersonFragment personFragment = new PersonFragment();
     TextView tvName;
     TextView tvEmail;
     ImageView imgAvatar;
