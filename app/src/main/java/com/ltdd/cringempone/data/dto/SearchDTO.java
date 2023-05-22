@@ -7,7 +7,7 @@ public class SearchDTO {
     public ArrayList<ArtistDTO> artists;
     public ArrayList<SearchSongDTO> songs;
     public ArrayList<SearchVideoDTO> videos;
-    public ArrayList<SearchPlaylistDTO> playlists;
+    public ArrayList<ItemDTO> playlists;
     public SearchCounterDTO counter;
     public String sectionId;
 }

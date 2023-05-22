@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ltdd.cringempone.R;
+import com.ltdd.cringempone.data.dto.ItemDTO;
 import com.ltdd.cringempone.data.dto.SearchPlaylistDTO;
 import com.ltdd.cringempone.service.MediaControlReceiver;
 import com.ltdd.cringempone.ui.musicplayer.RecyclerViewItemClickListener;
@@ -25,14 +26,14 @@ import java.util.List;
 public class SearchPlaylistAdapter extends RecyclerView.Adapter<SearchPlaylistAdapter.PlaylistViewHolder> {
 
     private List<PlaylistItem> playlistItemList;
-    private List<SearchPlaylistDTO> items;
+    private List<ItemDTO> items;
 
-    public SearchPlaylistAdapter(ArrayList<SearchPlaylistDTO> items)
+    public SearchPlaylistAdapter(ArrayList<ItemDTO> items)
     {
         this.playlistItemList = toPlaylistItemList(items);
         this.items = items;
     }
-    public List<PlaylistItem> toPlaylistItemList(ArrayList<SearchPlaylistDTO> items){
+    public List<PlaylistItem> toPlaylistItemList(ArrayList<ItemDTO> items){
         List<PlaylistItem> list = new ArrayList<>();
         items.forEach(i -> {
             list.add(new PlaylistItem(i.encodeId, i.title, i.artistsNames, i.thumbnailM));

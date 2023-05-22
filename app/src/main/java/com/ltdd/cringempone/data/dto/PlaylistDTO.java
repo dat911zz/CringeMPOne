@@ -13,7 +13,7 @@ public class PlaylistDTO {
     public boolean isIndie;
     public String releaseDate;
     public String sortDescription;
-    public int releasedAt;
+    public long releasedAt;
     public ArrayList<String> genreIds;
     @SerializedName(value = "PR")
     public boolean pR;
@@ -40,4 +40,7 @@ public class PlaylistDTO {
     public int like;
     public int listen;
     public boolean liked;
+    public boolean isOwner;
+    public boolean canEdit;
+    public boolean canDelete;
 }

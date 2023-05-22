@@ -40,7 +40,7 @@ public class ItemDTO {
     public boolean isIndie;
     public String releaseDate;
     public String sortDescription;
-    public int releasedAt;
+    public long releasedAt;
     public ArrayList<String> genreIds;
     public boolean pR;
     public ArrayList<ArtistDTO> artists;
@@ -58,4 +58,7 @@ public class ItemDTO {
     public String distributor;
     public boolean hasLyric;
     public String mvlink;
+    public boolean isOwner;
+    public boolean canEdit;
+    public boolean canDelete;
 }
