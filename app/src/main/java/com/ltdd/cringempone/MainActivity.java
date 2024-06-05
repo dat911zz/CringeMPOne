@@ -1,133 +1,325 @@
 package com.ltdd.cringempone;
 
-import android.content.ComponentName;
-import android.content.Context;
+import static com.ltdd.cringempone.ui.account.AccountFragment.imageAvatar;
+
+import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.ServiceConnection;
-import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.os.StrictMode;
+import android.provider.MediaStore;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.core.view.MenuItemCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.MediaItem;
-import com.google.android.exoplayer2.ui.PlayerView;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-import com.ltdd.cringempone.data.BaseAPIService;
-import com.ltdd.cringempone.ui.MusicPlayer;
-import com.ltdd.cringempone.utils.Helper;
-import com.ltdd.cringempone.utils.Zmp3API;
+import com.bumptech.glide.Glide;
+import com.facebook.login.LoginManager;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
+import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.ltdd.cringempone.databinding.ActivityMainBinding;
+import com.ltdd.cringempone.service.LocalStorageService;
+import com.ltdd.cringempone.service.MediaControlReceiver;
+import com.ltdd.cringempone.ui.activity.LoginActivity;
+import com.ltdd.cringempone.ui.activity.RegisterActivity;
+import com.ltdd.cringempone.ui.homebottom.HomeFragmentBottom;
+import com.ltdd.cringempone.ui.person.PersonFragment;
+import com.ltdd.cringempone.ui.slideshow.SlideshowFragment;
+import com.ltdd.cringempone.utils.CoreHelper;
+import com.ltdd.cringempone.ui.search.SearchResultActivity;
+import com.ltdd.cringempone.ui.settings.SettingsFragment;
 
-public class MainActivity extends AppCompatActivity {
+import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
+
+public class MainActivity extends AppCompatActivity implements BottomNavigationView.OnNavigationItemSelectedListener {
+
+    private AppBarConfiguration mAppBarConfiguration;
+    private ActivityMainBinding binding;
+    BottomNavigationView bottomNavigationView;
+    PersonFragment personFragment = new PersonFragment();
+    HomeFragmentBottom homeFragmentBottom = new HomeFragmentBottom();
+    SlideshowFragment slideshowFragment = new SlideshowFragment();
+    TextView tvName;
+    TextView tvEmail;
+    ImageView imgAvatar;
+    public static final int REQUEST_CODE = 10;
+    public static Uri uri = null;
     String TAG = "APP";
-    String apiSample = "https://zingmp3api-dvn.onrender.com/top100";
-    BaseAPIService apiService;
-    boolean isBound = false;
+    String[] testRs = new String[1];
+    NavigationView navigationView;
+    DrawerLayout drawer;
+    NavController navController;
+
+    private final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if(result.getResultCode() == RESULT_OK) {
+                        Intent intent = result.getData();
+                        if(intent == null){
+                            return;}
+                        uri = intent.getData();
+
+                        try {
+
+                            Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+                            imageAvatar.setImageBitmap(bitmap);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                }});
+
+
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSupportActionBar().hide();
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-        setContentView(R.layout.activity_main);
-
-        Intent sintent = new Intent(this, BaseAPIService.class);
-        bindService(sintent, new ServiceConnection() {
-            @Override
-            public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-                BaseAPIService.LocalBinder binder = (BaseAPIService.LocalBinder) iBinder;
-                apiService = binder.getService();
-                isBound = true;
-            }
-
-            @Override
-            public void onServiceDisconnected(ComponentName componentName) {
-                isBound = false;
-            }
-        }, Context.BIND_AUTO_CREATE);
-        getRandNumber();
-        //#region Streaming media player
-        //Set up
-        //https://mp3-s1-zmp3.zmdcdn.me/5a7ab8a550e1b9bfe0f0/2684602975505725241?authen=exp=1679135555~acl=/5a7ab8a550e1b9bfe0f0/*~hmac=4a1ff5882b7f905fb7241eaf281c725b&fs=MTY3ODk2MjmUsIC1NTmUsICzM3x3ZWJWNnwwfDU0LjI1NC4xNjIdUngMTM4
-        String url_exo = "https://vnso-pt-15-tf-mp3-s1-zmp3.zmdcdn.me/b9aa20ec13abfaf5a3ba/1502019886813006440?authen=exp=1679314428~acl=/b9aa20ec13abfaf5a3ba/*~hmac=18715487d8d7e0dec124d3133e0d9747&fs=MTY3OTE0MTYyODkzMXx3ZWJWNnwwfDE4LjE0Mi4xMjgdUngMjY";
-        PlayerView playerView = findViewById(R.id.exoPlayer);
-        ExoPlayer exoPlayer = new ExoPlayer.Builder(this).build();
-        playerView.setPlayer(exoPlayer);
-
-        // Build the media item.
-        MediaItem mediaItem = MediaItem.fromUri(url_exo);
-        // Set the media item to be played.
-        exoPlayer.setMediaItem(mediaItem);
-        // Prepare the player.
-        exoPlayer.prepare();
-        // Start the playback.
-        exoPlayer.play();
-        //#endregion
-        ImageView img = findViewById(R.id.imgView);
-        Log.d(TAG, "onCreate img: " + Helper.LoadImageFromWebOperations("https://photo-resize-zmp3.zmdcdn.me/w165_r1x1_jpeg/cover/8/5/5/b/855bb71b9bc9a577ea6627df65a2adeb.jpg"));
-        img.setImageDrawable(Helper.LoadImageFromWebOperations("https://photo-resize-zmp3.zmdcdn.me/w165_r1x1_jpeg/cover/8/5/5/b/855bb71b9bc9a577ea6627df65a2adeb.jpg"));
-
-        Button player = findViewById(R.id.btnMusicPlayer);
-        player.setOnClickListener(view -> {
-            exoPlayer.stop();
-            Intent intent = new Intent(view.getContext(), MusicPlayer.class);
-            startActivity(intent);
+        Thread.setDefaultUncaughtExceptionHandler((thread, ex) -> {
+            // Handle the exception here
+            Log.e("MyApplication", "Uncaught exception occurred: " + ex.getMessage());
         });
-
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        setSupportActionBar(binding.appBarMain.toolbar);
+        addControl();
+        bottomNavigationView.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                Fragment fragment;
+                switch (item.getItemId()) {
+                    case R.id.person:
+                        fragment = new PersonFragment();
+                        setTitle("Cá Nhân");
+                        binding.navView.getMenu().findItem(R.id.nav_gallery).setChecked(true);
+                        loadFragment(fragment);
+                        return true;
+                    case R.id.home:
+                        fragment = new HomeFragmentBottom();
+                        binding.navView.getMenu().findItem(R.id.nav_home).setChecked(true);
+                        setTitle("Trang Chủ");
+                        loadFragment(fragment);
+                        return true;
+                }
+                return true;
+            }
+        });
     }
-    public void getRandNumber(){
-        TextView txtV1 = findViewById(R.id.txtRand);
-        txtV1.setText(Integer.toString(apiService.gernerateRand()));
+    public void addControl(){
+        if (!MediaControlReceiver.getInstance().isRegister){
+            MediaControlReceiver.getInstance().registerReceiver(this);
+        }
+        drawer = binding.drawerLayout;
+        navigationView = binding.navView;
+        // Passing each menu ID as a set of Ids because each
+        // menu should be considered as top level destinations.
+        mAppBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow, R.id.nav_top100)
+                .setOpenableLayout(drawer)
+                .build();
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
+        NavigationUI.setupWithNavController(navigationView, navController);
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        bottomNavigationView.setOnNavigationItemSelectedListener(this);
+        bottomNavigationView.setSelectedItemId(R.id.person);
+
+        tvName = navigationView.getHeaderView(0).findViewById(R.id.name);
+        tvEmail = navigationView.getHeaderView(0).findViewById(R.id.email);
+        imgAvatar = navigationView.getHeaderView(0).findViewById(R.id.imageView);
+
+        showUserInformation();
+        navClick();
+
+        bottomNavigationView.setSelectedItemId(R.id.home);
+        bottomNavigationView.getMenu().findItem(R.id.home).setChecked(true);
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                LocalStorageService.getInstance().putString("isConnect", Boolean.toString(CoreHelper.isConnected(getBaseContext())));
+            }
+        }, 0, 5000);
+    }
+
+    private void navClick()
+    {
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                boolean handled = NavigationUI.onNavDestinationSelected(item, navController);
+                if (!handled) {
+                    switch (item.getItemId()) {
+                        case R.id.nav_logout: {
+                            LoginManager.getInstance().logOut();//Đăng xuất khỏi facebook
+                            FirebaseAuth.getInstance().signOut();//Đăng xuất khỏi Firebase Auth
+                            Intent intent = new Intent(MainActivity.this, MainActivity.class);
+                            finish();
+                            startActivity(intent);
+                            break;
+                        }
+                    }
+                }
+                drawer.closeDrawer(GravityCompat.START);
+                return handled;
+            }
+        });
     }
     @Override
     protected void onResume() {
         super.onResume();
-//        Zmp3API apiZ = new Zmp3API(this);
-//        apiZ.makeAPICall();
-//        RequestQueue rq = Volley.newRequestQueue(this);
-//        Request request = new StringRequest(Request.Method.GET, apiSample, new Response.Listener<String>() {
-//            @Override
-//            public void onResponse(String response) {
-//                Log.i(TAG, "StringRequest onResponse: " + response);
-//            }
-//        }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                Log.e(TAG, "StringRequest onErrorResponse: " + error.getMessage());
-//            }
-//        });
-//        rq.add(request);
-//
-//
-//        SharedPreferences sharedPref = this.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
-//        try {
-//            String source = sharedPref.getString("returnResponse", "");
-//            Gson gson = new GsonBuilder().setPrettyPrinting().create();
-//            JsonParser jp = new JsonParser();
-//            JsonElement je = jp.parse(source);
-//            String prettyJsonString = gson.toJson(je);
-//            Log.d(TAG, "onResume: " + prettyJsonString);
-//            TextView tvMain = findViewById(R.id.txtMain);
-//            tvMain.setText(prettyJsonString);
-//
-//        } catch (Exception e) {
-//            Log.e(TAG, "onResume: " + e.getMessage());
-//        }
     }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        MenuItem menuItem = menu.findItem(R.id.action_login);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
+        return super.onCreateOptionsMenu(menu);
+    }
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        switch (id){
+            case R.id.action_login:
+                startActivity(new Intent(this, LoginActivity.class));
+                break;
+            case R.id.action_register:
+                startActivity(new Intent(this, RegisterActivity.class));
+                break;
+            case R.id.action_settings:
+                Toast.makeText(getBaseContext(),"Settings",Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.action_search:
+                Toast.makeText(this, "Search", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(MainActivity.this, SearchResultActivity.class));
+            default:
+        }
+        return super.onOptionsItemSelected(item);
+    }
+    @Override
+    public boolean onSupportNavigateUp() {
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+        return NavigationUI.navigateUp(navController, mAppBarConfiguration)
+                || super.onSupportNavigateUp();
+    }
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.nav_gallery:
+                loadFragment(personFragment);
+                bottomNavigationView.getMenu().findItem(R.id.home).setChecked(false);
+                bottomNavigationView.getMenu().findItem(R.id.person).setChecked(true);
+                bottomNavigationView.setSelectedItemId(R.id.person);
+                return true;
+            case R.id.nav_home:
+                loadFragment(homeFragmentBottom);
+                bottomNavigationView.getMenu().findItem(R.id.person).setChecked(false);
+                bottomNavigationView.getMenu().findItem(R.id.home).setChecked(true);
+                bottomNavigationView.setSelectedItemId(R.id.home);
+                return true;
+            case R.id.nav_slideshow:
+                loadFragment(slideshowFragment);
+                return true;
+        }
+        return false;
+    }
+    private void loadFragment(Fragment fragment) {
+        // load fragment
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.nav_host_fragment_content_main, fragment);
+        transaction.addToBackStack(null);
+        getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+        transaction.commit();
+    }
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            menu.findItem(R.id.action_login).setVisible(false);
+            menu.findItem(R.id.action_register).setVisible(false);
+
+        }
+        else{
+            menu = navigationView.getMenu();
+            MenuItem nav_logout = menu.findItem(R.id.nav_logout);
+            nav_logout.setVisible(false);
+            MenuItem nav_acc = menu.findItem(R.id.nav_acc);
+            nav_acc.setVisible(false);
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+    public void showUserInformation()
+    {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if(user == null)
+        {
+            return;
+        }
+        String name = user.getDisplayName();
+        String email = user.getEmail();
+        Uri photoUrl = user.getPhotoUrl();
+        if(name == null)
+        {
+            tvName.setVisibility(View.GONE);
+        }
+        else {
+            tvName.setVisibility(View.VISIBLE);
+            tvName.setText(name);
+
+        }
+        tvEmail.setText(email);
+        Glide.with(this).load(photoUrl).error(R.drawable.avatar_default).into(imgAvatar);
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(requestCode == REQUEST_CODE)
+        {
+            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+            {
+                openGallery();
+            }
+        }
+    }
+    public void openGallery()
+    {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        activityResultLauncher.launch(Intent.createChooser(intent, "Select picture"));
+    }
+
 }

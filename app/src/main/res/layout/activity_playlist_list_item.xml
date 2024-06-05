@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp">
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/playlist_list_item_card">
+        <ImageView
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:id="@+id/playlist_list_item_img"
+            android:background="@mipmap/ic_disc" />
+
+        <TextView
+            android:id="@+id/playlist_list_item_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:maxLines="1"
+            android:maxLength="30"
+            android:ellipsize="marquee"
+            android:layout_toEndOf="@+id/playlist_list_item_img"
+            android:text="Trách ai bây giờ, trách mình thôi"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/playlist_list_item_artistsNames"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/playlist_list_item_img"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_toEndOf="@+id/playlist_list_item_img"
+            android:text="Đỗ Văn A, Nguyễn Thị B"
+            android:maxLines="1"
+            android:maxLength="40"
+            android:ellipsize="marquee"
+            android:layout_marginBottom="10dp"
+            android:textColor="@color/textSubtitleColor"
+            android:textSize="12dp" />
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/three_dot"
+            android:id="@+id/playlist_list_item_options"/>
+    </RelativeLayout>
+</RelativeLayout>
